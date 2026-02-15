@@ -85,7 +85,7 @@ namespace rurik
         // row=0-3
         public void AuctionBid(string actionName, string color, int advisor, int bidCoins = 0)
         {
-            Console.WriteLine("auctionBid(): " + color + " " + actionName + " " + advisor);
+            Globals.Log("auctionBid(): " + color + " " + actionName + " " + advisor);
             if (IsColumnFull(actionName))
             {
                 throw new Exception("Cannot place advisor in " + actionName + " column, because it is full.");
@@ -100,21 +100,21 @@ namespace rurik
             }
 
             int totalBid = advisor + bidCoins;
-            Console.WriteLine("auctionBid(): totalBid=" + totalBid);
+            Globals.Log("auctionBid(): totalBid=" + totalBid);
             for (int i = 0; i < numberOfRows; i++)
             {
                 int currentBid = this.board[actionName][i].advisor + this.board[actionName][i].bidCoins;
-                Console.WriteLine("auctionBid(): currentBid=" + currentBid + ", row " + i);
+                Globals.Log("auctionBid(): currentBid=" + currentBid + ", row " + i);
                 if (totalBid > currentBid)
                 {
                     // "move" everything down
                     for (int j = numberOfRows - 1; j > i; j--)
                     {
                         AuctionSpace aboveAuctionSpace = this.board[actionName][j - 1];
-                        Console.WriteLine("auctionBid(): aboveAuctionSpace " + (j - 1) + "=" + aboveAuctionSpace.ToString());
+                        Globals.Log("auctionBid(): aboveAuctionSpace " + (j - 1) + "=" + aboveAuctionSpace.ToString());
                         this.board[actionName][j].CopyBid(aboveAuctionSpace);
                     }
-                    Console.WriteLine("auctionBid(): auctionBid " + i + ":" + color + " " + advisor + " " + bidCoins);
+                    Globals.Log("auctionBid(): auctionBid " + i + ":" + color + " " + advisor + " " + bidCoins);
                     this.board[actionName][i].AuctionBid(color, advisor, bidCoins);
                     break;
                 }

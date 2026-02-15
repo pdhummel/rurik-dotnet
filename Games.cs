@@ -30,7 +30,7 @@ namespace rurik
         public GameStatus CreateGame(string name, string owner, int targetNumberOfPlayers, string password = null)
         {
             var game = new RurikGame(name, owner, targetNumberOfPlayers, password);
-            Console.WriteLine("createGame(): gameId=" + game.Id);
+            Globals.Log("createGame(): gameId=" + game.Id);
             games[game.Id] = game;
             var gameStatus = new GameStatus(game, null);
             return gameStatus;

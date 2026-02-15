@@ -70,20 +70,20 @@ namespace rurik
 
         public void AddGoodToDock(string resource)
         {
-            Console.WriteLine("AddGoodToDock(): " + resource);
+            Globals.Log("AddGoodToDock(): " + resource);
             goodsOnDock[resource]++;
         }
 
         public void AddGoodToBoat(string resource)
         {
-            Console.WriteLine("AddGoodToBoat(): " + resource);
+            Globals.Log("AddGoodToBoat(): " + resource);
             int openSlots = goodsOnBoatSlots[resource] - goodsOnBoat[resource];
             if (openSlots > 0)
             {
                 goodsOnBoat[resource] = goodsOnBoat[resource] + 1;
                 if (openSlots == 1 && tradeBoon[resource] > 0)
                 {
-                    Console.WriteLine("AddGoodToBoat(): tradeBoon bonus for " + resource);
+                    Globals.Log("AddGoodToBoat(): tradeBoon bonus for " + resource);
                     goodsOnDock["tradeBoon"]++;
                     tradeBoon[resource] = 0;
                 }
@@ -143,7 +143,7 @@ namespace rurik
 
         public int UseResourceConversionTile(string resource1, string resource2, string resourceToMatch1, string resourceToMatch2)
         {
-            Console.WriteLine("UseResourceConversionTile(): " + resource1 + " " + resource2 + " " + resourceToMatch1 + " " + resourceToMatch2);
+            Globals.Log("UseResourceConversionTile(): " + resource1 + " " + resource2 + " " + resourceToMatch1 + " " + resourceToMatch2);
             int actions = 0;
             bool canConvert = false;
             if (resource1 == resourceToMatch1 || resource1 == resourceToMatch2 || resource1 == "tradeboon" || 
@@ -160,7 +160,7 @@ namespace rurik
             }
             if (!canConvert)
             {
-                Console.WriteLine("UseResourceConversionTile(): " + goodsOnDock[resource1] + " " + goodsOnDock[resource2]);
+                Globals.Log("UseResourceConversionTile(): " + goodsOnDock[resource1] + " " + goodsOnDock[resource2]);
                 throw new Exception("UseResourceConversionTile(): Resources not available to complete conversion.");
             }
             if (canConvert)

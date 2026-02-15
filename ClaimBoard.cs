@@ -94,7 +94,7 @@ public class ClaimBoard
 
     public int CalculateCoins(string color)
     {
-        Console.WriteLine("CalculateCoins(): " + color);
+        Globals.Log("CalculateCoins(): " + color);
         var coins = 0;
         if (ClaimsByPlayer[color]["rule"] == 0)
             coins++;
@@ -110,7 +110,7 @@ public class ClaimBoard
     // This resets the values which are used in the visualization of the claims track.
     public void ResetClaimsByTrack()
     {
-        Console.WriteLine("ResetClaimsByTrack()");
+        Globals.Log("ResetClaimsByTrack()");
         var tracks = new List<string> { "rule", "build", "trade" };
         var points = new List<int> { 8, 5, 3, 2, 1, 0 };
         
@@ -134,7 +134,7 @@ public class ClaimBoard
     // ClaimsByPlayer -> ClaimsByTrack
     public void UpdateClaimsByTrack()
     {
-        Console.WriteLine("UpdateClaimsByTrack()");
+        Globals.Log("UpdateClaimsByTrack()");
         var colors = new List<string> { "blue", "red", "white", "yellow" };
         
         foreach (var color in colors)
@@ -159,7 +159,7 @@ public class ClaimBoard
     // have been calculated at the end of the round.
     public void UpdatePreviousClaims()
     {
-        Console.WriteLine("UpdatePreviousClaims()");
+        Globals.Log("UpdatePreviousClaims()");
         var colors = new List<string> { "blue", "red", "white", "yellow" };
         
         foreach (var color in colors)
@@ -177,7 +177,7 @@ public class ClaimBoard
     // which could be used by AI to evaluate who is winning and whether one decision is better than another.
     public int CalculateTotalClaims(Player player, GameMap gameMap)
     {
-        Console.WriteLine("CalculateTotalClaims(): " + player.Color);
+        Globals.Log("CalculateTotalClaims(): " + player.Color);
         var totalClaimPoints = 0;
         var color = player.Color;
         
@@ -200,7 +200,7 @@ public class ClaimBoard
             totalClaimPoints = totalClaimPoints + PreviousClaimsByPlayer[color]["build"];
             
         totalClaimPoints = totalClaimPoints + ClaimsByPlayer[color]["warfare"];
-        Console.WriteLine("CalculateTotalClaims(): totalClaimPoints=" + totalClaimPoints);
+        Globals.Log("CalculateTotalClaims(): totalClaimPoints=" + totalClaimPoints);
         return totalClaimPoints;
     }
 
@@ -219,7 +219,7 @@ public class ClaimBoard
     // The ClaimsByPlayer never decrease so it is never worst than the PreviousClaimsByPlayer.
     public int UpdateClaims(Player player, GameMap gameMap)
     {
-        Console.WriteLine("UpdateClaims(): " + player.Color);
+        Globals.Log("UpdateClaims(): " + player.Color);
         var coinCompensation = 0;
         var color = player.Color;
         
@@ -246,7 +246,7 @@ public class ClaimBoard
 
     public int CalculateClaimsForRule(Player player, GameMap gameMap)
     {
-        Console.WriteLine("CalculateClaimsForRule(): " + player.Color);
+        Globals.Log("CalculateClaimsForRule(): " + player.Color);
         var playerRulePoints = 0;
         var color = player.Color;
         var rules = 0;
@@ -292,13 +292,13 @@ public class ClaimBoard
             }
         }
         
-        Console.WriteLine("CalculateClaimsForRule(): playerRulePoints=" + playerRulePoints);
+        Globals.Log("CalculateClaimsForRule(): playerRulePoints=" + playerRulePoints);
         return playerRulePoints;
     }
 
     public int CalculateClaimsForTrade(Player player)
     {
-        Console.WriteLine("CalculateClaimsForTrade(): " + player.Color);
+        Globals.Log("CalculateClaimsForTrade(): " + player.Color);
         var playerTradePoints = 0;
         var goodsOnBoat = player.Boat.GoodsOnBoat["stone"] + player.Boat.GoodsOnBoat["wood"] +
             player.Boat.GoodsOnBoat["fish"] + player.Boat.GoodsOnBoat["honey"] + 
@@ -314,13 +314,13 @@ public class ClaimBoard
             }
         }
         
-        Console.WriteLine("CalculateClaimsForTrade(): playerTradePoints=" + playerTradePoints);
+        Globals.Log("CalculateClaimsForTrade(): playerTradePoints=" + playerTradePoints);
         return playerTradePoints;
     }
 
     public int CalculateClaimsForBuild(Player player, GameMap gameMap)
     {
-        Console.WriteLine("CalculateClaimsForBuild(): " + player.Color);
+        Globals.Log("CalculateClaimsForBuild(): " + player.Color);
         var playerBuildPoints = 0;
         var color = player.Color;
 
@@ -343,7 +343,7 @@ public class ClaimBoard
             }
         }
         
-        Console.WriteLine("CalculateClaimsForBuild(): playerBuildPoints=" + playerBuildPoints);
+        Globals.Log("CalculateClaimsForBuild(): playerBuildPoints=" + playerBuildPoints);
         return playerBuildPoints;
     }
 
@@ -373,7 +373,7 @@ public class ClaimBoard
      
     public int CountConnectedLocations(GameMap gameMap, string color, List<Location> locationsWithBuildings)
     {
-        Console.WriteLine("CountConnectedLocations(): " + string.Join(",", locationsWithBuildings.Select(l => l.Name)));
+        Globals.Log("CountConnectedLocations(): " + string.Join(",", locationsWithBuildings.Select(l => l.Name)));
         var largestClusterCount = 0;
         
         // Mark all the vertices as not visited
@@ -396,7 +396,7 @@ public class ClaimBoard
             }
         }
         
-        Console.WriteLine("CountConnectedLocations(): largestClusterCount=" + largestClusterCount);
+        Globals.Log("CountConnectedLocations(): largestClusterCount=" + largestClusterCount);
         return largestClusterCount;
     }
 */     

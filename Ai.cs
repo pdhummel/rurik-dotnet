@@ -40,14 +40,14 @@ namespace rurik
                 return;
             }
 
-            Console.WriteLine("evaluateGame(): isPlayerAi=true");
+            Globals.Log("evaluateGame(): isPlayerAi=true");
             var currentState = game.GameStates.GetCurrentState();
             if (currentState != null)
             {
                 var currentStateName = currentState.Name;
                 if (mapStateToFunction.TryGetValue(currentStateName, out string method))
                 {
-                    Console.WriteLine($"evaluateGame(): currentState={currentStateName}, currentPlayer={currentPlayer.Color}, method={method}");
+                    Globals.Log($"evaluateGame(): currentState={currentStateName}, currentPlayer={currentPlayer.Color}, method={method}");
                     try
                     {
                         switch (method)
@@ -95,20 +95,20 @@ namespace rurik
                     }
                     catch (Exception error)
                     {
-                        Console.WriteLine($"ai evaluateGame(): {error.Message}");
-                        Console.WriteLine(error.StackTrace);
+                        Globals.Log($"ai evaluateGame(): {error.Message}");
+                        Globals.Log(error.StackTrace);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("evaluateGame(): method not found for " + currentStateName);
+                    Globals.Log("evaluateGame(): method not found for " + currentStateName);
                 }
             }
         }
 
         private void SelectLeader(RurikGame game, Player player)
         {
-            Console.WriteLine("selectLeader()");
+            Globals.Log("selectLeader()");
             var leaderNames = new List<string> { "Boris", "Sviatopolk", "Yaroslav", "Mstislav" };
             var random = new Random();
             var leaderName = leaderNames[random.Next(leaderNames.Count)];
@@ -118,7 +118,7 @@ namespace rurik
 
         private void SelectSecretAgenda(RurikGame game, Player player)
         {
-            Console.WriteLine("selectSecretAgenda()");
+            Globals.Log("selectSecretAgenda()");
             game.SelectSecretAgenda(player.Color, player.temporarySecretAgenda[0].name);
         }
 
@@ -152,7 +152,7 @@ namespace rurik
             }
 
             var aiStrategy = player.aiCard.strategies[player.aiStrategy];
-            Console.WriteLine($"placeAdvisor(): aiCard={player.aiCard.id} {player.aiStrategy}");
+            Globals.Log($"placeAdvisor(): aiCard={player.aiCard.id} {player.aiStrategy}");
             var auctions = aiStrategy.auctions;
             var advisorNumber = 0;
             var index = 0;
@@ -173,14 +173,14 @@ namespace rurik
                 }
                 catch (Exception error)
                 {
-                    Console.WriteLine($"Could not place candidate advisor using strategy card: {auction.action} {advisorNumber}: {error.Message}");
+                    Globals.Log($"Could not place candidate advisor using strategy card: {auction.action} {advisorNumber}: {error.Message}");
                     index++;
                 }
             }
 
             if (!success)
             {
-                Console.WriteLine("placeAdvisor(): advisor could not be placed using strategy card");
+                Globals.Log("placeAdvisor(): advisor could not be placed using strategy card");
             }
 
             var actions = new List<string> { "muster", "move", "attack", "tax", "build", "scheme" };
@@ -199,7 +199,7 @@ namespace rurik
                 }
                 catch (Exception error)
                 {
-                    Console.WriteLine($"Could not place candidate advisor: {action} {advisor}: {error.Message}");
+                    Globals.Log($"Could not place candidate advisor: {action} {advisor}: {error.Message}");
                 }
             }
         }
@@ -211,7 +211,7 @@ namespace rurik
 
         private void RetrieveAdvisor(RurikGame game, Player player)
         {
-            Console.WriteLine($"ai retrieveAdvisor(): player={player.Color}, advisors={string.Join(",", player.advisors)}");
+            Globals.Log($"ai retrieveAdvisor(): player={player.Color}, advisors={string.Join(",", player.advisors)}");
             var color = player.Color;
             var advisor = player.advisors[0];
             var advisorCount = player.advisors.Count;
@@ -225,7 +225,7 @@ namespace rurik
             }
                 catch (Exception error)
                 {
-                    Console.WriteLine($"ai retrieveAdvisor(): Warning player={player.Color} forfeiting {auctionSpace.actionName}");
+                    Globals.Log($"ai retrieveAdvisor(): Warning player={player.Color} forfeiting {auctionSpace.actionName}");
                     if (player.advisors.Count < advisorCount)
                     {
                         player.boat.money++;
@@ -242,7 +242,7 @@ namespace rurik
 
         private void TakeAction(RurikGame game, Player player)
         {
-            Console.WriteLine($"ai takeAction(): player={player.Color}");
+            Globals.Log($"ai takeAction(): player={player.Color}");
             // Clone the game and calculate current points for all players.
             // TODO: var clonedGame = game.Clone();
             //var endGameStats = clonedGame.CalculateEndGameStats();
@@ -301,7 +301,7 @@ namespace rurik
 
         private void PlaySchemeCard(RurikGame game, Player player)
         {
-            Console.WriteLine($"ai playSchemeCard(): player={player.Color}");
+            Globals.Log($"ai playSchemeCard(): player={player.Color}");
             var color = player.Color;
             // For now, just play the first scheme card available which won't be too smart,
             // but better than holding the cards for the whole game.
@@ -319,7 +319,7 @@ namespace rurik
 
         private void PlayDeedCard(RurikGame game, Player player)
         {
-            Console.WriteLine($"ai playDeedCard(): player={player.Color}");
+            Globals.Log($"ai playDeedCard(): player={player.Color}");
             var color = player.Color;
             var isSviatopolk = player.leader.name == "Sviatopolk";
             var isYaroslav = player.leader.name == "Yaroslav";
@@ -337,7 +337,7 @@ namespace rurik
                 }
                 if (deedCard.canAi)
                 {
-                    Console.WriteLine($"ai playDeedCard(): player={player.Color}, deedCard={deedCard.name}");
+                    Globals.Log($"ai playDeedCard(): player={player.Color}, deedCard={deedCard.name}");
                     canFulfill = true;
                     if (deedCard.name == "Create Republic")
                     {
@@ -587,12 +587,12 @@ namespace rurik
                         {
                             if (money < 1)
                             {
-                                Console.WriteLine("ai playDeedCard(): can't pay a coin");
+                                Globals.Log("ai playDeedCard(): can't pay a coin");
                                 canFulfill = false;
                             }
                             else
                             {
-                                Console.WriteLine("ai playDeedCard(): can pay a coin");
+                                Globals.Log("ai playDeedCard(): can pay a coin");
                                 money--;
                             }
                         }
@@ -600,7 +600,7 @@ namespace rurik
                         {
                             if (wood < 1)
                             {
-                                Console.WriteLine("ai playDeedCard(): can't pay wood");
+                                Globals.Log("ai playDeedCard(): can't pay wood");
                                 canFulfill = false;
                             }
                             else
@@ -612,7 +612,7 @@ namespace rurik
                         {
                             if (stone < 1)
                             {
-                                Console.WriteLine("ai playDeedCard(): can't pay stone");
+                                Globals.Log("ai playDeedCard(): can't pay stone");
                                 canFulfill = false;
                             }
                             else
@@ -624,7 +624,7 @@ namespace rurik
                         {
                             if (fish < 1)
                             {
-                                Console.WriteLine("ai playDeedCard(): can't pay fish");
+                                Globals.Log("ai playDeedCard(): can't pay fish");
                                 canFulfill = false;
                             }
                             else
@@ -636,7 +636,7 @@ namespace rurik
                         {
                             if (honey < 1)
                             {
-                                Console.WriteLine("ai playDeedCard(): can't pay honey");
+                                Globals.Log("ai playDeedCard(): can't pay honey");
                                 canFulfill = false;
                             }
                             else
@@ -648,7 +648,7 @@ namespace rurik
                         {
                             if (fur < 1)
                             {
-                                Console.WriteLine("ai playDeedCard(): can't pay fur");
+                                Globals.Log("ai playDeedCard(): can't pay fur");
                                 canFulfill = false;
                             }
                             else
@@ -660,7 +660,7 @@ namespace rurik
                         {
                             if (schemeCards.Count < 1)
                             {
-                                Console.WriteLine("ai playDeedCard(): can't pay a schemeCard");
+                                Globals.Log("ai playDeedCard(): can't pay a schemeCard");
                                 canFulfill = false;
                             }
                             else
@@ -706,20 +706,20 @@ namespace rurik
                             }
                             if (!canPay)
                             {
-                                Console.WriteLine("ai playDeedCard(): can't pay a resource");
+                                Globals.Log("ai playDeedCard(): can't pay a resource");
                                 canFulfill = false;
                             }
                         }
                         else
                         {
-                            Console.WriteLine("ai playDeedCard(): can't pay " + costs[c]);
+                            Globals.Log("ai playDeedCard(): can't pay " + costs[c]);
                             canFulfill = false;
                         }
                     }
-                    Console.WriteLine("ai playDeedCard(): canFulfill=" + canFulfill + ", player=" + player.Color + ", deedCard=" + deedCard);
+                    Globals.Log("ai playDeedCard(): canFulfill=" + canFulfill + ", player=" + player.Color + ", deedCard=" + deedCard);
                     if (canFulfill)
                     {
-                        Console.WriteLine("ai playDeedCard(): check achievements, player=" + player.Color + ", deedCard=" + deedCard);
+                        Globals.Log("ai playDeedCard(): check achievements, player=" + player.Color + ", deedCard=" + deedCard);
                         var achievements = deedCard.achievements;
                         for (var a = 0; a < achievements.Count; a++)
                         {
@@ -753,7 +753,7 @@ namespace rurik
                     }
                     if (canFulfill)
                     {
-                        Console.WriteLine("ai playDeedCard(): canFulfill, player=" + player.Color + ", deedCard=" + deedCard);
+                        Globals.Log("ai playDeedCard(): canFulfill, player=" + player.Color + ", deedCard=" + deedCard);
                         player.boat.capturedRebels = rebels;
                         player.boat.money = money;
                         player.boat.goodsOnDock["stone"] = stone;
@@ -771,7 +771,7 @@ namespace rurik
 
         private bool Muster(RurikGame game, Player player)
         {
-            Console.WriteLine("ai muster(): player=" + player.Color);
+            Globals.Log("ai muster(): player=" + player.Color);
             var tookAction = false;
             var color = player.Color;
             //var aiCard = player.aiCard;
@@ -815,7 +815,7 @@ namespace rurik
 
         private bool Tax(RurikGame game, Player player)
         {
-            Console.WriteLine("ai tax(): player=" + player.Color);
+            Globals.Log("ai tax(): player=" + player.Color);
             var tookAction = false;
             var color = player.Color;
             var canTax = true;
@@ -890,13 +890,13 @@ namespace rurik
                             if (intersectionSetRuledWithMarket.Count > 0)
                             {
                                 canTax = true;
-                                Console.WriteLine("tax(): intersectionSetRuledWithMarket=" + intersectionSetRuledWithMarket.Count);
+                                Globals.Log("tax(): intersectionSetRuledWithMarket=" + intersectionSetRuledWithMarket.Count);
                                 locationName = intersectionSetRuledWithMarket[0].name;
                             }
                             else
                             {
                                 canTax = true;
-                                Console.WriteLine("tax(): intersectionSetRuled=" + intersectionSetRuled.Count);
+                                Globals.Log("tax(): intersectionSetRuled=" + intersectionSetRuled.Count);
                                 locationName = intersectionSetRuled[0].name;
                             }
                         }
@@ -905,7 +905,7 @@ namespace rurik
                             if (player.taxActions > 1)
                             {
                                 canTax = true;
-                                Console.WriteLine("tax(): intersectionSetGoodsNeeded=" + intersectionSetGoodsNeeded.Count);
+                                Globals.Log("tax(): intersectionSetGoodsNeeded=" + intersectionSetGoodsNeeded.Count);
                                 locationName = intersectionSetGoodsNeeded[0].name;
                             }
                         }
@@ -915,7 +915,7 @@ namespace rurik
                         if (player.taxActions > 1)
                         {
                             canTax = true;
-                            Console.WriteLine("tax(): intersectionSet=" + intersectionSet.Count);
+                            Globals.Log("tax(): intersectionSet=" + intersectionSet.Count);
                             locationName = intersectionSet[0].name;
                         }
                     }
@@ -968,7 +968,7 @@ namespace rurik
 
         private bool Attack(RurikGame game, Player player)
         {
-            Console.WriteLine("ai attack(): player=" + player.Color);
+            Globals.Log("ai attack(): player=" + player.Color);
             var tookAction = false;
             var color = player.Color;
             var canAttack = true;
@@ -1014,7 +1014,7 @@ namespace rurik
                 if (locationsWithEnemies.Count > 0)
                 {
                     var occupiesWithEnemies = occupies.Intersect(locationsWithEnemies).ToList();
-                    Console.WriteLine("attack(): occupiesWithEnemies=" + string.Join(",", occupiesWithEnemies));
+                    Globals.Log("attack(): occupiesWithEnemies=" + string.Join(",", occupiesWithEnemies));
                     if (occupiesWithEnemies.Count > 0)
                     {
                         var random = new Random();
@@ -1022,7 +1022,7 @@ namespace rurik
                         locationName = occupiesWithEnemies[r];
                         var location = game.GameMap.LocationByName[locationName];
                         // TODO: target = PickTarget(player, location, firstPlacePlayerColors);
-                        Console.WriteLine("attack(): target=" + target);
+                        Globals.Log("attack(): target=" + target);
                         if (target != null)
                         {
                             canAttack = true;
@@ -1064,7 +1064,7 @@ namespace rurik
 
         private bool Move(RurikGame game, Player player)
         {
-            Console.WriteLine("ai move(): player=" + player.Color);
+            Globals.Log("ai move(): player=" + player.Color);
             var tookAction = false;
             var color = player.Color;
             var canMove = true;
@@ -1091,20 +1091,20 @@ namespace rurik
                 {
                     moveLeader = false;
                     fromLocationName = rules[i];
-                    Console.WriteLine("move(): fromLocationName=" + fromLocationName);
+                    Globals.Log("move(): fromLocationName=" + fromLocationName);
                     var fromLocation = game.GameMap.LocationByName[fromLocationName];
                     if (fromLocation.leaderByColor[color] > 0)
                     {
-                        Console.WriteLine("move(): leader in fromLocation=" + fromLocation);
+                        Globals.Log("move(): leader in fromLocation=" + fromLocation);
                         moveLeader = true;
                     }
                     var excess = fromLocation.CalculateExcessTroopsForRule(color);
                     if (excess > 1)
                     {
                         var neighbors = fromLocation.neighbors;
-                        Console.WriteLine("move(): neighbors=" + string.Join(",", neighbors));
+                        Globals.Log("move(): neighbors=" + string.Join(",", neighbors));
                         var validNeighbors = locationsForGameNames.Intersect(neighbors).ToList();
-                        Console.WriteLine("move(): validNeighbors=" + string.Join(",", validNeighbors));
+                        Globals.Log("move(): validNeighbors=" + string.Join(",", validNeighbors));
                         for (var n = 0; n < validNeighbors.Count; n++)
                         {
                             var neighbor = game.GameMap.LocationByName[validNeighbors[n]];
@@ -1149,7 +1149,7 @@ namespace rurik
 
         private List<string> CheckLocationForBuildingsToPlay(Location location, Player player)
         {
-            Console.WriteLine("checkLocationForBuildingsToPlay(): " + location + " " + player.Color);
+            Globals.Log("checkLocationForBuildingsToPlay(): " + location + " " + player.Color);
             var isSviatopolk = player.leader.name == "Sviatopolk";
             var isYaroslav = player.leader.name == "Yaroslav";
             var locationBuildings = new List<string>();
@@ -1168,14 +1168,14 @@ namespace rurik
                 }
             }
             var buildingsAllowed = new List<string>();
-            //Console.WriteLine("checkLocationForBuildingsToPlay(): locationBuildings=" + JSON.stringify(locationBuildings));
-            //Console.WriteLine("checkLocationForBuildingsToPlay(): playerBuildings=" + JSON.stringify(playerBuildings));
+            //Globals.Log("checkLocationForBuildingsToPlay(): locationBuildings=" + JSON.stringify(locationBuildings));
+            //Globals.Log("checkLocationForBuildingsToPlay(): playerBuildings=" + JSON.stringify(playerBuildings));
             var buildingsAllowedInLocation = allBuildings.Except(locationBuildings).ToList();
-            Console.WriteLine("checkLocationForBuildingsToPlay(): buildingsAllowedInLocation=" + string.Join(",", buildingsAllowedInLocation));
+            Globals.Log("checkLocationForBuildingsToPlay(): buildingsAllowedInLocation=" + string.Join(",", buildingsAllowedInLocation));
             if (buildingsAllowedInLocation.Count > 0)
             {
                 var candidateBuildings = buildingsAllowedInLocation.Intersect(playerBuildings).ToList();
-                Console.WriteLine("checkLocationForBuildingsToPlay(): candidateBuildings=" + string.Join(",", candidateBuildings));
+                Globals.Log("checkLocationForBuildingsToPlay(): candidateBuildings=" + string.Join(",", candidateBuildings));
                 for (var i = 0; i < candidateBuildings.Count; i++)
                 {
                     var candidate = candidateBuildings[i];
@@ -1203,7 +1203,7 @@ namespace rurik
                     }
                 }
             }
-            Console.WriteLine("checkLocationForBuildingsToPlay(): buildingsAllowed=" + string.Join(",", buildingsAllowed));
+            Globals.Log("checkLocationForBuildingsToPlay(): buildingsAllowed=" + string.Join(",", buildingsAllowed));
             return buildingsAllowed;
         }
 
@@ -1228,7 +1228,7 @@ namespace rurik
 
         private bool Build(RurikGame game, Player player)
         {
-            Console.WriteLine("ai build(): player=" + player.Color);
+            Globals.Log("ai build(): player=" + player.Color);
             var tookAction = false;
             var color = player.Color;
             var aiCard = player.aiCard;

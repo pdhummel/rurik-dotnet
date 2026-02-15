@@ -28,7 +28,7 @@ class Globals
             if (!matchFound)
                 return;
         }
-        Console.WriteLine(output);
+        Globals.Log(output);
     }
 }
 

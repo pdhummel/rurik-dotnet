@@ -274,7 +274,7 @@ public class Location
             ruler = null;
         }
         //if (ruler == null) {
-        //    Console.WriteLine(this.name + " is ruled by no one");
+        //    Globals.Log(this.name + " is ruled by no one");
         //}
         return ruler;
     }
@@ -310,7 +310,7 @@ public class Location
 
     public bool IsNeighbor(string locationName)
     {
-        //Console.WriteLine("isNeighbor(): self=" + this.name + ", neighbor? " + locationName);
+        //Globals.Log("isNeighbor(): self=" + this.name + ", neighbor? " + locationName);
         return neighbors.Contains(locationName);
     }
 

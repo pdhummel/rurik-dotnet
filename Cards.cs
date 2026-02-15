@@ -120,7 +120,7 @@ namespace rurik
 
         public void takeDeedCard(Player player, string deedCardName)
         {
-            Console.WriteLine("takeDeedCard(): " + player.Color + " " + deedCardName);
+            Globals.Log("takeDeedCard(): " + player.Color + " " + deedCardName);
             var newDeedCardDisplay = new List<DeedCard>();
             for (int i = 0; i < this.displayedDeedCards.Count; i++)
             {
@@ -248,7 +248,7 @@ namespace rurik
                 schemeCards.RemoveAt(schemeCards.Count - 1);
             }
             this.schemeDeck2 = schemeCards;
-            Console.WriteLine("setupSchemeCards(): " + this.schemeDeck1.Count + " " + this.schemeDeck2.Count);
+            Globals.Log("setupSchemeCards(): " + this.schemeDeck1.Count + " " + this.schemeDeck2.Count);
         }
 
         public void addSchemeCard(List<string> rewards, int rewardCoinCost = 0, int deaths = 0)
@@ -283,7 +283,7 @@ namespace rurik
         // schemeDeck=1 or 2 or a list
         public SchemeCard drawSchemeCard(int schemeDeck)
         {
-            Console.WriteLine("cards drawSchemeCard(): schemeDeck= " + schemeDeck);
+            Globals.Log("cards drawSchemeCard(): schemeDeck= " + schemeDeck);
             List<SchemeCard> schemeDeckList = null;
             if (schemeDeck == 1)
             {
@@ -295,10 +295,10 @@ namespace rurik
             }
             else
             {
-                Console.WriteLine("drawSchemeCard(): schemeDeck=" + schemeDeck);
+                Globals.Log("drawSchemeCard(): schemeDeck=" + schemeDeck);
                 throw new ArgumentException("Not a valid schemeDeckNumber " + schemeDeck, "drawAndDiscardSchemeCard()");
             }
-            Console.WriteLine("drawSchemeCard(): length of schemeDeckList=" + schemeDeckList.Count);
+            Globals.Log("drawSchemeCard(): length of schemeDeckList=" + schemeDeckList.Count);
             if (schemeDeckList.Count < 1)
             {
                 this.reshuffleSchemeCards();
@@ -313,15 +313,15 @@ namespace rurik
             }
             SchemeCard card = schemeDeckList[0];
             schemeDeckList.RemoveAt(0);
-            Console.WriteLine("drawSchemeCard(): length: " + this.schemeDeck1.Count + " " + this.schemeDeck2.Count);
-            Console.WriteLine("drawSchemeCard(): card=" + card.id);
+            Globals.Log("drawSchemeCard(): length: " + this.schemeDeck1.Count + " " + this.schemeDeck2.Count);
+            Globals.Log("drawSchemeCard(): card=" + card.id);
             return card;
         }
 
         // schemeDeck=1 or 2 or a list
         public SchemeCard drawAndDiscardSchemeCard(int schemeDeck)
         {
-            Console.WriteLine("drawAndDiscardSchemeCard(): " + schemeDeck);
+            Globals.Log("drawAndDiscardSchemeCard(): " + schemeDeck);
             List<SchemeCard> schemeDeckList = null;
             if (schemeDeck == 1)
             {
@@ -333,7 +333,7 @@ namespace rurik
             }
             else
             {
-                Console.WriteLine("drawAndDiscardSchemeCard(): schemeDeck=" + schemeDeck);
+                Globals.Log("drawAndDiscardSchemeCard(): schemeDeck=" + schemeDeck);
                 throw new ArgumentException("Not a valid schemeDeckNumber " + schemeDeck, "drawAndDiscardSchemeCard()");
             }
             SchemeCard card = null;
@@ -343,14 +343,14 @@ namespace rurik
                 schemeDeckList.RemoveAt(0);
                 this.discardedSchemeCards.Add(card);
             }
-            Console.WriteLine("drawAndDiscardSchemeCard(): card=" + (card?.id ?? "null"));
+            Globals.Log("drawAndDiscardSchemeCard(): card=" + (card?.id ?? "null"));
             return card;
         }
 
         // schemeDeck=1 or 2 or a list
         public SchemeCard drawAndReturnSchemeCard(int schemeDeck, int schemeCardsToDraw)
         {
-            Console.WriteLine("drawAndReturnSchemeCard(): " + schemeDeck);
+            Globals.Log("drawAndReturnSchemeCard(): " + schemeDeck);
             List<SchemeCard> schemeDeckList = null;
             if (schemeDeck == 1)
             {
@@ -362,7 +362,7 @@ namespace rurik
             }
             else
             {
-                Console.WriteLine("drawAndReturnSchemeCard(): schemeDeck=" + schemeDeck);
+                Globals.Log("drawAndReturnSchemeCard(): schemeDeck=" + schemeDeck);
                 throw new ArgumentException("Not a valid schemeDeckNumber " + schemeDeck, "drawAndReturnSchemeCard()");
             }
             SchemeCard card = null;
@@ -379,10 +379,10 @@ namespace rurik
                         this.temporarySchemeCards.RemoveAt(0);
                         schemeDeckList.Add(tcard);
                     }
-                    Console.WriteLine("drawAndReturnSchemeCard(): temporarySchemeCards=" + this.temporarySchemeCards.Count);
+                    Globals.Log("drawAndReturnSchemeCard(): temporarySchemeCards=" + this.temporarySchemeCards.Count);
                 }
             }
-            Console.WriteLine("drawAndReturnSchemeCard(): card=" + (card?.id ?? "null"));
+            Globals.Log("drawAndReturnSchemeCard(): card=" + (card?.id ?? "null"));
             return card;
         }
 
@@ -394,7 +394,7 @@ namespace rurik
         // 1 or 2
         public List<SchemeCard> getSchemeDeckByNumber(int num)
         {
-            Console.WriteLine("getSchemeDeckByNumber(): " + num);
+            Globals.Log("getSchemeDeckByNumber(): " + num);
             if (num == 1)
             {
                 return this.schemeDeck1;

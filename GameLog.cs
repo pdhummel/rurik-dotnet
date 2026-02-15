@@ -97,11 +97,11 @@ public class Entry
             var player = game.Players.GetCurrentPlayer();
             Player = player.Color;
             // TODO: player.LastActionTimeStamp = TimeStamp;
-            Console.WriteLine("[" + game.Id + "] " + text);
+            Globals.Log("[" + game.Id + "] " + text);
         }
         else
         {
-            Console.WriteLine(text);
+            Globals.Log(text);
         }
     }
 }
