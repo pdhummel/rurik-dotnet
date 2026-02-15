@@ -41,7 +41,7 @@ namespace rurik
             }
 
             Console.WriteLine("evaluateGame(): isPlayerAi=true");
-            var currentState = game.GameStates.getCurrentState();
+            var currentState = game.GameStates.GetCurrentState();
             if (currentState != null)
             {
                 var currentStateName = currentState.Name;
@@ -223,21 +223,21 @@ namespace rurik
             {
                 game.TakeMainAction(color, advisor, actionColumnName, row);
             }
-            catch (Exception error)
-            {
-                Console.WriteLine($"ai retrieveAdvisor(): Warning player={player.Color} forfeiting {auctionSpace.actionName}");
-                if (player.advisors.Count < advisorCount)
+                catch (Exception error)
                 {
-                    player.boat.money++;
-                    player.tookMainActionForTurn = true;
-                    game.GameStates.setCurrentState("actionPhase");
-                    game.EndTurn(player.Color);
+                    Console.WriteLine($"ai retrieveAdvisor(): Warning player={player.Color} forfeiting {auctionSpace.actionName}");
+                    if (player.advisors.Count < advisorCount)
+                    {
+                        player.boat.money++;
+                        player.tookMainActionForTurn = true;
+                        game.GameStates.ChangeState("actionPhase");
+                        game.EndTurn(player.Color);
+                    }
+                    else
+                    {
+                        game.TakeMainAction(color, advisor, actionColumnName, row, true);
+                    }
                 }
-                else
-                {
-                    game.TakeMainAction(color, advisor, actionColumnName, row, true);
-                }
-            }
         }
 
         private void TakeAction(RurikGame game, Player player)

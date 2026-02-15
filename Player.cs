@@ -195,5 +195,43 @@ namespace rurik
             }
             return false;
         }
+        
+        // Missing properties that were causing errors
+        public bool Leader
+        {
+            get { return this.leader != null; }
+        }
+        
+        public int TroopsToDeploy
+        {
+            get { return this.troopsToDeploy; }
+            set { this.troopsToDeploy = value; }
+        }
+        
+        public bool IsAdvisorAvailable(string advisor)
+        {
+            return isAdvisorAvailable(advisor);
+        }
+        
+        public int Coins
+        {
+            get { return this.boat.money; }
+        }
+        
+        public void UseAdvisor(string advisor)
+        {
+            useAdvisor(advisor);
+        }
+        
+        public bool TookMainActionForTurn
+        {
+            get { return this.tookMainActionForTurn; }
+            set { this.tookMainActionForTurn = value; }
+        }
+        
+        public List<string> Advisors
+        {
+            get { return this.advisors; }
+        }
     }
 }

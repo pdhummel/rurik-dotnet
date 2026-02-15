@@ -12,6 +12,7 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Point = Microsoft.Xna.Framework.Point;
 using Microsoft.Xna.Framework.Audio;
 using static Microsoft.Xna.Framework.Graphics.Texture2D;
+using rurik.UI;
 namespace rurik;
 
 public class RurikMonoGame : Game
@@ -26,6 +27,10 @@ public class RurikMonoGame : Game
 
     public Dictionary<string, SoundEffect> soundEffects = new Dictionary<string, SoundEffect>();
     public List<GameEvent> GamePlayEvents { get; set; } = new List<GameEvent>();
+    
+    // UI Screens
+    //public GameLogScreen GameLogScreen { get; set; }
+    //public EndGameScreen EndGameScreen { get; set; }
 
     [DllImport("SDL2.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void SDL_MinimizeWindow(IntPtr window);
@@ -46,6 +51,10 @@ public class RurikMonoGame : Game
         IsMouseVisible = true;
         Window.AllowUserResizing = true;
         Client = new Client(this);
+        
+        // Initialize UI screens
+        //GameLogScreen = new GameLogScreen();
+        //EndGameScreen = new EndGameScreen();
     }
 
     public RurikMonoGame(IntPtr drawSurface) : this()
@@ -110,6 +119,9 @@ public class RurikMonoGame : Game
 
     protected override void LoadContent()
     {
+        // Initialize UI screens
+        //GameLogScreen.Initialize();
+        //EndGameScreen.Initialize();
     }
 
 

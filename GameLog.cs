@@ -28,6 +28,11 @@ public class GameLog
         var entry = new Entry(text, game);
         Entries.Add(entry);
     }
+    
+    public void AddLogEntry(string text)
+    {
+        AddEntry(text, RurikGame);
+    }
 
     public List<Entry> GetEntriesSinceLastTurn(Player player)
     {

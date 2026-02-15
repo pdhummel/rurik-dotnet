@@ -16,6 +16,7 @@ namespace rurik
         public Player firstPlayer { get; set; }
         public Player nextFirstPlayer { get; set; }
         public Player currentPlayer { get; set; }
+        public Player FirstPlayer { get; set; }
 
         public GamePlayers(int targetNumberOfPlayers)
         {
@@ -26,6 +27,49 @@ namespace rurik
             this.playersByName = new Dictionary<string, Player>();
             this.playersByPosition = new Dictionary<string, Player>();
             this.lastActionTimeStamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            this.FirstPlayer = null;
+        }
+        
+        public Player getCurrentPlayer()
+        {
+            return this.currentPlayer;
+        }
+        
+        public Player GetPlayer(string color)
+        {
+            if (this.playersByColor.ContainsKey(color))
+            {
+                return this.playersByColor[color];
+            }
+            return null;
+        }
+        
+        public Player GetNextPlayer(Player player)
+        {
+            return getNextPlayer(player);
+        }
+        
+        public void SetTroopsToDeploy(int troops)
+        {
+            foreach (var p in this.players)
+            {
+                p.troopsToDeploy = troops;
+            }
+        }
+        
+        public void MapAdvisorsToAuctionSpaces(AuctionBoard auctionBoard)
+        {
+            mapAdvisorsToAuctionSpaces(auctionBoard);
+        }
+        
+        public void SetAdvisors(List<int> advisors)
+        {
+            // Convert int advisors to string advisors for player.setAdvisors
+            var stringAdvisors = advisors.ConvertAll(a => a.ToString());
+            foreach (var player in this.players)
+            {
+                player.setAdvisors(stringAdvisors);
+            }
         }
 
         public Player addPlayer(string name, string color, string position, bool isPlayerAi, Cards cards)

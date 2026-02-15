@@ -39,17 +39,22 @@ namespace rurik
             gameStates["claimPhase"] = new GameState("claimPhase", new List<string> { "chooseDeedCard" });
             gameStates["endGame"] = new GameState("endGame", new List<string>());
 
-            setCurrentState("waitingForPlayers");
+            ChangeState("waitingForPlayers");
         }
 
-        public void setCurrentState(string stateName)
+        public void ChangeState(string stateName)
         {
             currentState = gameStates[stateName];
         }
 
-        public GameState getCurrentState()
+        public GameState GetCurrentState()
         {
             return currentState;
+        }
+        
+        public GameState CurrentState
+        {
+            get { return currentState; }
         }
     }
 }
