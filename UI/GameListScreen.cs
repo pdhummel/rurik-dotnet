@@ -25,19 +25,21 @@ namespace rurik.UI
         private Label _playerNameLabel;
         private TextBox _playerNameInput;
         private Button _loginButton;
-        private Panel _loginPanel;
+        private Button _openCreateGameButton;
+        private VerticalStackPanel _loginPanel;
         private VerticalStackPanel _gameListPanel;
-        private Panel _createGamePanel;
+        private VerticalStackPanel _createGamePanel;
         private bool _isLoggedIn = false;
         private string _currentPlayerName = "";
         private bool _isVisible = false;
+        private Window _createGameWindow;
 
-        private Desktop desktop;
+        private readonly Desktop Desktop;
 
         public GameListScreen(RurikMonoGame game, Desktop desktop)
         {
             RurikMonoGame = game;
-            this.desktop = desktop;
+            Desktop = desktop;
             Initialize();
         }
 
@@ -91,7 +93,7 @@ namespace rurik.UI
             };
 
             // Login panel
-            _loginPanel = new Panel()
+            _loginPanel = new VerticalStackPanel()
             {
                 Id = "loginPanel",
                 Background = new SolidBrush(Color.Gray),
@@ -114,6 +116,8 @@ namespace rurik.UI
                 Width = 200,
                 Height = 30,
                 Text = "",
+                Border = new SolidBrush("#808000FF"),
+                BorderThickness = new Thickness(2),
             };
 
             _loginButton = new Button()
@@ -121,13 +125,13 @@ namespace rurik.UI
                 Id = "loginButton",
                 Width = 100,
                 Height = 30,
+                Border = new SolidBrush("#808000FF"),
+                BorderThickness = new Thickness(2)
             };
             _loginButton.Content = new Label
             {
                 Text = "Login",
                 Width = 75,
-                Border = new SolidBrush("#808000FF"),
-                BorderThickness = new Thickness(2)
             };
 
             _loginButton.Click += (s, a) => Login();
@@ -171,6 +175,23 @@ namespace rurik.UI
             };            
             _refreshButton.Click += (s, a) => RefreshGameList();
 
+            _openCreateGameButton = new Button()
+            {
+                Id = "openCreateGameButton",
+                Width = 130,
+                Height = 30,
+                Border = new SolidBrush("#808000FF"),
+                BorderThickness = new Thickness(2)
+            };
+            _openCreateGameButton.Content = new Label
+            {
+                Id = "openCreateGameButtonLabel",
+                Text = "Create Game",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };            
+            _openCreateGameButton.Click += (s, a) => OpenCreateGame();
+
 
             _gameListView = new ListView()
             {
@@ -183,7 +204,7 @@ namespace rurik.UI
 
 
             // Create game panel
-            _createGamePanel = new Panel()
+            _createGamePanel = new VerticalStackPanel()
             {
                 Id = "createGamePanel",
                 Background = new SolidBrush(Color.Gray),
@@ -279,23 +300,26 @@ namespace rurik.UI
 
             // Add widgets to grid
             //_grid.Widgets.Add(_titleLabel);
-            //_grid.Widgets.Add(_loginPanel);
-            Grid.SetRow(_refreshButton, 0);
-            _grid.Widgets.Add(_refreshButton);
+            Grid.SetRow(_loginPanel, 0);
+            _grid.Widgets.Add(_loginPanel);
 
+            HorizontalStackPanel gameListButtonPanel = new HorizontalStackPanel();
+            //Grid.SetColumn(_refreshButton, 0);
+            gameListButtonPanel.Widgets.Add(_refreshButton);
+            //Grid.SetColumn(_openCreateGameButton, 1);
+            gameListButtonPanel.Widgets.Add(_openCreateGameButton);
+
+            _gameListPanel.Visible = false;
+            _gameListPanel.Widgets.Add(gameListButtonPanel);
             _gameListPanel.Widgets.Add(gameListLabel);
             _gameListPanel.Widgets.Add(_gameListView);
             Grid.SetRow(_gameListPanel, 1);
             _grid.Widgets.Add(_gameListPanel);
-            //_grid.Widgets.Add(_gameListView);
-            //_grid.Widgets.Add(_createGamePanel);
 
             _panel.Widgets.Add(_grid);
             _window.Content = _panel;
 
 
-            // Initially hide the create game panel
-            _createGamePanel.Visible = false;
         }
 
         public void Update()
@@ -312,7 +336,7 @@ namespace rurik.UI
         {
             _isVisible = true;
             // Add to desktop or parent container
-            desktop.Root = _window;
+            Desktop.Root = _window;
             //desktop.Widgets.Add(_panel);
         }
 
@@ -342,7 +366,6 @@ namespace rurik.UI
                 _isLoggedIn = true;
                 _loginPanel.Visible = false;
                 _gameListPanel.Visible = true;
-                _createGamePanel.Visible = true;
                 _playerNameLabel = new Label()
                 {
                     Id = "playerNameLabel",
@@ -352,6 +375,7 @@ namespace rurik.UI
                 };
                 // Add the player name label to the grid
                 _grid.Widgets.Add(_playerNameLabel);
+
                 RefreshGameList();
             }
         }
@@ -408,7 +432,15 @@ namespace rurik.UI
                 // For now, just log that a game was created and joined
                 System.Console.WriteLine($"Player {_currentPlayerName} created and joined game {gameName}");
             }
+            _createGameWindow.Close();
             RefreshGameList();
+        }
+
+        private void OpenCreateGame()
+        {
+            _createGameWindow = new Window();
+            _createGameWindow.Content = _createGamePanel;
+            _createGameWindow.ShowModal(Desktop);
         }
     }
 }
