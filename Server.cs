@@ -21,7 +21,7 @@ public class Server
     private int maxPeers;
     public ServerGameState? GameState { get; set; }
     private bool initialSync = false;
-    public GameLogic? GameLogic { get; set; }
+    public Games Games { get; set; } = new Games();
     Random random = new Random();
     int lastQueueSize = 0;
 
@@ -89,8 +89,8 @@ public class Server
 
     private void ServerLoop()
     {
-        GameLogic = new GameLogic(this);
-        GameLogic.StartGame();
+        //GameLogic = new GameLogic(this);
+        //GameLogic.StartGame();
 
         int sleepTime = 1000;
         Globals.Log("ServerLoop(): Server polling");

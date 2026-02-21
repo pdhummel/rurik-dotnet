@@ -16,6 +16,7 @@ namespace rurik
             games = new Dictionary<string, RurikGame>();
             gameSummaries = new Dictionary<string, GameStatus>();
             undoGames = new Dictionary<string, RurikGame>();
+            CreateGame("test", "Paul", 4);
         }
 
         public static Games GetInstance()

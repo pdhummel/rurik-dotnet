@@ -1,0 +1,143 @@
+using Myra.Graphics2D.UI;
+using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using rurik;
+
+namespace rurik.UI
+{
+    public class GameLogScreen : IGameScreen
+    {
+        private Grid _grid;
+        private TextArea _textArea;
+        private Button _closeButton;
+        private Panel _panel;
+        private bool _isVisible = false;
+
+        public GameLogScreen()
+        {
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            _panel = new Panel()
+            {
+                Id = "gameLogModal",
+                Background = Color.Gray,
+                Width = 600,
+                Height = 400,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            _grid = new Grid()
+            {
+                Id = "gameLogContent",
+                Background = Color.Gray,
+                Padding = new Thickness(10),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+            };
+
+            _grid.RowsProportions.Add(new Proportion(ProportionType.Auto));
+            _grid.RowsProportions.Add(new Proportion(ProportionType.Auto));
+            _grid.RowsProportions.Add(new Proportion(ProportionType.Auto));
+
+            _grid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
+
+            var header = new Label()
+            {
+                Id = "gameLogModalheader",
+                Text = "Game Log",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Background = Color.Gray,
+                Border = new Border()
+                {
+                    Thickness = new Thickness(1),
+                    Color = Color.Black
+                }
+            };
+
+            _textArea = new TextArea()
+            {
+                Id = "gameLogTextArea",
+                Width = 580,
+                Height = 300,
+                Text = "",
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+            };
+
+            _closeButton = new Button()
+            {
+                Id = "closeGameLogModal",
+                Text = "×",
+                Width = 30,
+                Height = 30,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top,
+            };
+
+            _closeButton.Click += (s, a) => Hide();
+
+            _grid.Widgets.Add(header);
+            _grid.Widgets.Add(_textArea);
+            _grid.Widgets.Add(_closeButton);
+
+            _panel.Widgets.Add(_grid);
+        }
+
+        public void Update()
+        {
+            // Update logic if needed
+        }
+
+        public void Draw()
+        {
+            // Draw logic if needed
+        }
+
+        public void Show()
+        {
+            _isVisible = true;
+            // Add to desktop or parent container
+        }
+
+        public void Hide()
+        {
+            _isVisible = false;
+            // Remove from desktop or parent container
+        }
+
+        public void HandleEvent(string eventName, object data)
+        {
+            switch (eventName)
+            {
+                case "updateLog":
+                    if (data is string logMessage)
+                    {
+                        _textArea.Text += logMessage + "\n";
+                    }
+                    break;
+                case "clearLog":
+                    _textArea.Text = "";
+                    break;
+            }
+        }
+
+        public void SetLogText(string text)
+        {
+            _textArea.Text = text;
+        }
+
+        public string GetLogText()
+        {
+            return _textArea.Text;
+        }
+    }
+}

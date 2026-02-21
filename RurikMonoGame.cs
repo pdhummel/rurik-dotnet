@@ -31,6 +31,7 @@ public class RurikMonoGame : Game
     // UI Screens
     //public GameLogScreen GameLogScreen { get; set; }
     //public EndGameScreen EndGameScreen { get; set; }
+    public GameListScreen GameListScreen { get; set; }
 
     [DllImport("SDL2.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void SDL_MinimizeWindow(IntPtr window);
@@ -120,8 +121,11 @@ public class RurikMonoGame : Game
     protected override void LoadContent()
     {
         // Initialize UI screens
-        //GameLogScreen.Initialize();
-        //EndGameScreen.Initialize();
+        //GameLogScreen = new GameLogScreen();
+        //EndGameScreen = new EndGameScreen();
+        setupDesktop();
+        GameListScreen = new GameListScreen(this, Desktop);
+        GameListScreen.Initialize();
     }
 
 
@@ -149,13 +153,32 @@ public class RurikMonoGame : Game
         base.Update(gameTime);
     }
 
-
+    private void setupDesktop()
+    {
+        Globals.Log("setupDesktop(): enter");
+        MyraEnvironment.Game = this;
+        Desktop = new Desktop();
+        Panel rootPanel = new Panel();
+        Desktop.Root = rootPanel;
+    }
 
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.Black);
+        if (Desktop != null)
+        {
+            ShowGameListScreen();
+            Desktop.Render();
+        }        
 
         base.Draw(gameTime);
+    }
+
+    public void ShowGameListScreen()
+    {
+
+        // Show the game list screen
+        GameListScreen.Show();
     }
 
 

@@ -90,7 +90,7 @@ namespace rurik
 
             Player player = new Player(name, color, "N", isPlayerAi); // Added default position "N" to match Player constructor
             Players.addPlayer(name, color, "N", isPlayerAi, Cards); // Using the proper method from GamePlayers
-        Log.AddEntry("Player " + name + " joined the game");
+            Log.AddEntry("Player " + name + " joined the game");
         }
 
         public void StartGame()
