@@ -25,12 +25,12 @@ public class Server
     Random random = new Random();
     int lastQueueSize = 0;
 
-    public void StartAsHost(GameSettings gameSettings, string key)
+    public void StartAsHost(ServerSettings serverSettings, string key)
     {
         Globals.Log("StartAsHost(): enter");
         this.maxPeers = 8; // gameSettings.NumberOfHumans;
         this.key = key;
-        GameState = new ServerGameState(gameSettings);
+        //GameState = new ServerGameState(serverSettings);
         listener = new EventBasedNetListener();
 
         // Set up event handlers for connection/data
@@ -45,7 +45,7 @@ public class Server
         };
 
         // Start the server manager
-        server.Start(gameSettings.Port);
+        server.Start(serverSettings.Port);
         isRunning = true;
 
         // Create and start the new thread for the server's polling loop
@@ -112,6 +112,7 @@ public class Server
 
     public void sendGameState()
     {
+        Globals.Log("sendGameState(): enter");
         if (server != null)
         {
             int count = server.ConnectedPeerList.Count;
@@ -142,14 +143,57 @@ public class Server
 
     public void sendGameState(NetPeer peer)
     {
+        Globals.Log("sendGameState(): peer=" + peer.Id);
         GameEvent gameEvent = new GameEvent(EVENT_TYPE_GAME_STATE_UPDATE);
         gameEvent.GameState = GameState;
         string jsonString = JsonSerializer.Serialize(gameEvent);
         sendJsonString(peer, jsonString);
     }
 
+    public void sendGames()
+    {
+        Globals.Log("sendGames(): enter");
+        if (server != null)
+        {
+            int count = server.ConnectedPeerList.Count;
+            for (int i = 0; i < count; i++)
+            {
+                if (i <= server.ConnectedPeerList.Count)
+                {
+                    try
+                    {
+                        NetPeer peer = server.ConnectedPeerList[i];
+                        sendGames(peer);
+                    }
+                    catch (Exception ex)
+                    {
+                        Globals.Log("sendGameState(): Exception:" + ex +
+                        ", Count=" + server.ConnectedPeerList.Count + ", i=" + i);
+                    }
+                }
+                else
+                {
+                    Globals.Log("sendGameState(): Count=" + server.ConnectedPeerList.Count + ", i=" + i);
+                }
+
+            }
+        }
+    }
+
+
+    public void sendGames(NetPeer peer)
+    {
+        Globals.Log("sendGames(): peer=" + peer.Id);
+        GameEvent gameEvent = new GameEvent(EVENT_TYPE_GAMES_UPDATE);
+        gameEvent.Games = Games;
+        string jsonString = JsonSerializer.Serialize(gameEvent);
+        sendJsonString(peer, jsonString);
+    }
+
+
     public void sendGamePlayEvent(GameEvent gameEvent)
     {
+        Globals.Log("sendGamePlayEvent(): enter");
         if (server != null)
         {
             int count = server.ConnectedPeerList.Count;
@@ -180,6 +224,7 @@ public class Server
 
     public void sendGamePlayEvent(string color, GameEvent gameEvent)
     {
+        Globals.Log("sendGamePlayEvent(): color=" + color);
         if (server != null)
         {
             // TODO
@@ -188,12 +233,14 @@ public class Server
 
     public void sendGamePlayEvent(NetPeer peer, GameEvent gameEvent)
     {
+        Globals.Log("sendGamePlayEvent(): peer=" + peer.Id);
         string jsonString = JsonSerializer.Serialize(gameEvent);
         sendJsonString(peer, jsonString);
     }
 
     public void sendJsonString(NetPeer peer, String jsonString)
     {
+        Globals.Log("sendJsonString(): peer=" + peer.Id + ", json=" + jsonString);
         int value = random.Next(0, 60);
         if (value == 0)
             checkQueueCount(peer);
@@ -276,13 +323,14 @@ public class Server
     private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
     {
         var jsonString = reader.GetString();
-        Globals.Log("Server.OnNetworkReceive(): " + jsonString);
+        Globals.Log("OnNetworkReceive(): " + jsonString);
         reader.Recycle(); // Free up the data reader
         PlayerAction? action =
                 JsonSerializer.Deserialize<PlayerAction>(jsonString);
         PlayerAction subClassAction = action.makeSubclass();
         subClassAction.MessageAsJson = jsonString;
-        MethodInfo executeMethod = subClassAction.GetType().GetMethod("deserializeAndExecute");
+        Globals.Log("OnNetworkReceive(): type=" + subClassAction.GetType());
+        MethodInfo executeMethod = subClassAction.GetType().GetMethod("DeserializeAndExecute");
         object[] parameters = new object[] { peer, this };
 
         executeMethod?.Invoke(subClassAction, parameters);

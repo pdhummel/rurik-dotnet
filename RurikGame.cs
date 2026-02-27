@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.Json.Serialization;
 using System.Xml;
 
 namespace rurik
@@ -22,6 +23,8 @@ namespace rurik
         public AvailableLeaders AvailableLeaders { get; set; }
         public GameStates GameStates { get; set; }
         public Ai Ai { get; set; }
+
+        [JsonIgnore]
         public GameLog Log { get; set; }
         public string DeedCardToVerify { get; set; }
 

@@ -18,12 +18,12 @@ namespace rurik;
 public class RurikMonoGame : Game
 {
     public Server? Server { get; set; }
-    public Client? Client { get; set; }
+    public Client Client { get; set; }
     private GraphicsDeviceManager _graphics;
     private readonly IntPtr drawSurface;
-    OrthographicCamera camera;
+    OrthographicCamera? camera;
     long lastMilliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-    public Desktop Desktop { get; set; }
+    public Desktop? Desktop { get; set; }
 
     public Dictionary<string, SoundEffect> soundEffects = new Dictionary<string, SoundEffect>();
     public List<GameEvent> GamePlayEvents { get; set; } = new List<GameEvent>();
@@ -31,7 +31,7 @@ public class RurikMonoGame : Game
     // UI Screens
     //public GameLogScreen GameLogScreen { get; set; }
     //public EndGameScreen EndGameScreen { get; set; }
-    public GameListScreen GameListScreen { get; set; }
+    public GameListScreen? GameListScreen { get; set; }
 
     [DllImport("SDL2.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void SDL_MinimizeWindow(IntPtr window);

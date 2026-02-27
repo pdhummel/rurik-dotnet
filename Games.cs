@@ -6,15 +6,15 @@ namespace rurik
 {
     public class Games
     {
-        private Dictionary<string, RurikGame> games;
-        private Dictionary<string, GameStatus> gameSummaries;
+        private Dictionary<string, RurikGame> GameIdToGameMap {get; set;}
+        public Dictionary<string, GameStatus> GameIdToGameStatus  {get; set;}
         private Dictionary<string, RurikGame> undoGames;
         private static Games self;
 
         public Games()
         {
-            games = new Dictionary<string, RurikGame>();
-            gameSummaries = new Dictionary<string, GameStatus>();
+            GameIdToGameMap = new Dictionary<string, RurikGame>();
+            GameIdToGameStatus = new Dictionary<string, GameStatus>();
             undoGames = new Dictionary<string, RurikGame>();
         }
 
@@ -31,22 +31,23 @@ namespace rurik
         {
             var game = new RurikGame(name, owner, targetNumberOfPlayers, password);
             Globals.Log("createGame(): gameId=" + game.Id);
-            games[game.Id] = game;
+            GameIdToGameMap[game.Id] = game;
             var gameStatus = new GameStatus(game, null);
+            GameIdToGameStatus[game.Id] = gameStatus;
             return gameStatus;
         }
 
         public RurikGame GetGameById(string id)
         {
-            return games.ContainsKey(id) ? games[id] : null;
+            return GameIdToGameMap.ContainsKey(id) ? GameIdToGameMap[id] : null;
         }
 
         public GameStatus GetGameStatus(string gameId, string clientColor = null)
         {
-            if (!games.ContainsKey(gameId))
+            if (!GameIdToGameMap.ContainsKey(gameId))
                 return null;
             
-            var game = games[gameId];
+            var game = GameIdToGameMap[gameId];
             var gameStatus = new GameStatus(game, clientColor);
             return gameStatus;
         }
@@ -54,9 +55,8 @@ namespace rurik
         public List<GameStatus> ListGames()
         {
             var gameStatusList = new List<GameStatus>();
-            foreach (var game in games.Values)
+            foreach (var gameStatus in GameIdToGameStatus.Values)
             {
-                var gameStatus = new GameStatus(game, null);
                 gameStatusList.Add(gameStatus);
             }
             return gameStatusList;

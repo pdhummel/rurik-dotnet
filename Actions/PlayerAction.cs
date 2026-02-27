@@ -4,14 +4,24 @@ using LiteNetLib;
 using Microsoft.Xna.Framework;
 namespace rurik.Actions;
 
-public class PlayerAction(string clientIdentifier, string classType, string messageAsJson)
+public class PlayerAction
 {
-    public string ClientIdentifier { get; set; } = clientIdentifier; // this is the player name
 
-    public string ClassType { get; set; } = classType;
+    public string? ClientIdentifier { get; set; } // this is the player name
 
-    public string MessageAsJson { get; set; } = messageAsJson;
+    // Set by Client.SendAction
+    public string? ClassType { get; set; }
+
+    // Set by Server.OnNetworkReceive
+    public string? MessageAsJson { get; set; }
     public long Ticks { get; set; } = DateTime.Now.Ticks;
+
+    public PlayerAction() {}
+
+    public PlayerAction(string clientIdentifier)
+    {
+        this.ClientIdentifier = clientIdentifier;
+    }
 
     public PlayerAction? makeSubclass()
     {
@@ -41,7 +51,7 @@ public class PlayerAction(string clientIdentifier, string classType, string mess
 
     public void Execute(NetPeer peer, Object serverObj)
     {
-        Globals.Log("execute(): " + MessageAsJson);
+        Globals.Log("Execute(): " + MessageAsJson);
     }
 
 }

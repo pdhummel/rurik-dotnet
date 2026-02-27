@@ -20,11 +20,12 @@ public class Client(RurikMonoGame game)
     public JoinGameValues? JoinGameValues { get; set; }
 
     public ServerGameState? GameState { get; set; }
+    public Games? Games {get;set;}
     ConcurrentQueue<GameEvent> gameEventExecutionQueue = new ConcurrentQueue<GameEvent>();
 
-    public void Connect(JoinGameValues joinGameValues, string key)
+    public void Connect(JoinServerValues joinServerValues, string key)
     {
-        ClientIdentifier = joinGameValues.Name;
+        ClientIdentifier = joinServerValues.Name;
         listener = new EventBasedNetListener();
         listener.PeerConnectedEvent += OnPeerConnected;
         listener.NetworkReceiveEvent += OnNetworkReceive;
@@ -36,8 +37,8 @@ public class Client(RurikMonoGame game)
             UnsyncedEvents = true
         };
         netmanagerclient.Start();
-        string host = joinGameValues.HostIp;
-        int port = joinGameValues.Port;
+        string host = joinServerValues.HostIp;
+        int port = joinServerValues.Port;
         serverPeer = netmanagerclient.Connect(host, port, key); // Use the same key as the server
         Globals.Log($"Connect(): Client attempting to connect to {host}:{port}");
         // Create and start the new thread for the client's polling loop
@@ -82,9 +83,14 @@ public class Client(RurikMonoGame game)
         Globals.Log("SendData(): " + peerIdentifier + " Client sent data " + data);
     }
 
-    public void SendAction(string peerIdentifier, PlayerAction action)
+    public void SendAction(PlayerAction action)
     {
-        Type type = Type.GetType(action.ClassType);
+        if (action == null || action.ClientIdentifier == null)
+            return;
+        string peerIdentifier = action.ClientIdentifier;
+        Type type = action.GetType();
+        action.ClassType = type.FullName;
+        Globals.Log("SendAction(): " + action.ClassType);
         dynamic subClassAction = Convert.ChangeType(action, type);
 
         if (peerIdentifier == null)
@@ -105,9 +111,9 @@ public class Client(RurikMonoGame game)
     {
         Globals.Log($"OnPeerConnected(): Client peer connected: {peer.Address}");
         //clientIdentifier, string classType, string messageAsJson) : base(clientIdentifier, classType, messageAsJson
-        JoinGameAction joinGameAction = new JoinGameAction(ClientIdentifier, nameof(JoinGameAction), "");
-        joinGameAction.JoinGameValues = JoinGameValues;
-        SendAction(JoinGameValues.Name, joinGameAction);
+        //JoinGameAction joinGameAction = new JoinGameAction(ClientIdentifier);
+        //joinGameAction.JoinGameValues = JoinGameValues;
+        //SendAction(joinGameAction);
     }
 
     private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
@@ -124,7 +130,7 @@ public class Client(RurikMonoGame game)
         }
         if (gameEvent != null)
         {
-            // TODO
+            processGameEvent(gameEvent);
         }    
         reader.Recycle(); // Free up the data reader
     }

@@ -7,6 +7,7 @@ namespace rurik;
 public class GameEvent
 {
     public static readonly string EVENT_TYPE_GAME_STATE_UPDATE ="gameStateUpdate";
+    public static readonly string EVENT_TYPE_GAMES_UPDATE ="gamesUpdate";
     public static readonly string EVENT_TYPE_GAME_STARTED = "gameStarted";
     // Used to send separate message to clients for Events.
     // TODO: Also keep track of these events in a server log.
@@ -16,6 +17,7 @@ public class GameEvent
 
     public RurikMonoGame? Game { get; set; }
     public ServerGameState? GameState {get; set; }
+    public Games? Games {get;set;}
     public string? EventString { get; set; }
 
     private int secondsForPopupToAppear = 10;
@@ -36,7 +38,8 @@ public class GameEvent
     {
         var gamePlayEvents = new string[]
         {
-            EVENT_TYPE_GAME_STARTED
+            EVENT_TYPE_GAME_STARTED,
+            EVENT_TYPE_GAMES_UPDATE
         };
         GamePlayEvents.UnionWith(gamePlayEvents);
     }
@@ -69,7 +72,12 @@ public class GameEvent
 
     }
 
-
+    public void gamesUpdateHandler()
+    {
+        Globals.Log("gamesUpdateHandler(): enter");
+        Game.Client.Games = Games;
+        Game.GameListScreen.RefreshGameList();
+    }
 
     public void gameStartedHandler()
     {

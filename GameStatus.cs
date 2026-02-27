@@ -5,27 +5,30 @@ namespace rurik
 {
     public class GameStatus
     {
-        public string GameId { get; set; }
-        public string Id { get; set; }
-        public string GameName { get; set; }
-        public string Owner { get; set; }
-        public string Name { get; set; }
-        public string PlayerNames { get; set; }
-        public string CurrentPlayer { get; set; }
-        public Player ClientPlayer { get; set; }
-        public string EndGameSummary { get; set; }
+        public string? GameId { get; set; }
+        public string? Id { get; set; }
+        public string? GameName { get; set; }
+        public string? Owner { get; set; }
+        public string? Name { get; set; }
+        public string? PlayerNames { get; set; }
+        public string? CurrentPlayer { get; set; }
+        public Player? ClientPlayer { get; set; }
+        public string? EndGameSummary { get; set; }
         public int NumberOfPlayers { get; set; }
         public int TargetNumberOfPlayers { get; set; }
-        public string CurrentState { get; set; }
-        public string FirstPlayer { get; set; }
-        public Leader ClientLeader { get; set; }
-        public string ClientName { get; set; }
+        public string? CurrentState { get; set; }
+        public string? FirstPlayer { get; set; }
+        public Leader? ClientLeader { get; set; }
+        public string? ClientName { get; set; }
         public int ClientPosition { get; set; }
-        public string StatusMessage { get; set; }
-        public List<string> AvailableActions { get; set; }
-        public string NextPlayer { get; set; }
-        public string NextFirstPlayer { get; set; }
+        public string? StatusMessage { get; set; }
+        public List<string>? AvailableActions { get; set; }
+        public string? NextPlayer { get; set; }
+        public string? NextFirstPlayer { get; set; }
         public int Round { get; set; }
+
+        public GameStatus()
+        {}
 
         public GameStatus(RurikGame game, string clientColor = null)
         {

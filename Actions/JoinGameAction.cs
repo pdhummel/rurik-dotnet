@@ -5,7 +5,11 @@ namespace rurik.Actions;
 
 public class JoinGameAction : PlayerAction
 {
-    public JoinGameAction(string clientIdentifier, string classType, string messageAsJson) : base(clientIdentifier, classType, messageAsJson)
+
+    public JoinGameAction() : base()
+    {}
+    
+    public JoinGameAction(string clientIdentifier) : base(clientIdentifier)
     {
     }
 

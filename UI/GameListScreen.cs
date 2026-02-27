@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using rurik;
+using rurik.Actions;
 
 namespace rurik.UI
 {
@@ -24,7 +25,7 @@ namespace rurik.UI
         private Label _titleLabel;
         private Label _playerNameLabel;
         private TextBox _playerNameInput;
-        private Button _loginButton;
+        private Button _createServerButton;
         private Button _openCreateGameButton;
         private VerticalStackPanel _loginPanel;
         private VerticalStackPanel _gameListPanel;
@@ -45,13 +46,24 @@ namespace rurik.UI
 
         public void Initialize()
         {
+            // Title label
+            _titleLabel = new Label()
+            {
+                Id = "titleLabel",
+                Text = "Rurik Game List",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Background = new SolidBrush(Color.Gray),
+            };
+
             _window.Width = RurikMonoGame.Window.ClientBounds.Width;
             _window.Height = RurikMonoGame.Window.ClientBounds.Height;
+            _window.Title = "Rurik: Dawn of Kyiv";
 
             // Main panel
             _panel = new Panel()
             {
-                Id = "gameListPanel",
+                Id = "mainGameListPanel",
                 Background = new SolidBrush(Color.Black),
                 Width = _window.Width,
                 Height = _window.Height,
@@ -82,16 +94,30 @@ namespace rurik.UI
 
             _grid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
 
-            // Title label
-            _titleLabel = new Label()
-            {
-                Id = "titleLabel",
-                Text = "Rurik Game List",
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Background = new SolidBrush(Color.Gray),
-            };
 
+            setupLoginPanel();
+            setupGameListPanel();
+            setupCreateGamePanel();
+
+
+
+            // Add widgets to grid
+            //_grid.Widgets.Add(_titleLabel);
+            Grid.SetRow(_loginPanel, 0);
+            _grid.Widgets.Add(_loginPanel);
+
+
+            Grid.SetRow(_gameListPanel, 1);
+            _grid.Widgets.Add(_gameListPanel);
+
+            _panel.Widgets.Add(_grid);
+            _window.Content = _panel;
+
+
+        }
+
+        private void setupLoginPanel()
+        {
             // Login panel
             _loginPanel = new VerticalStackPanel()
             {
@@ -102,10 +128,11 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
+            HorizontalStackPanel namePanel = new HorizontalStackPanel();
             var loginLabel = new Label()
             {
                 Id = "loginLabel",
-                Text = "Who are you?",
+                Text = "Name?",
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -119,27 +146,91 @@ namespace rurik.UI
                 Border = new SolidBrush("#808000FF"),
                 BorderThickness = new Thickness(2),
             };
+            namePanel.Widgets.Add(loginLabel);
+            namePanel.Widgets.Add(_playerNameInput);
 
-            _loginButton = new Button()
+            HorizontalStackPanel hostPanel = new HorizontalStackPanel();
+            var hostLabel = new Label()
             {
-                Id = "loginButton",
-                Width = 100,
+                Id = "hostLabel",
+                Text = "host:",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            var hostInput = new TextBox()
+            {
+                Id = "hostInput",
+                Width = 200,
+                Height = 30,
+                Text = "127.0.0.1",
+                Border = new SolidBrush("#808000FF"),
+                BorderThickness = new Thickness(2),
+            };
+            hostPanel.Widgets.Add(hostLabel);
+            hostPanel.Widgets.Add(hostInput);
+
+            HorizontalStackPanel portPanel = new HorizontalStackPanel();
+            var portLabel = new Label()
+            {
+                Id = "portLabel",
+                Text = "port:",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            var portInput = new TextBox()
+            {
+                Id = "portInput",
+                Width = 200,
+                Height = 30,
+                Text = "5005",
+                Border = new SolidBrush("#808000FF"),
+                BorderThickness = new Thickness(2),
+            };
+            portPanel.Widgets.Add(portLabel);
+            portPanel.Widgets.Add(portInput);
+
+            HorizontalStackPanel loginButtonPanel = new HorizontalStackPanel();
+            _createServerButton = new Button()
+            {
+                Id = "createServerButton",
+                Width = 125,
                 Height = 30,
                 Border = new SolidBrush("#808000FF"),
                 BorderThickness = new Thickness(2)
             };
-            _loginButton.Content = new Label
+            _createServerButton.Content = new Label
             {
-                Text = "Login",
-                Width = 75,
+                Text = "Create Server",
             };
+            _createServerButton.Click += (s, a) => StartServer();
 
-            _loginButton.Click += (s, a) => Login();
+            var joinServerButton = new Button()
+            {
+                Id = "joinServerButton",
+                Width = 125,
+                Height = 30,
+                Border = new SolidBrush("#808000FF"),
+                BorderThickness = new Thickness(2)
+            };
+            joinServerButton.Content = new Label
+            {
+                Text = "Join Server",
+            };
+            joinServerButton.Click += (s, a) => Login();
+            loginButtonPanel.Widgets.Add(_createServerButton);
+            loginButtonPanel.Widgets.Add(joinServerButton);
 
-            _loginPanel.Widgets.Add(loginLabel);
-            _loginPanel.Widgets.Add(_playerNameInput);
-            _loginPanel.Widgets.Add(_loginButton);
 
+            _loginPanel.Widgets.Add(namePanel);
+            _loginPanel.Widgets.Add(hostPanel);
+            _loginPanel.Widgets.Add(portPanel);
+            _loginPanel.Widgets.Add(loginButtonPanel);
+        }
+
+        private void setupGameListPanel()
+        {
             // Game list panel
             _gameListPanel = new VerticalStackPanel()
             {
@@ -192,7 +283,6 @@ namespace rurik.UI
             };            
             _openCreateGameButton.Click += (s, a) => OpenCreateGame();
 
-
             _gameListView = new ListView()
             {
                 Id = "gameListView",
@@ -202,7 +292,19 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
+            HorizontalStackPanel gameListButtonPanel = new HorizontalStackPanel();
+            gameListButtonPanel.Widgets.Add(_refreshButton);
+            gameListButtonPanel.Widgets.Add(_openCreateGameButton);
 
+            _gameListPanel.Visible = false;
+            _gameListPanel.Widgets.Add(gameListButtonPanel);
+            _gameListPanel.Widgets.Add(gameListLabel);
+            _gameListPanel.Widgets.Add(_gameListView);
+
+        }
+
+        private void setupCreateGamePanel()
+        {
             // Create game panel
             _createGamePanel = new VerticalStackPanel()
             {
@@ -297,29 +399,6 @@ namespace rurik.UI
             _createGamePanel.Widgets.Add(playerPositionLabel);
             _createGamePanel.Widgets.Add(playerPositionSelect);
             _createGamePanel.Widgets.Add(_createGameButton);
-
-            // Add widgets to grid
-            //_grid.Widgets.Add(_titleLabel);
-            Grid.SetRow(_loginPanel, 0);
-            _grid.Widgets.Add(_loginPanel);
-
-            HorizontalStackPanel gameListButtonPanel = new HorizontalStackPanel();
-            //Grid.SetColumn(_refreshButton, 0);
-            gameListButtonPanel.Widgets.Add(_refreshButton);
-            //Grid.SetColumn(_openCreateGameButton, 1);
-            gameListButtonPanel.Widgets.Add(_openCreateGameButton);
-
-            _gameListPanel.Visible = false;
-            _gameListPanel.Widgets.Add(gameListButtonPanel);
-            _gameListPanel.Widgets.Add(gameListLabel);
-            _gameListPanel.Widgets.Add(_gameListView);
-            Grid.SetRow(_gameListPanel, 1);
-            _grid.Widgets.Add(_gameListPanel);
-
-            _panel.Widgets.Add(_grid);
-            _window.Content = _panel;
-
-
         }
 
         public void Update()
@@ -358,35 +437,42 @@ namespace rurik.UI
             }
         }
 
+        // JoinServer
         private void Login()
         {
             _currentPlayerName = _playerNameInput.Text;
-            if (!string.IsNullOrEmpty(_currentPlayerName))
-            {
-                _isLoggedIn = true;
-                _loginPanel.Visible = false;
-                _gameListPanel.Visible = true;
-                _playerNameLabel = new Label()
-                {
-                    Id = "playerNameLabel",
-                    Text = "Hello " + _currentPlayerName + "!",
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-                // Add the player name label to the grid
-                _grid.Widgets.Add(_playerNameLabel);
+            if (string.IsNullOrEmpty(_currentPlayerName))
+                return;
 
-                RefreshGameList();
-            }
+            JoinServerValues joinServerValues = new JoinServerValues("127.0.0.1",5005, "Paul");
+            RurikMonoGame.Client.ClientIdentifier = _currentPlayerName;
+            RurikMonoGame.Client.Connect(joinServerValues, "rurik");
+
+            _isLoggedIn = true;
+            _loginPanel.Visible = false;
+            _gameListPanel.Visible = true;
+            _playerNameLabel = new Label()
+            {
+                Id = "playerNameLabel",
+                Text = "Hello " + _currentPlayerName + "!",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            // Add the player name label to the grid
+            _grid.Widgets.Add(_playerNameLabel);
+            RefreshGameList();
         }
 
-        private void RefreshGameList()
+        public void RefreshGameList()
         {
+            if (RurikMonoGame.Client.Games == null)
+                return;
+
             // Clear existing items
             _gameListView.Widgets.Clear();
 
             // Get list of games
-            var games = Games.GetInstance().ListGames();
+            var games = RurikMonoGame.Client.Games.ListGames();
             
             // Add games to list view
             foreach (var game in games)
@@ -416,24 +502,37 @@ namespace rurik.UI
             }
         }
 
+        private void StartServer()
+        {
+            ServerSettings serverSettings = new ServerSettings();
+            RurikMonoGame.Server = new Server();
+            RurikMonoGame.Server.StartAsHost(serverSettings, "rurik");
+            _createServerButton.Visible = false;
+        }
+
         private void CreateGame(string gameName, string color, string position)
         {
-            if (string.IsNullOrEmpty(gameName))
+            if (string.IsNullOrEmpty(gameName) || RurikMonoGame.Client.ClientIdentifier == null)
             {
                 return;
             }
 
-            var gameStatus = Games.GetInstance().CreateGame(gameName, _currentPlayerName, 4);
+            // TODO: make this dynamic
+            CreateGameAction action = new(RurikMonoGame.Client.ClientIdentifier);
+            action.CreateGameValues = new CreateGameValues("test", RurikMonoGame.Client.ClientIdentifier);
+
+            RurikMonoGame.Client.SendAction(action);
+            //var gameStatus = Games.GetInstance().CreateGame(gameName, _currentPlayerName, 4);
             // Join the newly created game
-            var game = Games.GetInstance().GetGameStatus(gameStatus.GameId);
-            if (game != null)
-            {
+            //var game = Games.GetInstance().GetGameStatus(gameStatus.GameId);
+            //if (game != null)
+            //{
                 // This would normally open a join game dialog or redirect to the game
                 // For now, just log that a game was created and joined
-                System.Console.WriteLine($"Player {_currentPlayerName} created and joined game {gameName}");
-            }
+                //System.Console.WriteLine($"Player {_currentPlayerName} created and joined game {gameName}");
+            //}
             _createGameWindow.Close();
-            RefreshGameList();
+            //RefreshGameList();
         }
 
         private void OpenCreateGame()
