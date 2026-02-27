@@ -34,6 +34,14 @@ namespace rurik.UI
         private string _currentPlayerName = "";
         private bool _isVisible = false;
         private Window _createGameWindow;
+        private Label _portLabel;
+        private TextBox _portInput;
+        private TextBox _hostInput;
+        private TextBox _gameNameInput;
+        private ComboView _playerColorSelect;
+        private ComboView _playerPositionSelect;
+        private Label _numberOfPlayersLabel;
+        private TextBox _numberOfPlayersInput;
 
         private readonly Desktop Desktop;
 
@@ -137,12 +145,13 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
+            string currentUser = Environment.UserName;
             _playerNameInput = new TextBox()
             {
                 Id = "playerNameInput",
                 Width = 200,
                 Height = 30,
-                Text = "",
+                Text = currentUser,
                 Border = new SolidBrush("#808000FF"),
                 BorderThickness = new Thickness(2),
             };
@@ -158,7 +167,7 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            var hostInput = new TextBox()
+            _hostInput = new TextBox()
             {
                 Id = "hostInput",
                 Width = 200,
@@ -168,10 +177,10 @@ namespace rurik.UI
                 BorderThickness = new Thickness(2),
             };
             hostPanel.Widgets.Add(hostLabel);
-            hostPanel.Widgets.Add(hostInput);
+            hostPanel.Widgets.Add(_hostInput);
 
             HorizontalStackPanel portPanel = new HorizontalStackPanel();
-            var portLabel = new Label()
+            _portLabel = new Label()
             {
                 Id = "portLabel",
                 Text = "port:",
@@ -179,7 +188,7 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            var portInput = new TextBox()
+            _portInput = new TextBox()
             {
                 Id = "portInput",
                 Width = 200,
@@ -188,8 +197,8 @@ namespace rurik.UI
                 Border = new SolidBrush("#808000FF"),
                 BorderThickness = new Thickness(2),
             };
-            portPanel.Widgets.Add(portLabel);
-            portPanel.Widgets.Add(portInput);
+            portPanel.Widgets.Add(_portLabel);
+            portPanel.Widgets.Add(_portInput);
 
             HorizontalStackPanel loginButtonPanel = new HorizontalStackPanel();
             _createServerButton = new Button()
@@ -331,13 +340,31 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            var gameNameInput = new TextBox()
+            _gameNameInput = new TextBox()
             {
                 Id = "gameNameInput",
                 Width = 200,
                 Height = 30,
                 Text = "",
             };
+
+            _numberOfPlayersLabel = new Label()
+            {
+                Id = "numberOfPlayersLabel",
+                Text = "Number of Players:",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            _numberOfPlayersInput = new TextBox()
+            {
+                Id = "numberOfPlayersInput",
+                Width = 200,
+                Height = 30,
+                Text = "4",
+            };
+
+
 
             var playerColorLabel = new Label()
             {
@@ -347,17 +374,18 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            var playerColorSelect = new ComboView()
+            _playerColorSelect = new ComboView()
             {
                 Id = "playerColorSelect",
                 Width = 100,
                 Height = 30,
             };
 
-            playerColorSelect.Widgets.Add(new Label() {Text="blue"});
-            playerColorSelect.Widgets.Add(new Label() {Text="red"});
-            playerColorSelect.Widgets.Add(new Label() {Text="white"});
-            playerColorSelect.Widgets.Add(new Label() {Text="yellow"});
+            _playerColorSelect.Widgets.Add(new Label() {Text="blue"});
+            _playerColorSelect.Widgets.Add(new Label() {Text="red"});
+            _playerColorSelect.Widgets.Add(new Label() {Text="white"});
+            _playerColorSelect.Widgets.Add(new Label() {Text="yellow"});
+            _playerColorSelect.SelectedIndex = 0;
 
             var playerPositionLabel = new Label()
             {
@@ -367,17 +395,18 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            var playerPositionSelect = new ComboView()
+            _playerPositionSelect = new ComboView()
             {
                 Id = "playerPositionSelect",
                 Width = 100,
                 Height = 30,
             };
 
-            playerPositionSelect.Widgets.Add(new Label() {Text="N"});
-            playerPositionSelect.Widgets.Add(new Label() {Text="E"});
-            playerPositionSelect.Widgets.Add(new Label() {Text="S"});
-            playerPositionSelect.Widgets.Add(new Label() {Text="W"});
+            _playerPositionSelect.Widgets.Add(new Label() {Text="N"});
+            _playerPositionSelect.Widgets.Add(new Label() {Text="E"});
+            _playerPositionSelect.Widgets.Add(new Label() {Text="S"});
+            _playerPositionSelect.Widgets.Add(new Label() {Text="W"});
+            _playerPositionSelect.SelectedIndex = 0;
 
             _createGameButton = new Button()
             {
@@ -387,17 +416,19 @@ namespace rurik.UI
             };
             _createGameButton.Content = new Label() {Text="Create Game"};
 
-            _createGameButton.Click += (s, a) => CreateGame(gameNameInput.Text, 
-                ((Label)playerColorSelect.SelectedItem).Text, 
-                ((Label)playerPositionSelect.SelectedItem).Text);
+            _createGameButton.Click += (s, a) => CreateGame(_gameNameInput.Text, 
+                ((Label)_playerColorSelect.SelectedItem).Text, 
+                ((Label)_playerPositionSelect.SelectedItem).Text);
 
             _createGamePanel.Widgets.Add(createGameLabel);
             _createGamePanel.Widgets.Add(gameNameLabel);
-            _createGamePanel.Widgets.Add(gameNameInput);
+            _createGamePanel.Widgets.Add(_gameNameInput);
+            _createGamePanel.Widgets.Add(_numberOfPlayersLabel);
+            _createGamePanel.Widgets.Add(_numberOfPlayersInput);
             _createGamePanel.Widgets.Add(playerColorLabel);
-            _createGamePanel.Widgets.Add(playerColorSelect);
+            _createGamePanel.Widgets.Add(_playerColorSelect);
             _createGamePanel.Widgets.Add(playerPositionLabel);
-            _createGamePanel.Widgets.Add(playerPositionSelect);
+            _createGamePanel.Widgets.Add(_playerPositionSelect);
             _createGamePanel.Widgets.Add(_createGameButton);
         }
 
@@ -437,14 +468,15 @@ namespace rurik.UI
             }
         }
 
-        // JoinServer
+        // JoinServer()
         private void Login()
         {
             _currentPlayerName = _playerNameInput.Text;
             if (string.IsNullOrEmpty(_currentPlayerName))
                 return;
 
-            JoinServerValues joinServerValues = new JoinServerValues("127.0.0.1",5005, "Paul");
+            int port = validateTextBoxInteger(_portLabel.Text, _portInput, 1024, 49151);
+            JoinServerValues joinServerValues = new JoinServerValues(_hostInput.Text, port, _playerNameInput.Text);
             RurikMonoGame.Client.ClientIdentifier = _currentPlayerName;
             RurikMonoGame.Client.Connect(joinServerValues, "rurik");
 
@@ -489,22 +521,11 @@ namespace rurik.UI
             }
         }
 
-        private void JoinGame(string gameId)
-        {
-            // In a real implementation, this would handle joining a game
-            // For now, we'll just show a message
-            var game = Games.GetInstance().GetGameStatus(gameId);
-            if (game != null)
-            {
-                // This would normally open a join game dialog or redirect to the game
-                // For now, just log that a game was joined
-                System.Console.WriteLine($"Player {_currentPlayerName} joined game {game.GameName}");
-            }
-        }
-
+        // CreateServer()
         private void StartServer()
         {
             ServerSettings serverSettings = new ServerSettings();
+            serverSettings.Port = validateTextBoxInteger(_portLabel.Text, _portInput, 1024, 49151);
             RurikMonoGame.Server = new Server();
             RurikMonoGame.Server.StartAsHost(serverSettings, "rurik");
             _createServerButton.Visible = false;
@@ -517,22 +538,30 @@ namespace rurik.UI
                 return;
             }
 
-            // TODO: make this dynamic
             CreateGameAction action = new(RurikMonoGame.Client.ClientIdentifier);
-            action.CreateGameValues = new CreateGameValues("test", RurikMonoGame.Client.ClientIdentifier);
-
+            CreateGameValues gameValues = new CreateGameValues(_gameNameInput.Text, RurikMonoGame.Client.ClientIdentifier);
+            int numberOfPlayers = validateTextBoxInteger(_numberOfPlayersLabel.Text, _numberOfPlayersInput, 1, 4);
+            gameValues.NumberOfPlayers = numberOfPlayers;
+            action.CreateGameValues = gameValues;
             RurikMonoGame.Client.SendAction(action);
-            //var gameStatus = Games.GetInstance().CreateGame(gameName, _currentPlayerName, 4);
-            // Join the newly created game
-            //var game = Games.GetInstance().GetGameStatus(gameStatus.GameId);
-            //if (game != null)
-            //{
-                // This would normally open a join game dialog or redirect to the game
-                // For now, just log that a game was created and joined
-                //System.Console.WriteLine($"Player {_currentPlayerName} created and joined game {gameName}");
-            //}
+            Globals.Log("CreateGame(): exit");
+        }
+
+        public void JoinGameAfterGameCreated(GameStatus gameStatus)
+        {
+            Globals.Log("JoinGameAfterGameCreated(): enter");
+            JoinGame(gameStatus.Id);
             _createGameWindow.Close();
-            //RefreshGameList();
+        }
+
+        private void JoinGame(string gameId)
+        {
+            Globals.Log("JoinGame(): gameId=" + gameId);
+            JoinGameAction action = new(RurikMonoGame.Client.ClientIdentifier);
+            string playerColor = ((Label)_playerColorSelect.SelectedItem).Text;
+            string playerPosition = ((Label)_playerPositionSelect.SelectedItem).Text;
+            action.JoinGameValues = new JoinGameValues(gameId, _playerNameInput.Text, playerColor, playerPosition);
+            RurikMonoGame.Client.SendAction(action);
         }
 
         private void OpenCreateGame()
@@ -541,5 +570,43 @@ namespace rurik.UI
             _createGameWindow.Content = _createGamePanel;
             _createGameWindow.ShowModal(Desktop);
         }
+
+
+        private int validateTextBoxInteger(string fieldName, TextBox textBox, int min, int max)
+        {
+            int number = 0;
+            bool isValid = true;
+            try
+            {
+                number = (Int32.Parse(textBox.Text));
+                if (number < min || number > max)
+                {
+                    isValid = false;
+                    showMessage(fieldName + " must have a value between " + min + " and " + max + ".");
+                }
+            }
+            catch (Exception e)
+            {
+                isValid = false;
+                showMessage("Could not parse " + fieldName + ".");
+            }
+            if (!isValid)
+            {
+                throw new Exception(fieldName + " was not valid.");
+            }
+            return number;
+        }
+
+        private void showMessage(string message)
+        {
+            Window window = new Window
+            {
+                Title = message
+            };
+            window.ShowModal(Desktop);
+        }
+
     }
+
+
 }

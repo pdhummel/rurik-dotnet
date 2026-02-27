@@ -74,6 +74,7 @@ namespace rurik
 
         public Player addPlayer(string name, string color, string position, bool isPlayerAi, Cards cards)
         {
+            Globals.Log("addPlayer(): name=" + name + ", color=" + color + ", position=" + position);
             if (this.players.Count >= this.targetNumberOfPlayers)
             {
                 throw new Exception("Target player count has already been reached.");
@@ -199,7 +200,10 @@ namespace rurik
 
         public Player getPlayerByColor(string color)
         {
-            return this.playersByColor[color];
+            Player player = null;
+            if (playersByColor.ContainsKey(color))
+                player = playersByColor[color];
+            return player;
         }
 
         public Player getPlayerByName(string name)

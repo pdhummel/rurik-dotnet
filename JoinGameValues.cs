@@ -1,10 +1,9 @@
 namespace rurik;
 
-public class JoinGameValues(string hostIp, int port, string name)
+public class JoinGameValues(string gameId, string playerName, string playerColor, string playerPosition)
 {
-    public int Port { get; set; } = port;
-
-    public string HostIp { get; set; } = hostIp;
-
-    public string Name { get; set; } = name;
+    public string GameId {get; set;} = gameId;
+    public string PlayerName { get; set; } = playerName;
+    public string PlayerColor { get; set; } = playerColor;
+    public string PlayerPosition { get; set; } = playerPosition;
 }

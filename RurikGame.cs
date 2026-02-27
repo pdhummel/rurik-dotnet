@@ -71,8 +71,9 @@ namespace rurik
             }
         }
 
-        public void JoinGame(string name, string color, int position, bool isPlayerAi = false, string password = null)
+        public void JoinGame(string name, string color, string position, bool isPlayerAi = false, string password = null)
         {
+            Globals.Log("JoinGame(): name=" + name + ", color=" + color + ", position=" + position);
             if (Players.getNumberOfPlayers() >= TargetNumberOfPlayers)
             {
                 ThrowError("Game is full", "JoinGame");
@@ -91,9 +92,9 @@ namespace rurik
                 return;
             }
 
-            Player player = new Player(name, color, "N", isPlayerAi); // Added default position "N" to match Player constructor
-            Players.addPlayer(name, color, "N", isPlayerAi, Cards); // Using the proper method from GamePlayers
-            Log.AddEntry("Player " + name + " joined the game");
+            Player player = new Player(name, color, position, isPlayerAi);
+            Players.addPlayer(name, color, position, isPlayerAi, Cards);
+            Log.AddEntry("Player " + name + " joined the game", "JoinGame()");
         }
 
         public void StartGame()

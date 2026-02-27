@@ -144,7 +144,7 @@ public class Server
     public void sendGameState(NetPeer peer)
     {
         Globals.Log("sendGameState(): peer=" + peer.Id);
-        GameEvent gameEvent = new GameEvent(EVENT_TYPE_GAME_STATE_UPDATE);
+        GameEvent gameEvent = new GameEvent(EVENT_GAME_STATE_UPDATE);
         gameEvent.GameState = GameState;
         string jsonString = JsonSerializer.Serialize(gameEvent);
         sendJsonString(peer, jsonString);
@@ -184,7 +184,7 @@ public class Server
     public void sendGames(NetPeer peer)
     {
         Globals.Log("sendGames(): peer=" + peer.Id);
-        GameEvent gameEvent = new GameEvent(EVENT_TYPE_GAMES_UPDATE);
+        GameEvent gameEvent = new GameEvent(EVENT_GAMES_UPDATE);
         gameEvent.Games = Games;
         string jsonString = JsonSerializer.Serialize(gameEvent);
         sendJsonString(peer, jsonString);

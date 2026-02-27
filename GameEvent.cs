@@ -6,9 +6,12 @@ namespace rurik;
 
 public class GameEvent
 {
-    public static readonly string EVENT_TYPE_GAME_STATE_UPDATE ="gameStateUpdate";
-    public static readonly string EVENT_TYPE_GAMES_UPDATE ="gamesUpdate";
-    public static readonly string EVENT_TYPE_GAME_STARTED = "gameStarted";
+    public static readonly string EVENT_GAME_STATE_UPDATE ="gameStateUpdate";
+    public static readonly string EVENT_GAMES_UPDATE ="gamesUpdate";
+    public static readonly string EVENT_GAME_CREATED = "gameCreated";
+    public static readonly string EVENT_GAME_STARTED = "gameStarted";
+    public static readonly string EVENT_PLAYER_JOINED_GAME = "playerJoinedGame";
+    
     // Used to send separate message to clients for Events.
     // TODO: Also keep track of these events in a server log.
     public string EventType { get; set; }
@@ -17,6 +20,7 @@ public class GameEvent
 
     public RurikMonoGame? Game { get; set; }
     public ServerGameState? GameState {get; set; }
+    public GameStatus? GameStatus {get; set;}
     public Games? Games {get;set;}
     public string? EventString { get; set; }
 
@@ -38,8 +42,9 @@ public class GameEvent
     {
         var gamePlayEvents = new string[]
         {
-            EVENT_TYPE_GAME_STARTED,
-            EVENT_TYPE_GAMES_UPDATE
+            EVENT_GAME_STARTED,
+            EVENT_GAMES_UPDATE,
+            EVENT_GAME_CREATED
         };
         GamePlayEvents.UnionWith(gamePlayEvents);
     }
@@ -78,6 +83,13 @@ public class GameEvent
         Game.Client.Games = Games;
         Game.GameListScreen.RefreshGameList();
     }
+
+    public void gameCreatedHandler()
+    {
+        Globals.Log("gameCreatedHandler(): enter");
+        Game.GameListScreen.JoinGameAfterGameCreated(GameStatus);
+    }
+
 
     public void gameStartedHandler()
     {

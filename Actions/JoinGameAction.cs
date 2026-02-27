@@ -1,6 +1,7 @@
 using System.Text.Json;
 using LiteNetLib;
 using rurik;
+using static rurik.GameEvent;
 namespace rurik.Actions;
 
 public class JoinGameAction : PlayerAction
@@ -31,7 +32,12 @@ public class JoinGameAction : PlayerAction
         Globals.Log("Execute()");
         Server server = (Server)serverObj;
         ServerGameState gameState = server.GameState;
-
-
+        RurikGame game = server.Games.GetGameById(JoinGameValues.GameId);
+        game.JoinGame(JoinGameValues.PlayerName, JoinGameValues.PlayerColor, JoinGameValues.PlayerPosition, false);
+        GameStatus gameStatus = server.Games.GetGameStatus(JoinGameValues.GameId);
+        GameEvent gameEvent = new GameEvent(EVENT_PLAYER_JOINED_GAME);
+        gameEvent.GameStatus = gameStatus;
+        server.sendGamePlayEvent(gameEvent);
+        server.sendGames();
     }
 }

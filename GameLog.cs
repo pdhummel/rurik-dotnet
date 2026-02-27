@@ -15,24 +15,31 @@ public class GameLog
 
     public void Log(string text)
     {
-        AddEntry(text, RurikGame);
+        AddEntry(text, null, RurikGame);
     }
 
     public void Info(string text)
     {
-        AddEntry(text, RurikGame);
+        AddEntry(text, null, RurikGame);
     }
 
-    public void AddEntry(string text, RurikGame game = null)
+    public void AddLogEntry(string text)
     {
+        AddEntry(text, null, RurikGame);
+    }
+
+    //public void AddEntry(string text, RurikGame game = null)
+    //{
+    //    AddEntry(text, null, game);
+    //}
+
+    public void AddEntry(string text, string methodToLog=null, RurikGame game = null)
+    {
+        Globals.Log("AddEntry(): " + (methodToLog != null ? methodToLog + ": ": "") + text);
         var entry = new Entry(text, game);
         Entries.Add(entry);
     }
-    
-    public void AddLogEntry(string text)
-    {
-        AddEntry(text, RurikGame);
-    }
+
 
     public List<Entry> GetEntriesSinceLastTurn(Player player)
     {

@@ -1,6 +1,7 @@
 using System.Text.Json;
 using LiteNetLib;
 using rurik;
+using static rurik.GameEvent;
 namespace rurik.Actions;
 
 public class CreateGameAction : PlayerAction
@@ -33,7 +34,10 @@ public class CreateGameAction : PlayerAction
             return;
         Server server = (Server)serverObj;
         Games games = server.Games;
-        games.CreateGame(CreateGameValues.GameName, CreateGameValues.Owner, 4);
+        GameStatus gameStatus = games.CreateGame(CreateGameValues.GameName, CreateGameValues.Owner, CreateGameValues.NumberOfPlayers);
+        GameEvent gameEvent = new GameEvent(EVENT_GAME_CREATED);
+        gameEvent.GameStatus = gameStatus;
+        server.sendGamePlayEvent(gameEvent);
         server.sendGames();
     }
 }
