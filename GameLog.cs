@@ -102,9 +102,12 @@ public class Entry
             GameId = game.Id;
             Round = game.CurrentRound;
             var player = game.Players.GetCurrentPlayer();
-            Player = player.Color;
-            // TODO: player.LastActionTimeStamp = TimeStamp;
-            Globals.Log("[" + game.Id + "] " + text);
+            if (player != null)
+            {
+                Player = player.Color;
+                // TODO: player.LastActionTimeStamp = TimeStamp;
+                Globals.Log("[" + game.Id + "] " + text);
+            }
         }
         else
         {

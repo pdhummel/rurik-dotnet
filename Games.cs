@@ -52,6 +52,14 @@ namespace rurik
             return gameStatus;
         }
 
+        public GameStatus UpdateGameStatus(string gameId, string clientColor = null)
+        {
+            var game = GameIdToGameMap[gameId];
+            var gameStatus = new GameStatus(game, clientColor);
+            GameIdToGameStatus[gameId] = gameStatus;
+            return gameStatus;            
+        }
+
         public List<GameStatus> ListGames()
         {
             var gameStatusList = new List<GameStatus>();

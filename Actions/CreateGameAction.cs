@@ -37,7 +37,7 @@ public class CreateGameAction : PlayerAction
         GameStatus gameStatus = games.CreateGame(CreateGameValues.GameName, CreateGameValues.Owner, CreateGameValues.NumberOfPlayers);
         GameEvent gameEvent = new GameEvent(EVENT_GAME_CREATED);
         gameEvent.GameStatus = gameStatus;
-        server.sendGamePlayEvent(gameEvent);
-        server.sendGames();
+        server.SendGamePlayEvent(gameEvent);
+        server.SendGames();
     }
 }

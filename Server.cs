@@ -110,7 +110,7 @@ public class Server
         }
     }
 
-    public void sendGameState()
+    public void SendGameState()
     {
         Globals.Log("sendGameState(): enter");
         if (server != null)
@@ -123,7 +123,7 @@ public class Server
                     try
                     {
                         NetPeer peer = server.ConnectedPeerList[i];
-                        sendGameState(peer);
+                        SendGameState(peer);
                     }
                     catch (Exception ex)
                     {
@@ -141,16 +141,16 @@ public class Server
     }
 
 
-    public void sendGameState(NetPeer peer)
+    public void SendGameState(NetPeer peer)
     {
         Globals.Log("sendGameState(): peer=" + peer.Id);
         GameEvent gameEvent = new GameEvent(EVENT_GAME_STATE_UPDATE);
         gameEvent.GameState = GameState;
         string jsonString = JsonSerializer.Serialize(gameEvent);
-        sendJsonString(peer, jsonString);
+        SendJsonString(peer, jsonString);
     }
 
-    public void sendGames()
+    public void SendGames()
     {
         Globals.Log("sendGames(): enter");
         if (server != null)
@@ -163,7 +163,7 @@ public class Server
                     try
                     {
                         NetPeer peer = server.ConnectedPeerList[i];
-                        sendGames(peer);
+                        SendGames(peer);
                     }
                     catch (Exception ex)
                     {
@@ -181,17 +181,19 @@ public class Server
     }
 
 
-    public void sendGames(NetPeer peer)
+    public void SendGames(NetPeer peer)
     {
         Globals.Log("sendGames(): peer=" + peer.Id);
-        GameEvent gameEvent = new GameEvent(EVENT_GAMES_UPDATE);
-        gameEvent.Games = Games;
+        GameEvent gameEvent = new(EVENT_GAMES_UPDATE)
+        {
+            Games = this.Games
+        };
         string jsonString = JsonSerializer.Serialize(gameEvent);
-        sendJsonString(peer, jsonString);
+        SendJsonString(peer, jsonString);
     }
 
 
-    public void sendGamePlayEvent(GameEvent gameEvent)
+    public void SendGamePlayEvent(GameEvent gameEvent)
     {
         Globals.Log("sendGamePlayEvent(): enter");
         if (server != null)
@@ -204,7 +206,7 @@ public class Server
                     try
                     {
                         NetPeer peer = server.ConnectedPeerList[i];
-                        sendGamePlayEvent(peer, gameEvent);
+                        SendGamePlayEvent(peer, gameEvent);
                     }
                     catch (Exception ex)
                     {
@@ -222,7 +224,7 @@ public class Server
     }
 
 
-    public void sendGamePlayEvent(string color, GameEvent gameEvent)
+    public void SendGamePlayEvent(string color, GameEvent gameEvent)
     {
         Globals.Log("sendGamePlayEvent(): color=" + color);
         if (server != null)
@@ -231,14 +233,14 @@ public class Server
         }
     }
 
-    public void sendGamePlayEvent(NetPeer peer, GameEvent gameEvent)
+    public void SendGamePlayEvent(NetPeer peer, GameEvent gameEvent)
     {
         Globals.Log("sendGamePlayEvent(): peer=" + peer.Id);
         string jsonString = JsonSerializer.Serialize(gameEvent);
-        sendJsonString(peer, jsonString);
+        SendJsonString(peer, jsonString);
     }
 
-    public void sendJsonString(NetPeer peer, String jsonString)
+    public void SendJsonString(NetPeer peer, String jsonString)
     {
         Globals.Log("sendJsonString(): peer=" + peer.Id + ", json=" + jsonString);
         int value = random.Next(0, 60);
@@ -253,7 +255,7 @@ public class Server
         }
     }
 
-    private void checkQueueCount()
+    private void CheckQueueCount()
     {
         if (server.ConnectedPeerList.Count > 0)
         {

@@ -140,7 +140,8 @@ namespace rurik.UI
             var loginLabel = new Label()
             {
                 Id = "loginLabel",
-                Text = "Name?",
+                Text = "name:",
+                Width = 125,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -162,6 +163,7 @@ namespace rurik.UI
             var hostLabel = new Label()
             {
                 Id = "hostLabel",
+                Width = 125,
                 Text = "host:",
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
@@ -183,6 +185,7 @@ namespace rurik.UI
             _portLabel = new Label()
             {
                 Id = "portLabel",
+                Width = 125,
                 Text = "port:",
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
@@ -324,13 +327,23 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
-            var createGameLabel = new Label()
+            // Helper method to add a row with label on the right and input on the left
+            void addPanelRow(VerticalStackPanel parentPanel, Label label, Widget widget)
             {
-                Id = "createGameLabel",
-                Text = "Create New Game",
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
+                var panel = new HorizontalStackPanel();
+                panel.Width = 375;
+                panel.MaxWidth = 375;
+                label.Width = 200;
+                parentPanel.Widgets.Add(panel);
+                label.HorizontalAlignment = HorizontalAlignment.Right;
+                panel.Widgets.Add(label);
+                label.Visible = true;
+                widget.HorizontalAlignment = HorizontalAlignment.Left;
+                widget.Border = new SolidBrush("#808000FF");
+                widget.BorderThickness = new Thickness(2);
+                panel.Widgets.Add(widget);
+                widget.Visible = true;
+            }
 
             var gameNameLabel = new Label()
             {
@@ -420,15 +433,11 @@ namespace rurik.UI
                 ((Label)_playerColorSelect.SelectedItem).Text, 
                 ((Label)_playerPositionSelect.SelectedItem).Text);
 
-            _createGamePanel.Widgets.Add(createGameLabel);
-            _createGamePanel.Widgets.Add(gameNameLabel);
-            _createGamePanel.Widgets.Add(_gameNameInput);
-            _createGamePanel.Widgets.Add(_numberOfPlayersLabel);
-            _createGamePanel.Widgets.Add(_numberOfPlayersInput);
-            _createGamePanel.Widgets.Add(playerColorLabel);
-            _createGamePanel.Widgets.Add(_playerColorSelect);
-            _createGamePanel.Widgets.Add(playerPositionLabel);
-            _createGamePanel.Widgets.Add(_playerPositionSelect);
+            //_createGamePanel.Widgets.Add(createGameLabel);
+            addPanelRow(_createGamePanel, gameNameLabel, _gameNameInput);
+            addPanelRow(_createGamePanel, _numberOfPlayersLabel, _numberOfPlayersInput);
+            addPanelRow(_createGamePanel, playerColorLabel, _playerColorSelect);
+            addPanelRow(_createGamePanel, playerPositionLabel, _playerPositionSelect);
             _createGamePanel.Widgets.Add(_createGameButton);
         }
 
@@ -506,18 +515,173 @@ namespace rurik.UI
             // Get list of games
             var games = RurikMonoGame.Client.Games.ListGames();
             
-            // Add games to list view
+            // Add games to list view with grid layout
             foreach (var game in games)
             {
-                var gameItem = new Label()
+                // Create a grid for each game row
+                var gameRowGrid = new Grid()
                 {
-                    Text = $"Game: {game.GameName} | Owner: {game.Owner} | Players: {game.NumberOfPlayers}/{game.TargetNumberOfPlayers} | State: {game.CurrentState}",
+                    Background = new SolidBrush(Color.Gray),
+                    Padding = new Thickness(5),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Stretch,
+                    ShowGridLines = true,
+                    ColumnSpacing = 8,
+                    RowSpacing = 8,
                 };
                 
-                // Add click event to join the game
-                //gameItem.Click += (s, a) => JoinGame(game.GameId);
+                // Set up grid columns - 5 columns for: Game, Owner, Players, State, Actions
+                gameRowGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
+                gameRowGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
+                gameRowGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
+                gameRowGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
+                gameRowGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
                 
-                _gameListView.Widgets.Add(gameItem);
+                // Set up grid rows - 2 rows: header row and data row
+                gameRowGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // Header row
+                gameRowGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // Data row
+                
+                // Header row
+                var gameHeaderLabel = new Label()
+                {
+                    Text = "Game",
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Background = new SolidBrush(Color.DarkGray),
+                };
+                
+                var ownerHeaderLabel = new Label()
+                {
+                    Text = "Owner",
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Background = new SolidBrush(Color.DarkGray),
+                };
+                
+                var playersHeaderLabel = new Label()
+                {
+                    Text = "Players",
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Background = new SolidBrush(Color.DarkGray),
+                };
+                
+                var stateHeaderLabel = new Label()
+                {
+                    Text = "State",
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Background = new SolidBrush(Color.DarkGray),
+                };
+                
+                var actionsHeaderLabel = new Label()
+                {
+                    Text = "Actions",
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Background = new SolidBrush(Color.DarkGray),
+                };
+                
+                // Add header widgets to grid
+                gameRowGrid.Widgets.Add(gameHeaderLabel);
+                Grid.SetColumn(gameHeaderLabel, 0);
+                Grid.SetRow(gameHeaderLabel, 0);
+                
+                gameRowGrid.Widgets.Add(ownerHeaderLabel);
+                Grid.SetColumn(ownerHeaderLabel, 1);
+                Grid.SetRow(ownerHeaderLabel, 0);
+                
+                gameRowGrid.Widgets.Add(playersHeaderLabel);
+                Grid.SetColumn(playersHeaderLabel, 2);
+                Grid.SetRow(playersHeaderLabel, 0);
+                
+                gameRowGrid.Widgets.Add(stateHeaderLabel);
+                Grid.SetColumn(stateHeaderLabel, 3);
+                Grid.SetRow(stateHeaderLabel, 0);
+                
+                gameRowGrid.Widgets.Add(actionsHeaderLabel);
+                Grid.SetColumn(actionsHeaderLabel, 4);
+                Grid.SetRow(actionsHeaderLabel, 0);
+                
+                // Data row
+                // Game info labels
+                var gameNameLabel = new Label()
+                {
+                    Text = $"{game.GameName}",
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                
+                var ownerLabel = new Label()
+                {
+                    Text = $"{game.Owner}",
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                
+                var playersLabel = new Label()
+                {
+                    Text = $"{game.NumberOfPlayers}/{game.TargetNumberOfPlayers}",
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                
+                var stateLabel = new Label()
+                {
+                    Text = $"{game.CurrentState}",
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                
+                // Join button (only show when game is waitingForPlayers and not full)
+                Button joinButton = null;
+                if (game.CurrentState == "waitingForPlayers" && game.NumberOfPlayers < game.TargetNumberOfPlayers)
+                {
+                    joinButton = new Button()
+                    {
+                        Width = 100,
+                        Height = 30,
+                        Border = new SolidBrush("#808000FF"),
+                        BorderThickness = new Thickness(2)
+                    };
+                    joinButton.Content = new Label
+                    {
+                        Text = "Join",
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                    };
+                    // Capture current values to avoid closure issues
+                    var currentPlayerName = _currentPlayerName;
+                    var selectedColor = ((Label)_playerColorSelect.SelectedItem).Text;
+                    var selectedPosition = ((Label)_playerPositionSelect.SelectedItem).Text;
+                    joinButton.Click += (s, a) => OpenJoinGame(game.GameId);
+                }
+                
+                // Add data widgets to grid row
+                gameRowGrid.Widgets.Add(gameNameLabel);
+                Grid.SetColumn(gameNameLabel, 0);
+                Grid.SetRow(gameNameLabel, 1);
+                
+                gameRowGrid.Widgets.Add(ownerLabel);
+                Grid.SetColumn(ownerLabel, 1);
+                Grid.SetRow(ownerLabel, 1);
+                
+                gameRowGrid.Widgets.Add(playersLabel);
+                Grid.SetColumn(playersLabel, 2);
+                Grid.SetRow(playersLabel, 1);
+                
+                gameRowGrid.Widgets.Add(stateLabel);
+                Grid.SetColumn(stateLabel, 3);
+                Grid.SetRow(stateLabel, 1);
+                
+                if (joinButton != null)
+                {
+                    gameRowGrid.Widgets.Add(joinButton);
+                    Grid.SetColumn(joinButton, 4);
+                    Grid.SetRow(joinButton, 1);
+                }
+                
+                _gameListView.Widgets.Add(gameRowGrid);
             }
         }
 
@@ -550,25 +714,185 @@ namespace rurik.UI
         public void JoinGameAfterGameCreated(GameStatus gameStatus)
         {
             Globals.Log("JoinGameAfterGameCreated(): enter");
-            JoinGame(gameStatus.Id);
+            string playerColor = ((Label)_playerColorSelect.SelectedItem).Text;
+            string playerPosition = ((Label)_playerPositionSelect.SelectedItem).Text;
+            JoinGameValues joinGameValues = new JoinGameValues(gameStatus.Id, _playerNameInput.Text, playerColor, playerPosition);
+            JoinGame(gameStatus.Id, joinGameValues);
             _createGameWindow.Close();
         }
 
-        private void JoinGame(string gameId)
+        private void JoinGame(string gameId, JoinGameValues joinGameValues)
         {
             Globals.Log("JoinGame(): gameId=" + gameId);
             JoinGameAction action = new(RurikMonoGame.Client.ClientIdentifier);
-            string playerColor = ((Label)_playerColorSelect.SelectedItem).Text;
-            string playerPosition = ((Label)_playerPositionSelect.SelectedItem).Text;
-            action.JoinGameValues = new JoinGameValues(gameId, _playerNameInput.Text, playerColor, playerPosition);
+            action.JoinGameValues = joinGameValues;
             RurikMonoGame.Client.SendAction(action);
         }
 
         private void OpenCreateGame()
         {
             _createGameWindow = new Window();
+            _createGameWindow.Title = "Create New Game";
             _createGameWindow.Content = _createGamePanel;
             _createGameWindow.ShowModal(Desktop);
+        }
+
+        private void OpenJoinGame(string gameId)
+        {
+            // Create a new window for joining a game
+            Window joinGameWindow = new Window();
+            VerticalStackPanel joinGamePanel = new VerticalStackPanel()
+            {
+                Id = "joinGamePanel",
+                Background = new SolidBrush(Color.Gray),
+                Padding = new Thickness(10),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch,
+            };
+
+            // Game ID label (read-only)
+            Label gameIdLabel = new Label()
+            {
+                Id = "gameIdLabel",
+                Text = "Game ID:",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            Label gameIdValueLabel = new Label()
+            {
+                Id = "gameIdValueLabel",
+                Text = gameId, // Set the game ID from parameter
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            // Game Name label (read-only)
+            Label gameNameLabel = new Label()
+            {
+                Id = "gameNameLabel",
+                Text = "Game Name:",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            Label gameNameValueLabel = new Label()
+            {
+                Id = "gameNameValueLabel",
+                Text = "", // This will be populated with the actual game name
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            // Player Name label (read-only)
+            Label playerNameLabel = new Label()
+            {
+                Id = "playerNameLabel",
+                Text = "Player Name:",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            Label playerNameValueLabel = new Label()
+            {
+                Id = "playerNameValueLabel",
+                Text = _currentPlayerName, // Set the player name from the current player
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            // Player Color label and combo box (similar to create game panel)
+            Label playerColorLabel = new Label()
+            {
+                Id = "playerColorLabel",
+                Text = "Player Color:",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            ComboView playerColorSelect = new ComboView()
+            {
+                Id = "playerColorSelect",
+                Width = 100,
+                Height = 30,
+            };
+
+            playerColorSelect.Widgets.Add(new Label() { Text = "blue" });
+            playerColorSelect.Widgets.Add(new Label() { Text = "red" });
+            playerColorSelect.Widgets.Add(new Label() { Text = "white" });
+            playerColorSelect.Widgets.Add(new Label() { Text = "yellow" });
+            playerColorSelect.SelectedIndex = 0;
+
+            // Player Position label and combo box (similar to create game panel)
+            Label playerPositionLabel = new Label()
+            {
+                Id = "playerPositionLabel",
+                Text = "Player Position:",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            ComboView playerPositionSelect = new ComboView()
+            {
+                Id = "playerPositionSelect",
+                Width = 100,
+                Height = 30,
+            };
+
+            playerPositionSelect.Widgets.Add(new Label() { Text = "N" });
+            playerPositionSelect.Widgets.Add(new Label() { Text = "E" });
+            playerPositionSelect.Widgets.Add(new Label() { Text = "S" });
+            playerPositionSelect.Widgets.Add(new Label() { Text = "W" });
+            playerPositionSelect.SelectedIndex = 0;
+
+            // Join button
+            Button joinButton = new Button()
+            {
+                Id = "joinButton",
+                Width = 120,
+                Height = 30,
+            };
+            joinButton.Content = new Label() { Text = "Join Game" };
+
+            // Set up the panel with all elements
+            joinGamePanel.Widgets.Add(gameIdLabel);
+            joinGamePanel.Widgets.Add(gameIdValueLabel);
+            joinGamePanel.Widgets.Add(gameNameLabel);
+            joinGamePanel.Widgets.Add(gameNameValueLabel);
+            joinGamePanel.Widgets.Add(playerNameLabel);
+            joinGamePanel.Widgets.Add(playerNameValueLabel);
+            joinGamePanel.Widgets.Add(playerColorLabel);
+            joinGamePanel.Widgets.Add(playerColorSelect);
+            joinGamePanel.Widgets.Add(playerPositionLabel);
+            joinGamePanel.Widgets.Add(playerPositionSelect);
+            joinGamePanel.Widgets.Add(joinButton);
+
+            // Set up button click event - this would need to be connected to a selected game
+            joinButton.Click += (s, a) =>
+            {
+                string playerName = _playerNameInput.Text; // Get player name from login panel
+                string playerColor = ((Label)playerColorSelect.SelectedItem).Text; // Get color from join panel
+                string playerPosition = ((Label)playerPositionSelect.SelectedItem).Text; // Get position from join panel
+          
+                JoinGameValues joinGameValues = new JoinGameValues(gameId, playerName, playerColor, playerPosition);
+                JoinGame(gameId, joinGameValues);
+                joinGameWindow.Close(); // Close the modal window after joining
+            };
+
+            // Try to get the game name from the client's game data
+            try
+            {
+                if (RurikMonoGame.Client.Games != null && RurikMonoGame.Client.Games.GameIdToGameStatus.ContainsKey(gameId))
+                {
+                    var gameStatus = RurikMonoGame.Client.Games.GameIdToGameStatus[gameId];
+                    gameNameValueLabel.Text = gameStatus.GameName;
+                }
+            }
+            catch (Exception)
+            {
+                // If we can't get the game name, leave it blank
+                gameNameValueLabel.Text = "Unknown Game";
+            }
+
+            joinGameWindow.Content = joinGamePanel;
+            joinGameWindow.ShowModal(Desktop);
         }
 
 

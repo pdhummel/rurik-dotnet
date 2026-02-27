@@ -30,14 +30,17 @@ public class JoinGameAction : PlayerAction
     public new void Execute(NetPeer peer, Object serverObj)
     {
         Globals.Log("Execute()");
+        if (JoinGameValues == null || JoinGameValues.GameId == null)
+            return;
         Server server = (Server)serverObj;
-        ServerGameState gameState = server.GameState;
         RurikGame game = server.Games.GetGameById(JoinGameValues.GameId);
         game.JoinGame(JoinGameValues.PlayerName, JoinGameValues.PlayerColor, JoinGameValues.PlayerPosition, false);
-        GameStatus gameStatus = server.Games.GetGameStatus(JoinGameValues.GameId);
-        GameEvent gameEvent = new GameEvent(EVENT_PLAYER_JOINED_GAME);
-        gameEvent.GameStatus = gameStatus;
-        server.sendGamePlayEvent(gameEvent);
-        server.sendGames();
+        GameStatus gameStatus = server.Games.UpdateGameStatus(JoinGameValues.GameId);
+        GameEvent gameEvent = new(EVENT_PLAYER_JOINED_GAME)
+        {
+            GameStatus = gameStatus
+        };
+        server.SendGamePlayEvent(gameEvent);
+        server.SendGames();
     }
 }
