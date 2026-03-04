@@ -26,6 +26,7 @@ namespace rurik
         public string? NextPlayer { get; set; }
         public string? NextFirstPlayer { get; set; }
         public int Round { get; set; }
+        public GamePlayers? Players { get; set; }
 
         public GameStatus()
         {}
@@ -37,6 +38,7 @@ namespace rurik
             GameName = game.Name;
             Owner = game.Owner;
             Name = game.Name;
+            Players = game.Players;
             PlayerNames = "";
             CurrentPlayer = null;
             ClientPlayer = null;

@@ -42,6 +42,12 @@ namespace rurik.UI
         private ComboView _playerPositionSelect;
         private Label _numberOfPlayersLabel;
         private TextBox _numberOfPlayersInput;
+        private string _currentGameId;
+        private string _currentGameName;
+        private string _currentGameOwner;
+        private int _currentNumberOfPlayers;
+        private int _targetNumberOfPlayers;
+        private string _currentGameState;
 
         private readonly Desktop Desktop;
 
@@ -506,8 +512,12 @@ namespace rurik.UI
 
         public void RefreshGameList()
         {
+            Globals.Log("RefreshGameList(): enter");
             if (RurikMonoGame.Client.Games == null)
                 return;
+            if (Desktop.Root != _window)
+                return;
+
 
             // Clear existing items
             _gameListView.Widgets.Clear();
@@ -893,6 +903,42 @@ namespace rurik.UI
 
             joinGameWindow.Content = joinGamePanel;
             joinGameWindow.ShowModal(Desktop);
+        }
+
+        public void OpenGameSetup(GameStatus gameStatus)
+        {
+            if (gameStatus == null)
+            {
+                return;
+            }
+            Globals.Log("Opening Game Setup for game ID: " + gameStatus.GameId);
+            // Create the GameSetup screen
+            var gameSetup = new GameSetup(RurikMonoGame, Desktop);
+
+            // Create a new window for the GameSetup screen
+            //Window gameSetupWindow = new Window();
+            Window gameSetupWindow = gameSetup.Window;
+            gameSetupWindow.Title = "Game Setup";
+            gameSetupWindow.Width = _window.Width + 0;
+            gameSetupWindow.Height = _window.Height + 0;
+
+            // Populate the GameSetup screen with the game data
+            gameSetup.UpdateGameInfo(gameStatus);
+            //gameSetupWindow.Content = gameSetup.Panel;
+
+            //_window.RemoveFromParent();
+            //_window.Close();
+            gameSetup.Show();
+    
+    
+
+    
+            // Set Desktop.Root to gameSetupWindow
+            //Desktop.Root = gameSetupWindow;
+            
+            // Make _window not visible and remove it
+            //_window.Visible = false;
+            //_window.RemoveFromParent();
         }
 
 

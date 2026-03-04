@@ -38,7 +38,8 @@ public class JoinGameAction : PlayerAction
         GameStatus gameStatus = server.Games.UpdateGameStatus(JoinGameValues.GameId);
         GameEvent gameEvent = new(EVENT_PLAYER_JOINED_GAME)
         {
-            GameStatus = gameStatus
+            GameStatus = gameStatus,
+            PlayerName = JoinGameValues.PlayerName,
         };
         server.SendGamePlayEvent(gameEvent);
         server.SendGames();

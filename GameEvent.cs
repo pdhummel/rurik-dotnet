@@ -11,6 +11,7 @@ public class GameEvent
     public static readonly string EVENT_GAME_CREATED = "gameCreated";
     public static readonly string EVENT_GAME_STARTED = "gameStarted";
     public static readonly string EVENT_PLAYER_JOINED_GAME = "playerJoinedGame";
+    public static readonly string EVENT_LEADER_CHOSEN = "leaderChosen";
     
     // Used to send separate message to clients for Events.
     // TODO: Also keep track of these events in a server log.
@@ -23,6 +24,7 @@ public class GameEvent
     public GameStatus? GameStatus {get; set;}
     public Games? Games {get;set;}
     public string? EventString { get; set; }
+    public string? PlayerName { get; set; }
 
     private int secondsForPopupToAppear = 10;
     
@@ -44,7 +46,9 @@ public class GameEvent
         {
             EVENT_GAME_STARTED,
             EVENT_GAMES_UPDATE,
-            EVENT_GAME_CREATED
+            EVENT_GAME_CREATED,
+            EVENT_PLAYER_JOINED_GAME,
+            EVENT_LEADER_CHOSEN
         };
         GamePlayEvents.UnionWith(gamePlayEvents);
     }
@@ -93,6 +97,18 @@ public class GameEvent
 
     public void gameStartedHandler()
     {
+    }
+
+    public void playerJoinedGameHandler()
+    {
+        Globals.Log("playerJoinedGameHandler(): enter");
+        Game.GameListScreen.RefreshGameList();
+        
+        // Open the game setup screen for the player who joined
+        if (PlayerName.Equals(Game.Client.ClientIdentifier))
+        {
+            Game.GameListScreen.OpenGameSetup(GameStatus);
+        }
     }
 
 

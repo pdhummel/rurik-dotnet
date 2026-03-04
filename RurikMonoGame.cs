@@ -32,6 +32,7 @@ public class RurikMonoGame : Game
     //public GameLogScreen GameLogScreen { get; set; }
     //public EndGameScreen EndGameScreen { get; set; }
     public GameListScreen? GameListScreen { get; set; }
+    public GameSetup? GameSetup { get; set; }
 
     [DllImport("SDL2.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void SDL_MinimizeWindow(IntPtr window);
@@ -126,6 +127,8 @@ public class RurikMonoGame : Game
         setupDesktop();
         GameListScreen = new GameListScreen(this, Desktop);
         GameListScreen.Initialize();
+        GameSetup = new GameSetup(this, Desktop);
+        GameSetup.Initialize();
     }
 
 
@@ -179,6 +182,12 @@ public class RurikMonoGame : Game
 
         // Show the game list screen
         GameListScreen.Show();
+    }
+
+    public void ShowGameSetupScreen()
+    {
+        // Show the game setup screen
+        GameSetup.Show();
     }
 
 
