@@ -42,6 +42,7 @@ namespace rurik.UI
         {
             _rurikMonoGame = game;
             _desktop = desktop;
+            game.GameSetup = this;
             Initialize();
         }
 
@@ -123,7 +124,7 @@ namespace rurik.UI
             {
                 Id = "gameIdLabel",
                 Text = "Game ID:",
-                Width = 120,
+                Width = 175,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -143,7 +144,7 @@ namespace rurik.UI
             {
                 Id = "gameNameLabel",
                 Text = "Game Name:",
-                Width = 120,
+                Width = 175,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -163,7 +164,7 @@ namespace rurik.UI
             {
                 Id = "gameOwnerLabel",
                 Text = "Game Owner:",
-                Width = 120,
+                Width = 175,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -183,7 +184,7 @@ namespace rurik.UI
             {
                 Id = "numberOfPlayersLabel",
                 Text = "Number of Players:",
-                Width = 120,
+                Width = 175,
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -282,6 +283,7 @@ namespace rurik.UI
 
         public void UpdateGameInfo(GameStatus game)
         {
+            Globals.Log("UpdateGameInfo(): enter");
             _game = game;
             
             // Update game info labels

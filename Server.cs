@@ -320,6 +320,7 @@ public class Server
     private void OnPeerConnected(NetPeer peer)
     {
         Globals.Log($"OnPeerConnected(): Peer connected to Server: {peer.Address}");
+        SendGames(peer);
     }
 
     private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)

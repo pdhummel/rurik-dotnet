@@ -728,7 +728,8 @@ namespace rurik.UI
             string playerPosition = ((Label)_playerPositionSelect.SelectedItem).Text;
             JoinGameValues joinGameValues = new JoinGameValues(gameStatus.Id, _playerNameInput.Text, playerColor, playerPosition);
             JoinGame(gameStatus.Id, joinGameValues);
-            _createGameWindow.Close();
+            if (_createGameWindow != null)
+                _createGameWindow.Close();
         }
 
         private void JoinGame(string gameId, JoinGameValues joinGameValues)
@@ -917,10 +918,10 @@ namespace rurik.UI
 
             // Create a new window for the GameSetup screen
             //Window gameSetupWindow = new Window();
-            Window gameSetupWindow = gameSetup.Window;
-            gameSetupWindow.Title = "Game Setup";
-            gameSetupWindow.Width = _window.Width + 0;
-            gameSetupWindow.Height = _window.Height + 0;
+            //Window gameSetupWindow = gameSetup.Window;
+            //gameSetupWindow.Title = "Game Setup";
+            //gameSetupWindow.Width = _window.Width + 0;
+            //gameSetupWindow.Height = _window.Height + 0;
 
             // Populate the GameSetup screen with the game data
             gameSetup.UpdateGameInfo(gameStatus);

@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
+using rurik.UI;
 
 namespace rurik;
 
@@ -91,7 +92,12 @@ public class GameEvent
     public void gameCreatedHandler()
     {
         Globals.Log("gameCreatedHandler(): enter");
-        Game.GameListScreen.JoinGameAfterGameCreated(GameStatus);
+        if (GameStatus == null)
+            return;
+        if (GameStatus.Owner.Equals(Game.Client.ClientIdentifier))
+            Game.GameListScreen.JoinGameAfterGameCreated(GameStatus);
+        else
+            Game.GameListScreen.RefreshGameList();
     }
 
 
@@ -102,7 +108,10 @@ public class GameEvent
     public void playerJoinedGameHandler()
     {
         Globals.Log("playerJoinedGameHandler(): enter");
-        Game.GameListScreen.RefreshGameList();
+        if (Game.GameListScreen != null)
+            Game.GameListScreen.RefreshGameList();
+        if (Game.GameSetup != null)
+            Game.GameSetup.UpdateGameInfo(GameStatus);
         
         // Open the game setup screen for the player who joined
         if (PlayerName.Equals(Game.Client.ClientIdentifier))
