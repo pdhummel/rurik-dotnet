@@ -224,7 +224,7 @@ namespace rurik
             }
             for (int i = 0; i < this.sortedPlayers.Count; i++)
             {
-                if (this.sortedPlayers[i].Color == player.Color)
+                if (this.sortedPlayers[i].Color.Equals(player.Color))
                 {
                     int nextIndex = i + 1;
                     if (nextIndex >= this.sortedPlayers.Count)
@@ -244,7 +244,7 @@ namespace rurik
                 if (this.sortedPlayers[i].Color == this.currentPlayer.Color)
                 {
                     int nextIndex = i + 1;
-                    if (i >= this.sortedPlayers.Count)
+                    if (nextIndex >= this.sortedPlayers.Count)
                     {
                         nextIndex = 0;
                     }

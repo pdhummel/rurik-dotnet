@@ -28,6 +28,8 @@ namespace rurik.UI
         private Label _numberOfPlayersLabel;
         private Label _numberOfPlayersValueLabel;
         private Label _playersLabel;
+        private Label _currentPlayerLabel;
+        private Label _currentPlayerValueLabel;
         
         private VerticalStackPanel _gameInfoPanel;
         private VerticalStackPanel _playersPanel;
@@ -198,10 +200,31 @@ namespace rurik.UI
             numberOfPlayersPanel.Widgets.Add(_numberOfPlayersLabel);
             numberOfPlayersPanel.Widgets.Add(_numberOfPlayersValueLabel);
 
+            // Current Player
+            HorizontalStackPanel currentPlayerPanel = new HorizontalStackPanel();
+            _currentPlayerLabel = new Label()
+            {
+                Id = "currentPlayerLabel",
+                Text = "Current Player:",
+                Width = 175,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            _currentPlayerValueLabel = new Label()
+            {
+                Id = "currentPlayerValueLabel",
+                Text = "",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            currentPlayerPanel.Widgets.Add(_currentPlayerLabel);
+            currentPlayerPanel.Widgets.Add(_currentPlayerValueLabel);
+
             _gameInfoPanel.Widgets.Add(gameIdPanel);
             _gameInfoPanel.Widgets.Add(gameNamePanel);
             _gameInfoPanel.Widgets.Add(gameOwnerPanel);
             _gameInfoPanel.Widgets.Add(numberOfPlayersPanel);
+            _gameInfoPanel.Widgets.Add(currentPlayerPanel);
         }
 
         private void setupPlayersPanel()
@@ -330,7 +353,7 @@ namespace rurik.UI
 
         private void updatePlayersList()
         {
-            // Clear existing player widgets
+            // Clear existing player widgets (keep only _playersLabel)
             for (int i = _playersPanel.Widgets.Count - 1; i >= 0; i--)
             {
                 if (_playersPanel.Widgets[i] != _playersLabel)
@@ -339,13 +362,23 @@ namespace rurik.UI
                 }
             }
 
+            // Update current player value label (in game info panel)
+            if (_game != null && !string.IsNullOrEmpty(_game.CurrentPlayerName))
+            {
+                _currentPlayerValueLabel.Text = _game.CurrentPlayerName;
+            }
+            else
+            {
+                _currentPlayerValueLabel.Text = "";
+            }
+
             // Add player info
             if (_game != null)
             {
                 foreach (var player in _game.Players.players)
                 {
                     HorizontalStackPanel playerPanel = new HorizontalStackPanel();
-                    
+                  
                     Label playerLabel = new Label()
                     {
                         Id = "playerLabel_" + player.Color,
@@ -354,7 +387,7 @@ namespace rurik.UI
                         HorizontalAlignment = HorizontalAlignment.Right,
                         VerticalAlignment = VerticalAlignment.Center,
                     };
-                    
+                  
                     Label positionLabel = new Label()
                     {
                         Id = "positionLabel_" + player.Color,
@@ -362,10 +395,10 @@ namespace rurik.UI
                         HorizontalAlignment = HorizontalAlignment.Left,
                         VerticalAlignment = VerticalAlignment.Center,
                     };
-                    
+                  
                     playerPanel.Widgets.Add(playerLabel);
                     playerPanel.Widgets.Add(positionLabel);
-                    
+                  
                     _playersPanel.Widgets.Add(playerPanel);
                 }
             }

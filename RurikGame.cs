@@ -92,7 +92,7 @@ namespace rurik
                 return;
             }
 
-            Player player = new Player(name, color, position, isPlayerAi);
+            //Player player = new Player(name, color, position, isPlayerAi);
             Players.addPlayer(name, color, position, isPlayerAi, Cards);
             Log.AddEntry("Player " + name + " joined the game", "JoinGame()");
             
@@ -126,6 +126,7 @@ namespace rurik
             }
 
             Players.setCurrentPlayerByColor(color);
+            Players.sortPlayers();
             GameStates.ChangeState("waitingForLeaderSelection");
             Log.AddLogEntry("First player selected: " + color);
         }
@@ -142,6 +143,7 @@ namespace rurik
             int randomIndex = rand.Next(Players.getNumberOfPlayers());
             string randomPlayer = Players.players[randomIndex].Color;
             Players.setCurrentPlayerByColor(randomPlayer);
+            Players.sortPlayers();
             GameStates.ChangeState("waitingForLeaderSelection");
             Log.AddLogEntry("Random first player selected: " + randomPlayer);
         }
@@ -184,10 +186,8 @@ namespace rurik
             {
                 GameStates.ChangeState("waitingForSecretAgendaSelection");
             }
-            else
-            {
-                Players.setCurrentPlayer(Players.GetNextPlayer(player));
-            }
+            Players.advanceToNextPlayer();
+            Globals.Log("ChooseLeader():  exit, currentPlayer=" + Players.getCurrentPlayer().Color);
         }
 
         public void SelectSecretAgenda(string color, string cardName)
