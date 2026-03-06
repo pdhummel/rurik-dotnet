@@ -285,7 +285,7 @@ namespace rurik.UI
         {
             Globals.Log("UpdateGameInfo(): enter");
             _game = game;
-            
+        
             // Update game info labels
             if (game != null)
             {
@@ -297,6 +297,22 @@ namespace rurik.UI
 
             // Update players list
             updatePlayersList();
+
+            // Check if game state is waitingForFirstPlayerSelection and show modal
+            if (game != null && game.CurrentState == "waitingForFirstPlayerSelection")
+            {
+                // Check if this client is the game owner
+                if (game.Owner != null && _rurikMonoGame.Client.ClientIdentifier != null &&
+                    game.Owner.Equals(_rurikMonoGame.Client.ClientIdentifier))
+                {
+                    // Show the choose first player modal
+                    if (_rurikMonoGame.ChooseFirstPlayerModal != null)
+                    {
+                        _rurikMonoGame.ChooseFirstPlayerModal.UpdateGameInfo(game);
+                        _rurikMonoGame.ChooseFirstPlayerModal.Show();
+                    }
+                }
+            }
         }
 
         private void updatePlayersList()

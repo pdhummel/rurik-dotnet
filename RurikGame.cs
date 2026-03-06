@@ -95,6 +95,13 @@ namespace rurik
             Player player = new Player(name, color, position, isPlayerAi);
             Players.addPlayer(name, color, position, isPlayerAi, Cards);
             Log.AddEntry("Player " + name + " joined the game", "JoinGame()");
+            
+            // Check if the last expected player has joined
+            if (Players.getNumberOfPlayers() == TargetNumberOfPlayers)
+            {
+                GameStates.ChangeState("waitingForFirstPlayerSelection");
+                Log.AddEntry("All players have joined. Waiting for first player selection.", "JoinGame()");
+            }
         }
 
         public void StartGame()
@@ -119,6 +126,7 @@ namespace rurik
             }
 
             Players.setCurrentPlayerByColor(color);
+            GameStates.ChangeState("waitingForLeaderSelection");
             Log.AddLogEntry("First player selected: " + color);
         }
 
@@ -134,6 +142,7 @@ namespace rurik
             int randomIndex = rand.Next(Players.getNumberOfPlayers());
             string randomPlayer = Players.players[randomIndex].Color;
             Players.setCurrentPlayerByColor(randomPlayer);
+            GameStates.ChangeState("waitingForLeaderSelection");
             Log.AddLogEntry("Random first player selected: " + randomPlayer);
         }
 

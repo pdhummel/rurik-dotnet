@@ -33,6 +33,7 @@ public class RurikMonoGame : Game
     //public EndGameScreen EndGameScreen { get; set; }
     public GameListScreen? GameListScreen { get; set; }
     public GameSetup? GameSetup { get; set; }
+    public ChooseFirstPlayerModal? ChooseFirstPlayerModal { get; set; }
 
     [DllImport("SDL2.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void SDL_MinimizeWindow(IntPtr window);
@@ -129,6 +130,8 @@ public class RurikMonoGame : Game
         GameListScreen.Initialize();
         GameSetup = new GameSetup(this, Desktop);
         GameSetup.Initialize();
+        ChooseFirstPlayerModal = new ChooseFirstPlayerModal(this, Desktop);
+        ChooseFirstPlayerModal.Initialize();
     }
 
 

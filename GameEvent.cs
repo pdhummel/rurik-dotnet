@@ -13,6 +13,7 @@ public class GameEvent
     public static readonly string EVENT_GAME_STARTED = "gameStarted";
     public static readonly string EVENT_PLAYER_JOINED_GAME = "playerJoinedGame";
     public static readonly string EVENT_LEADER_CHOSEN = "leaderChosen";
+    public static readonly string EVENT_FIRST_PLAYER_SELECTED = "firstPlayerSelected";
     
     // Used to send separate message to clients for Events.
     // TODO: Also keep track of these events in a server log.
@@ -49,7 +50,9 @@ public class GameEvent
             EVENT_GAMES_UPDATE,
             EVENT_GAME_CREATED,
             EVENT_PLAYER_JOINED_GAME,
-            EVENT_LEADER_CHOSEN
+            EVENT_LEADER_CHOSEN,
+            EVENT_FIRST_PLAYER_SELECTED,
+            EVENT_GAME_STATE_UPDATE
         };
         GamePlayEvents.UnionWith(gamePlayEvents);
     }
@@ -117,6 +120,27 @@ public class GameEvent
         if (PlayerName.Equals(Game.Client.ClientIdentifier))
         {
             Game.GameListScreen.OpenGameSetup(GameStatus);
+        }
+    }
+
+    public void gameStateUpdateHandler()
+    {
+        Globals.Log("gameStateUpdateHandler(): enter");
+        
+        // Check if the game state is waitingForFirstPlayerSelection
+        if (GameStatus == null || GameStatus.CurrentState != "waitingForFirstPlayerSelection")
+            return;
+        
+        // Check if the current client is the game owner
+        if (GameStatus.Owner != null && Game.Client.ClientIdentifier != null &&
+            GameStatus.Owner.Equals(Game.Client.ClientIdentifier))
+        {
+            // Show the choose first player modal
+            if (Game.ChooseFirstPlayerModal != null)
+            {
+                Game.ChooseFirstPlayerModal.UpdateGameInfo(GameStatus);
+                Game.ChooseFirstPlayerModal.Show();
+            }
         }
     }
 
