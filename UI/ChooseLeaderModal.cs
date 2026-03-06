@@ -21,7 +21,9 @@ namespace rurik.UI
         
         private Label _titleLabel;
         private Label _instructionsLabel;
-        private VerticalStackPanel _leaderListPanel;
+        private ComboView _leaderComboView;
+        private Label _descriptionLabel;
+        private Button _selectButton;
         private Button _closeButton;
         
         private bool _isVisible = false;
@@ -67,7 +69,8 @@ namespace rurik.UI
 
             _grid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // Title
             _grid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // Instructions
-            _grid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // Leader List
+            _grid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // Leader Combo
+            _grid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // Description
             _grid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // Buttons
 
             _grid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
@@ -75,7 +78,7 @@ namespace rurik.UI
             setupContentPanel();
 
             _grid.Widgets.Add(_contentPanel);
-            Grid.SetRow(_contentPanel, 3);
+            Grid.SetRow(_contentPanel, 4);
 
             _panel.Widgets.Add(_grid);
             _window.Content = _panel;
@@ -111,15 +114,42 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            // Leader list panel
-            _leaderListPanel = new VerticalStackPanel()
+            // Leader combo view
+            _leaderComboView = new ComboView()
             {
-                Id = "leaderListPanel",
-                Background = new SolidBrush(Color.LightGray),
-                Padding = new Thickness(5),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
+                Id = "leaderComboView",
+                Width = 400,
+                Height = 30,
             };
+            _leaderComboView.SelectedIndexChanged += (s, a) => OnLeaderSelectionChanged();
+
+            // Description label
+            _descriptionLabel = new Label()
+            {
+                Id = "descriptionLabel",
+                Text = "",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Wrap = true,
+                MaxWidth = 450,
+            };
+
+            // Select button
+            _selectButton = new Button()
+            {
+                Id = "selectButton",
+                Width = 100,
+                Height = 30,
+                Border = new SolidBrush("#808000FF"),
+                BorderThickness = new Thickness(2),
+            };
+            _selectButton.Content = new Label
+            {
+                Text = "Select",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            _selectButton.Click += (s, a) => OnSelectButtonClicked();
 
             // Close button
             _closeButton = new Button()
@@ -139,10 +169,38 @@ namespace rurik.UI
             _closeButton.Click += (s, a) => Hide();
 
             // Add widgets to panel
-            _contentPanel.Widgets.Add(_titleLabel);
+            //_contentPanel.Widgets.Add(_titleLabel);
             _contentPanel.Widgets.Add(_instructionsLabel);
-            _contentPanel.Widgets.Add(_leaderListPanel);
-            _contentPanel.Widgets.Add(_closeButton);
+            _contentPanel.Widgets.Add(_leaderComboView);
+            _contentPanel.Widgets.Add(_descriptionLabel);
+            _contentPanel.Widgets.Add(_selectButton);
+            //_contentPanel.Widgets.Add(_closeButton);
+        }
+
+        private void OnLeaderSelectionChanged()
+        {
+            if (_leaderComboView.SelectedIndex != null && _leaderComboView.SelectedIndex >= 0 && _leaderComboView.SelectedIndex < _availableLeaderNames.Count)
+            {
+                string selectedLeaderName = _availableLeaderNames[(int)_leaderComboView.SelectedIndex];
+                Leader leader = _game?.AvailableLeaders?.GetLeaderByName(selectedLeaderName);
+                if (leader != null)
+                {
+                    _descriptionLabel.Text = leader.description;
+                }
+            }
+            else
+            {
+                _descriptionLabel.Text = "";
+            }
+        }
+
+        private void OnSelectButtonClicked()
+        {
+            if (_leaderComboView.SelectedIndex != null && _leaderComboView.SelectedIndex >= 0 && _leaderComboView.SelectedIndex < _availableLeaderNames.Count)
+            {
+                string selectedLeaderName = _availableLeaderNames[(int)_leaderComboView.SelectedIndex];
+                OnLeaderButtonClicked(selectedLeaderName);
+            }
         }
 
         public void Update()
@@ -181,14 +239,14 @@ namespace rurik.UI
         {
             _game = game;
 
-            // Clear existing leader widgets
-            for (int i = _leaderListPanel.Widgets.Count - 1; i >= 0; i--)
+            // Clear existing items in combo view
+            for (int i = _leaderComboView.Widgets.Count - 1; i >= 0; i--)
             {
-                _leaderListPanel.Widgets.RemoveAt(i);
+                _leaderComboView.Widgets.RemoveAt(i);
             }
+            _availableLeaderNames.Clear();
 
             // Get available leaders from the game status
-            _availableLeaderNames.Clear();
             if (_game != null && _game.AvailableLeaders != null)
             {
                 // Get leaders that are still available (not yet chosen by any player)
@@ -213,33 +271,22 @@ namespace rurik.UI
                 }
             }
 
-            // Add leader options to the list
-            if (_game != null && _game.AvailableLeaders != null)
+            // Add leader options to the combo view
+            foreach (var leaderName in _availableLeaderNames)
             {
-                foreach (var leaderName in _availableLeaderNames)
-                {
-                    Leader leader = _game.AvailableLeaders.GetLeaderByName(leaderName);
-                    if (leader != null)
-                    {
-                        Button leaderButton = new Button()
-                        {
-                            Id = "leaderButton_" + leaderName,
-                            Width = 400,
-                            Height = 60,
-                            Border = new SolidBrush("#808000FF"),
-                            BorderThickness = new Thickness(2),
-                        };
-                        leaderButton.Content = new Label
-                        {
-                            Text = leader.name,
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                            VerticalAlignment = VerticalAlignment.Center,
-                        };
-                        leaderButton.Click += (s, a) => OnLeaderButtonClicked(leaderName);
+                _leaderComboView.Widgets.Add(new Label() { Text = leaderName });
+            }
 
-                        _leaderListPanel.Widgets.Add(leaderButton);
-                    }
-                }
+            // Select first item by default if available
+            if (_leaderComboView.Widgets.Count > 0)
+            {
+                _leaderComboView.SelectedIndex = 0;
+            }
+
+            // Clear description if no leaders available
+            if (_availableLeaderNames.Count == 0)
+            {
+                _descriptionLabel.Text = "";
             }
         }
 
