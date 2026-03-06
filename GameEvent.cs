@@ -123,26 +123,30 @@ public class GameEvent
         }
     }
 
+    public void firstPlayerSelectedHandler()
+    {
+        Globals.Log("firstPlayerSelectedHandler(): enter");
+        if (Game.GameSetup == null)
+            return;
+
+        Game.GameSetup.UpdateGameInfo(GameStatus);
+    }
+
     public void gameStateUpdateHandler()
     {
         Globals.Log("gameStateUpdateHandler(): enter");
-        
-        // Check if the game state is waitingForFirstPlayerSelection
-        if (GameStatus == null || GameStatus.CurrentState != "waitingForFirstPlayerSelection")
-            return;
-        
+    
         // Check if the current client is the game owner
-        if (GameStatus.Owner != null && Game.Client.ClientIdentifier != null &&
-            GameStatus.Owner.Equals(Game.Client.ClientIdentifier))
-        {
+        //if (GameStatus.Owner != null && Game.Client.ClientIdentifier != null &&
+        //    GameStatus.Owner.Equals(Game.Client.ClientIdentifier))
+        //{
             // Show the choose first player modal
             if (Game.ChooseFirstPlayerModal != null)
             {
                 Game.ChooseFirstPlayerModal.UpdateGameInfo(GameStatus);
-                Game.ChooseFirstPlayerModal.Show();
+                //Game.ChooseFirstPlayerModal.Show();
             }
-        }
+        //}
     }
-
 
 }

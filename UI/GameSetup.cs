@@ -313,6 +313,19 @@ namespace rurik.UI
                     }
                 }
             }
+
+            // Check if game state is waitingForLeaderSelection and show modal
+            if (game != null && game.CurrentState == "waitingForLeaderSelection" && 
+                    game.CurrentPlayerName != null && _rurikMonoGame.Client.ClientIdentifier != null &&
+                game.CurrentPlayerName.Equals(_rurikMonoGame.Client.ClientIdentifier))
+            {
+                // Show the choose leader modal
+                if (_rurikMonoGame.ChooseLeaderModal != null)
+                {
+                    _rurikMonoGame.ChooseLeaderModal.UpdateGameInfo(game);
+                    _rurikMonoGame.ChooseLeaderModal.Show();
+                }
+            }
         }
 
         private void updatePlayersList()

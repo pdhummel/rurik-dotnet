@@ -11,7 +11,8 @@ namespace rurik
         public string? Owner { get; set; }
         public string? Name { get; set; }
         public string? PlayerNames { get; set; }
-        public string? CurrentPlayer { get; set; }
+        public string? CurrentPlayerName { get; set; }
+        public string? CurrentPlayerColor { get; set; }
         public Player? ClientPlayer { get; set; }
         public string? EndGameSummary { get; set; }
         public int NumberOfPlayers { get; set; }
@@ -23,10 +24,11 @@ namespace rurik
         public int ClientPosition { get; set; }
         public string? StatusMessage { get; set; }
         public List<string>? AvailableActions { get; set; }
-        public string? NextPlayer { get; set; }
-        public string? NextFirstPlayer { get; set; }
+        public string? NextPlayerColor { get; set; }
+        public string? NextFirstPlayerColor { get; set; }
         public int Round { get; set; }
         public GamePlayers? Players { get; set; }
+        public AvailableLeaders? AvailableLeaders { get; set; }
 
         public GameStatus()
         {}
@@ -39,8 +41,10 @@ namespace rurik
             Owner = game.Owner;
             Name = game.Name;
             Players = game.Players;
+            AvailableLeaders = game.AvailableLeaders;
             PlayerNames = "";
-            CurrentPlayer = null;
+            CurrentPlayerName = null;
+            CurrentPlayerColor = null;
             ClientPlayer = null;
             EndGameSummary = "";
             NumberOfPlayers = game.Players.getNumberOfPlayers();
@@ -72,7 +76,7 @@ namespace rurik
                 var currentPlayer = game.Players.currentPlayer;
                 if (currentPlayer != null)
                 {
-                    CurrentPlayer = currentPlayer.Color;
+                    CurrentPlayerName = currentPlayer.name;
                     if (currentPlayer.Color == clientColor)
                     {
                         StatusMessage = "Waiting on you";
@@ -92,12 +96,12 @@ namespace rurik
                 var nextPlayer = game.Players.getNextPlayer(currentPlayer);
                 if (nextPlayer != null)
                 {
-                    NextPlayer = nextPlayer.Color;
+                    NextPlayerColor = nextPlayer.Color;
                 }
                 var nextFirstPlayer = game.Players.nextFirstPlayer;
                 if (nextFirstPlayer != null)
                 {
-                    NextFirstPlayer = nextFirstPlayer.Color;
+                    NextFirstPlayerColor = nextFirstPlayer.Color;
                 }
             }
         }

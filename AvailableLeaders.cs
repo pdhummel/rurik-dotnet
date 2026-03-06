@@ -52,5 +52,15 @@ namespace rurik
         {
             return availableLeaders.ContainsKey(name);
         }
+
+        public List<string> GetAvailableLeaderNames()
+        {
+            return availableLeaders.Keys.ToList();
+        }
+
+        public List<string> GetAllLeaderNames()
+        {
+            return allLeaders.Keys.ToList();
+        }
     }
 }
