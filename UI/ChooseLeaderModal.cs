@@ -296,9 +296,9 @@ namespace rurik.UI
                 return;
 
             // Get the current player's color from the game status
-            if (!string.IsNullOrEmpty(_game.CurrentPlayerName))
+            if (!string.IsNullOrEmpty(_game.CurrentPlayerColor))
             {
-                _currentPlayerColor = _game.CurrentPlayerName;
+                _currentPlayerColor = _game.CurrentPlayerColor;
             }
 
             if (string.IsNullOrEmpty(_currentPlayerColor))

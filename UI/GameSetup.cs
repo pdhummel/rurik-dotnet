@@ -292,7 +292,7 @@ namespace rurik.UI
                 _gameIdValueLabel.Text = game.Id;
                 _gameNameValueLabel.Text = game.Name;
                 _gameOwnerValueLabel.Text = game.Owner;
-                _numberOfPlayersValueLabel.Text = game.NumberOfPlayers.ToString();
+                _numberOfPlayersValueLabel.Text = $"{game.NumberOfPlayers}/{game.TargetNumberOfPlayers}";
             }
 
             // Update players list

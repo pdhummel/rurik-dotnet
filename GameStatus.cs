@@ -77,6 +77,7 @@ namespace rurik
                 if (currentPlayer != null)
                 {
                     CurrentPlayerName = currentPlayer.name;
+                    CurrentPlayerColor = currentPlayer.Color;
                     if (currentPlayer.Color == clientColor)
                     {
                         StatusMessage = "Waiting on you";

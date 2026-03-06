@@ -152,7 +152,7 @@ namespace rurik
             if (player == null)
                 return;
 
-            if (!AvailableLeaders.IsLeaderAvailable(leaderName)) // Using IsLeaderAvailable instead of Contains
+            if (!AvailableLeaders.IsLeaderAvailable(leaderName))
             {
                 ThrowError("Leader not available", "ChooseLeader");
                 return;
@@ -168,6 +168,26 @@ namespace rurik
             }
             player.setLeader(leader); // Using the setLeader method we defined in Player.cs
             Log.AddLogEntry(color + " chose leader " + leaderName);
+
+            // Check if all players have selected their leaders
+            bool allPlayersHaveLeader = true;
+            foreach (var p in Players.players)
+            {
+                if (p.leader == null)
+                {
+                    allPlayersHaveLeader = false;
+                    break;
+                }
+            }
+
+            if (allPlayersHaveLeader)
+            {
+                GameStates.ChangeState("waitingForSecretAgendaSelection");
+            }
+            else
+            {
+                Players.setCurrentPlayer(Players.GetNextPlayer(player));
+            }
         }
 
         public void SelectSecretAgenda(string color, string cardName)
@@ -728,7 +748,7 @@ namespace rurik
 
         public void ValidateGameStatus(string desiredState, string method, string message = null)
         {
-            if (GameStates.GetCurrentState().Name != desiredState)
+            if (!GameStates.GetCurrentState().Name.Equals(desiredState))
             {
                 ThrowError("Invalid game state. Expected: " + desiredState + ", Got: " + GameStates.GetCurrentState().Name, method);
             }
@@ -744,9 +764,9 @@ namespace rurik
 
         public Player ValidateCurrentPlayer(string color, string method)
         {
-            if (Players.getCurrentPlayer().Color != color)
+            if (!Players.getCurrentPlayer().Color.Equals(color))
             {
-                ThrowError("Not current player", method);
+                ThrowError("Not current player, " + color + ", does not  match current player color: " + Players.getCurrentPlayer().Color, method);
                 return null;
             }
             return Players.GetPlayer(color);

@@ -242,7 +242,8 @@ public class Server
 
     public void SendJsonString(NetPeer peer, String jsonString)
     {
-        Globals.Log("sendJsonString(): peer=" + peer.Id + ", json=" + jsonString);
+        //Globals.Log("sendJsonString(): peer=" + peer.Id + ", json=" + jsonString);
+        Globals.Log("sendJsonString(): peer=" + peer.Id);
         int value = random.Next(0, 60);
         if (value == 0)
             checkQueueCount(peer);

@@ -28,6 +28,7 @@ public class ChooseLeaderAction : PlayerAction
 
     public new void Execute(NetPeer peer, Object serverObj)
     {
+        Globals.Log("ChooseLeaderAction.Execute(): enter");
         if (ChooseLeaderValues == null || ChooseLeaderValues.GameId == null || ChooseLeaderValues.PlayerColor == null || ChooseLeaderValues.LeaderName == null)
             return;
         

@@ -28,6 +28,7 @@ public class ChooseFirstPlayerAction : PlayerAction
 
     public new void Execute(NetPeer peer, Object serverObj)
     {
+        Globals.Log("ChooseFirstPlayerAction.Execute(): enter");
         if (ChooseFirstPlayerValues == null || ChooseFirstPlayerValues.GameId == null)
             return;
         

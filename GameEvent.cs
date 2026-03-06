@@ -131,6 +131,15 @@ public class GameEvent
         Game.GameSetup.UpdateGameInfo(GameStatus);
     }
 
+    public void leaderChosenHandler()
+    {
+        Globals.Log("leaderChosenHandler(): enter");
+        if (Game.GameSetup == null)
+            return;
+        Game.GameSetup.UpdateGameInfo(GameStatus);
+    }
+
+
     public void gameStateUpdateHandler()
     {
         Globals.Log("gameStateUpdateHandler(): enter");    
