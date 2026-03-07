@@ -112,8 +112,20 @@ namespace rurik
                 return;
             }
 
+            // Deal 2 Secret Agenda cards to each player
+            for (int i = 0; i < Players.getNumberOfPlayers(); i++)
+            {
+                Player player = Players.players[i];
+                for (int j = 0; j < 2; j++)
+                {
+                    SecretAgendaCard card = Cards.dealRandomSecretAgendaCard();
+                    player.secretAgenda.Add(card);
+                }
+                Log.AddLogEntry(player.Color + " was dealt 2 secret agenda cards: " + string.Join(", ", player.secretAgenda.Select(c => c.name)));
+            }
+
             // Initialize game state and start the first round
-            GameStates.ChangeState("SetupPhase");
+            //GameStates.ChangeState("SetupPhase");
             Log.AddLogEntry("Game started with " + Players.getNumberOfPlayers() + " players");
         }
 

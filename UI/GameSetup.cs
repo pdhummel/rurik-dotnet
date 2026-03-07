@@ -28,6 +28,8 @@ namespace rurik.UI
         private Label _numberOfPlayersLabel;
         private Label _numberOfPlayersValueLabel;
         private Label _playersLabel;
+        private Label _currentStateLabel;
+        private Label _currentStateValueLabel;
         private Label _currentPlayerLabel;
         private Label _currentPlayerValueLabel;
         
@@ -200,6 +202,26 @@ namespace rurik.UI
             numberOfPlayersPanel.Widgets.Add(_numberOfPlayersLabel);
             numberOfPlayersPanel.Widgets.Add(_numberOfPlayersValueLabel);
 
+            // Current State
+            HorizontalStackPanel currentStatePanel = new HorizontalStackPanel();
+            _currentStateLabel = new Label()
+            {
+                Id = "currentStateLabel",
+                Text = "Game State:",
+                Width = 175,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            _currentStateValueLabel = new Label()
+            {
+                Id = "currentStateValueLabel",
+                Text = "",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            currentStatePanel.Widgets.Add(_currentStateLabel);
+            currentStatePanel.Widgets.Add(_currentStateValueLabel);
+
             // Current Player
             HorizontalStackPanel currentPlayerPanel = new HorizontalStackPanel();
             _currentPlayerLabel = new Label()
@@ -224,6 +246,7 @@ namespace rurik.UI
             _gameInfoPanel.Widgets.Add(gameNamePanel);
             _gameInfoPanel.Widgets.Add(gameOwnerPanel);
             _gameInfoPanel.Widgets.Add(numberOfPlayersPanel);
+            _gameInfoPanel.Widgets.Add(currentStatePanel);
             _gameInfoPanel.Widgets.Add(currentPlayerPanel);
         }
 
@@ -316,6 +339,7 @@ namespace rurik.UI
                 _gameNameValueLabel.Text = game.Name;
                 _gameOwnerValueLabel.Text = game.Owner;
                 _numberOfPlayersValueLabel.Text = $"{game.NumberOfPlayers}/{game.TargetNumberOfPlayers}";
+                _currentStateValueLabel.Text = game.CurrentState ?? "";
             }
 
             // Update players list

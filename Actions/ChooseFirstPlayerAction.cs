@@ -55,6 +55,7 @@ public class ChooseFirstPlayerAction : PlayerAction
             // Otherwise select a random player
             game.SelectRandomFirstPlayer();
         }
+        game.StartGame();
         
         GameStatus gameStatus = server.Games.UpdateGameStatus(ChooseFirstPlayerValues.GameId);
         GameEvent gameEvent = new(EVENT_FIRST_PLAYER_SELECTED)

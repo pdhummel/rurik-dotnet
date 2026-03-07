@@ -14,6 +14,7 @@ public class GameEvent
     public static readonly string EVENT_PLAYER_JOINED_GAME = "playerJoinedGame";
     public static readonly string EVENT_LEADER_CHOSEN = "leaderChosen";
     public static readonly string EVENT_FIRST_PLAYER_SELECTED = "firstPlayerSelected";
+    public static readonly string EVENT_SECRET_AGENDA_SELECTED = "secretAgendaSelected";
     
     // Used to send separate message to clients for Events.
     // TODO: Also keep track of these events in a server log.
@@ -52,7 +53,8 @@ public class GameEvent
             EVENT_PLAYER_JOINED_GAME,
             EVENT_LEADER_CHOSEN,
             EVENT_FIRST_PLAYER_SELECTED,
-            EVENT_GAME_STATE_UPDATE
+            EVENT_GAME_STATE_UPDATE,
+            EVENT_SECRET_AGENDA_SELECTED
         };
         GamePlayEvents.UnionWith(gamePlayEvents);
     }
@@ -139,6 +141,13 @@ public class GameEvent
         Game.GameSetup.UpdateGameInfo(GameStatus);
     }
 
+    public void secretAgendaSelectedHandler()
+    {
+        Globals.Log("secretAgendaSelectedHandler(): enter");
+        if (Game.GameSetup == null)
+            return;
+        Game.GameSetup.UpdateGameInfo(GameStatus);
+    }
 
     public void gameStateUpdateHandler()
     {
