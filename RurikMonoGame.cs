@@ -35,6 +35,7 @@ public class RurikMonoGame : Game
     public GameSetup? GameSetup { get; set; }
     public ChooseFirstPlayerModal? ChooseFirstPlayerModal { get; set; }
     public ChooseLeaderModal? ChooseLeaderModal { get; set; }
+    public ChooseSecretAgendaModal? ChooseSecretAgendaModal { get; set; }
 
     [DllImport("SDL2.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void SDL_MinimizeWindow(IntPtr window);
@@ -135,6 +136,8 @@ public class RurikMonoGame : Game
         ChooseFirstPlayerModal.Initialize();
         ChooseLeaderModal = new ChooseLeaderModal(this, Desktop);
         ChooseLeaderModal.Initialize();
+        ChooseSecretAgendaModal = new ChooseSecretAgendaModal(this, Desktop);
+        ChooseSecretAgendaModal.Initialize();
     }
 
 

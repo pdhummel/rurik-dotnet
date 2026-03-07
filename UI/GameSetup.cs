@@ -362,7 +362,7 @@ namespace rurik.UI
             }
 
             // Check if game state is waitingForLeaderSelection and show modal
-            if (game != null && game.CurrentState == "waitingForLeaderSelection" && 
+            if (game != null && game.CurrentState == "waitingForLeaderSelection" &&
                     game.CurrentPlayerName != null && _rurikMonoGame.Client.ClientIdentifier != null &&
                 game.CurrentPlayerName.Equals(_rurikMonoGame.Client.ClientIdentifier))
             {
@@ -371,6 +371,19 @@ namespace rurik.UI
                 {
                     _rurikMonoGame.ChooseLeaderModal.UpdateGameInfo(game);
                     _rurikMonoGame.ChooseLeaderModal.Show();
+                }
+            }
+
+            // Check if game state is waitingForSecretAgendaSelection and show modal
+            if (game != null && game.CurrentState == "waitingForSecretAgendaSelection" &&
+                    game.CurrentPlayerName != null && _rurikMonoGame.Client.ClientIdentifier != null &&
+                game.CurrentPlayerName.Equals(_rurikMonoGame.Client.ClientIdentifier))
+            {
+                // Show the choose secret agenda modal
+                if (_rurikMonoGame.ChooseSecretAgendaModal != null)
+                {
+                    _rurikMonoGame.ChooseSecretAgendaModal.UpdateGameInfo(game);
+                    _rurikMonoGame.ChooseSecretAgendaModal.Show();
                 }
             }
         }
