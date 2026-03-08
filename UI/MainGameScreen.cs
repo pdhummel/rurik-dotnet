@@ -152,14 +152,14 @@ namespace rurik.UI
 
         public void Show()
         {
-            Globals.Log("MainGameScreen.Show(): enter, window=" + _window.Id + ", panel=" + _window.Content.Id);
+            //Globals.Log("MainGameScreen.Show(): enter, window=" + _window.Id + ", panel=" + _window.Content.Id);
             _isVisible = true;
             _window.Content.RemoveFromParent();
             _window.Content = null;
             _window.Content = _panel;
             _window.Title = "Rurik: Game";
             _rurikMonoGame.CurrentMyraScreen = "MainGameScreen";
-            Globals.Log("MainGameScreen.Show(): exit, window=" + _window.Id + ", panel=" + _window.Content.Id);
+            //Globals.Log("MainGameScreen.Show(): exit, window=" + _window.Id + ", panel=" + _window.Content.Id);
         }
 
         public void Hide()

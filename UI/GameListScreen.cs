@@ -749,6 +749,38 @@ namespace rurik.UI
 
         private void OpenJoinGame(string gameId)
         {
+            // Get the game status to check which colors/positions are already taken
+            GameStatus gameStatus = null;
+            try
+            {
+                if (RurikMonoGame.Client.Games != null && RurikMonoGame.Client.Games.GameIdToGameStatus.ContainsKey(gameId))
+                {
+                    gameStatus = RurikMonoGame.Client.Games.GameIdToGameStatus[gameId];
+                }
+            }
+            catch (Exception)
+            {
+                // If we can't get the game status, we'll show all options
+            }
+
+            // Determine which colors and positions are already taken
+            var takenColors = new List<string>();
+            var takenPositions = new List<string>();
+            
+            if (gameStatus?.Players != null)
+            {
+                takenColors = gameStatus.Players.playersByColor.Keys.ToList();
+                takenPositions = gameStatus.Players.playersByPosition.Keys.ToList();
+            }
+
+            // All available options
+            var allColors = new List<string> { "blue", "red", "white", "yellow" };
+            var allPositions = new List<string> { "N", "E", "S", "W" };
+
+            // Filter out taken options
+            var availableColors = allColors.Where(c => !takenColors.Contains(c)).ToList();
+            var availablePositions = allPositions.Where(p => !takenPositions.Contains(p)).ToList();
+
             // Create a new window for joining a game
             Window joinGameWindow = new Window();
             VerticalStackPanel joinGamePanel = new VerticalStackPanel()
@@ -824,11 +856,14 @@ namespace rurik.UI
                 Height = 30,
             };
 
-            playerColorSelect.Widgets.Add(new Label() { Text = "blue" });
-            playerColorSelect.Widgets.Add(new Label() { Text = "red" });
-            playerColorSelect.Widgets.Add(new Label() { Text = "white" });
-            playerColorSelect.Widgets.Add(new Label() { Text = "yellow" });
-            playerColorSelect.SelectedIndex = 0;
+            foreach (var color in availableColors)
+            {
+                playerColorSelect.Widgets.Add(new Label() { Text = color });
+            }
+            if (playerColorSelect.Widgets.Count > 0)
+            {
+                playerColorSelect.SelectedIndex = 0;
+            }
 
             // Player Position label and combo box (similar to create game panel)
             Label playerPositionLabel = new Label()
@@ -846,11 +881,14 @@ namespace rurik.UI
                 Height = 30,
             };
 
-            playerPositionSelect.Widgets.Add(new Label() { Text = "N" });
-            playerPositionSelect.Widgets.Add(new Label() { Text = "E" });
-            playerPositionSelect.Widgets.Add(new Label() { Text = "S" });
-            playerPositionSelect.Widgets.Add(new Label() { Text = "W" });
-            playerPositionSelect.SelectedIndex = 0;
+            foreach (var position in availablePositions)
+            {
+                playerPositionSelect.Widgets.Add(new Label() { Text = position });
+            }
+            if (playerPositionSelect.Widgets.Count > 0)
+            {
+                playerPositionSelect.SelectedIndex = 0;
+            }
 
             // Join button
             Button joinButton = new Button()
@@ -880,7 +918,7 @@ namespace rurik.UI
                 string playerName = _playerNameInput.Text; // Get player name from login panel
                 string playerColor = ((Label)playerColorSelect.SelectedItem).Text; // Get color from join panel
                 string playerPosition = ((Label)playerPositionSelect.SelectedItem).Text; // Get position from join panel
-          
+           
                 JoinGameValues joinGameValues = new JoinGameValues(gameId, playerName, playerColor, playerPosition);
                 JoinGame(gameId, joinGameValues);
                 joinGameWindow.Close(); // Close the modal window after joining
@@ -891,8 +929,8 @@ namespace rurik.UI
             {
                 if (RurikMonoGame.Client.Games != null && RurikMonoGame.Client.Games.GameIdToGameStatus.ContainsKey(gameId))
                 {
-                    var gameStatus = RurikMonoGame.Client.Games.GameIdToGameStatus[gameId];
-                    gameNameValueLabel.Text = gameStatus.GameName;
+                    var status = RurikMonoGame.Client.Games.GameIdToGameStatus[gameId];
+                    gameNameValueLabel.Text = status.GameName;
                 }
             }
             catch (Exception)
