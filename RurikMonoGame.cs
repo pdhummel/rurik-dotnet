@@ -28,6 +28,8 @@ public class RurikMonoGame : Game
     public Dictionary<string, SoundEffect> soundEffects = new Dictionary<string, SoundEffect>();
     public List<GameEvent> GamePlayEvents { get; set; } = new List<GameEvent>();
     
+    public Textures Textures { get; private set; } = new Textures();
+    
     // UI Screens
     //public GameLogScreen GameLogScreen { get; set; }
     //public EndGameScreen EndGameScreen { get; set; }
@@ -140,6 +142,9 @@ public class RurikMonoGame : Game
         ChooseLeaderModal.Initialize();
         ChooseSecretAgendaModal = new ChooseSecretAgendaModal(this, Desktop);
         ChooseSecretAgendaModal.Initialize();
+        
+        // Load textures
+        Textures.LoadContent(Content);
     }
 
 
