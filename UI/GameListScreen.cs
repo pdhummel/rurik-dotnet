@@ -14,7 +14,7 @@ namespace rurik.UI
 {
     public class GameListScreen : IGameScreen
     {
-        private Window _window = new Window();
+        private Window _window;
         private RurikMonoGame RurikMonoGame;
         private Grid _grid;
         private Panel _panel;
@@ -31,7 +31,7 @@ namespace rurik.UI
         private VerticalStackPanel _gameListPanel;
         private VerticalStackPanel _createGamePanel;
         private bool _isLoggedIn = false;
-        private string _currentPlayerName = "";
+        private string _currentPlayerName;
         private bool _isVisible = false;
         private Window _createGameWindow;
         private Label _portLabel;
@@ -55,6 +55,7 @@ namespace rurik.UI
         {
             RurikMonoGame = game;
             Desktop = desktop;
+            _window = desktop.Root as Window;
             Initialize();
         }
 
@@ -70,9 +71,6 @@ namespace rurik.UI
                 Background = new SolidBrush(Color.Gray),
             };
 
-            _window.Width = RurikMonoGame.Window.ClientBounds.Width;
-            _window.Height = RurikMonoGame.Window.ClientBounds.Height;
-            _window.Title = "Rurik: Dawn of Kyiv";
 
             // Main panel
             _panel = new Panel()
@@ -81,8 +79,8 @@ namespace rurik.UI
                 Background = new SolidBrush(Color.Black),
                 Width = _window.Width,
                 Height = _window.Height,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
+                //HorizontalAlignment = HorizontalAlignment.Center,
+                //VerticalAlignment = VerticalAlignment.Center,
             };
 
             _grid = new Grid()
@@ -125,8 +123,6 @@ namespace rurik.UI
             _grid.Widgets.Add(_gameListPanel);
 
             _panel.Widgets.Add(_grid);
-            _window.Content = _panel;
-
 
         }
 
@@ -460,8 +456,10 @@ namespace rurik.UI
         public void Show()
         {
             _isVisible = true;
+            _window.Title = "Rurik: Dawn of Kyiv";
+            _window.Content = _panel;
             // Add to desktop or parent container
-            Desktop.Root = _window;
+            //Desktop.Root = _window;
             //desktop.Widgets.Add(_panel);
         }
 
@@ -470,7 +468,7 @@ namespace rurik.UI
             _isVisible = false;
             
             // Remove from desktop or parent container
-            _window.RemoveFromParent();
+            //_window.RemoveFromParent();
         }
 
         public void HandleEvent(string eventName, object data)
@@ -505,6 +503,7 @@ namespace rurik.UI
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
             };
+            _gameNameInput.Text = _currentPlayerName + "'s Game";
             // Add the player name label to the grid
             _grid.Widgets.Add(_playerNameLabel);
             RefreshGameList();
@@ -908,38 +907,21 @@ namespace rurik.UI
 
         public void OpenGameSetup(GameStatus gameStatus)
         {
+            Globals.Log("OpenGameSetup(): enter, window=" + _window.Id + ", panel=" + _window.Content.Id);
             if (gameStatus == null)
             {
                 return;
             }
             Globals.Log("Opening Game Setup for game ID: " + gameStatus.GameId);
+            _window.Content.RemoveFromParent();
             // Create the GameSetup screen
-            var gameSetup = new GameSetup(RurikMonoGame, Desktop);
-
-            // Create a new window for the GameSetup screen
-            //Window gameSetupWindow = new Window();
-            //Window gameSetupWindow = gameSetup.Window;
-            //gameSetupWindow.Title = "Game Setup";
-            //gameSetupWindow.Width = _window.Width + 0;
-            //gameSetupWindow.Height = _window.Height + 0;
-
+            //var gameSetup = new GameSetup(RurikMonoGame, Desktop);
+            var gameSetup = RurikMonoGame.GameSetup;
             // Populate the GameSetup screen with the game data
             gameSetup.UpdateGameInfo(gameStatus);
-            //gameSetupWindow.Content = gameSetup.Panel;
-
-            //_window.RemoveFromParent();
-            //_window.Close();
             gameSetup.Show();
+            this.Hide();
     
-    
-
-    
-            // Set Desktop.Root to gameSetupWindow
-            //Desktop.Root = gameSetupWindow;
-            
-            // Make _window not visible and remove it
-            //_window.Visible = false;
-            //_window.RemoveFromParent();
         }
 
 

@@ -218,6 +218,24 @@ namespace rurik
             // For now, we'll just assign it
             player.secretAgenda = new List<SecretAgendaCard> { new SecretAgendaCard(cardName, "", 0) };
             Log.AddLogEntry(color + " selected secret agenda " + cardName);
+
+            // Check if all players have selected their secret agenda
+            bool done = true;
+            foreach (var p in Players.players)
+            {
+                if (p.secretAgenda.Count != 1)
+                {
+                    done = false;
+                    break;
+                }
+            }
+
+            if (done)
+            {
+                GameStates.ChangeState("waitingForTroopPlacement");
+            }
+
+
             Players.advanceToNextPlayer();
         }
 

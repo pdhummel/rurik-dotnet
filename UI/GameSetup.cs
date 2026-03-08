@@ -13,7 +13,7 @@ namespace rurik.UI
 {
     public class GameSetup : IGameScreen
     {
-        public Window Window {get;} = new Window();
+        private Window _window;
         private RurikMonoGame _rurikMonoGame;
         private Grid _grid;
         public Panel Panel { get; set; }
@@ -46,6 +46,7 @@ namespace rurik.UI
         {
             _rurikMonoGame = game;
             _desktop = desktop;
+            _window = _desktop.Root as Window;
             game.GameSetup = this;
             Initialize();
         }
@@ -62,9 +63,8 @@ namespace rurik.UI
                 Background = new SolidBrush(Color.Gray),
             };
 
-            Window.Width = 600;
-            Window.Height = 500;
-            Window.Title = "Rurik: Game Setup";
+            //Window.Width = 600;
+            //Window.Height = 500;
 
             // Main panel
             Panel = new Panel()
@@ -108,7 +108,6 @@ namespace rurik.UI
             //_grid.Widgets.Add(_closeButton);
 
             Panel.Widgets.Add(_grid);
-            Window.Content = Panel;
         }
 
         private void setupGameInfoPanel()
@@ -301,20 +300,25 @@ namespace rurik.UI
 
         public void Show()
         {
+            Globals.Log("Show(): enter, window=" + _window.Id + ", panel=" + _window.Content.Id);
             _isVisible = true;
-            //Window.ShowModal(_desktop);
             //_desktop.Root = Window;
-            Window window = (Window)(_desktop.Root);
-            Panel.Width = window.Width;
-            Panel.Height = window.Height;
-            window.Content = Panel;
-            window.Title = "Game Setup";
+            //Window window = (Window)(_desktop.Root);
+            //Panel.Width = window.Width;
+            //Panel.Height = window.Height;
+            _window.Content.RemoveFromParent();
+            _window.Content = null;
+            _window.Content = Panel;
+            //window.Title = "Game Setup";
+            _window.Title = "Rurik: Game Setup";
+            _rurikMonoGame.CurrentMyraScreen = "GameSetup";
+            Globals.Log("Show(): exit, window=" + _window.Id + ", panel=" + _window.Content.Id);
         }
 
         public void Hide()
         {
             _isVisible = false;
-            Window.Close();
+            _window.Close();
         }
 
         public void HandleEvent(string eventName, object data)

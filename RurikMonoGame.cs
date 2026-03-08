@@ -33,6 +33,7 @@ public class RurikMonoGame : Game
     //public EndGameScreen EndGameScreen { get; set; }
     public GameListScreen? GameListScreen { get; set; }
     public GameSetup? GameSetup { get; set; }
+    public string CurrentMyraScreen { get; set; } = "GameListScreen";
     public ChooseFirstPlayerModal? ChooseFirstPlayerModal { get; set; }
     public ChooseLeaderModal? ChooseLeaderModal { get; set; }
     public ChooseSecretAgendaModal? ChooseSecretAgendaModal { get; set; }
@@ -119,6 +120,7 @@ public class RurikMonoGame : Game
     protected override void Initialize()
     {
         // Add your initialization logic here
+        Window.ClientSizeChanged += Window_ClientSizeChanged;
         base.Initialize();
     }
 
@@ -170,8 +172,13 @@ public class RurikMonoGame : Game
         Globals.Log("setupDesktop(): enter");
         MyraEnvironment.Game = this;
         Desktop = new Desktop();
-        Panel rootPanel = new Panel();
-        Desktop.Root = rootPanel;
+        //Panel rootPanel = new Panel();
+        //Desktop.Root = rootPanel;
+        Window window = new Window();
+        window.Id = "MyraMainWindow";
+        window.Width = Globals.WIDTH;
+        window.Height = Globals.HEIGHT;
+        Desktop.Root = window;
     }
 
     protected override void Draw(GameTime gameTime)
@@ -179,11 +186,23 @@ public class RurikMonoGame : Game
         GraphicsDevice.Clear(Color.Black);
         if (Desktop != null)
         {
-            ShowGameListScreen();
+            ShowCurrentScreen();
             Desktop.Render();
         }        
 
         base.Draw(gameTime);
+    }
+
+    public void ShowCurrentScreen()
+    {
+        if (CurrentMyraScreen == "GameListScreen")
+        {
+            ShowGameListScreen();
+        }
+        else if (CurrentMyraScreen == "GameSetup")
+        {
+            ShowGameSetupScreen();
+        }
     }
 
     public void ShowGameListScreen()
@@ -204,9 +223,19 @@ public class RurikMonoGame : Game
     private void Window_ClientSizeChanged(object sender, EventArgs e)
     {
         // Update the back buffer size to match the new window size
-        _graphics.PreferredBackBufferWidth = Globals.WIDTH;
-        _graphics.PreferredBackBufferHeight = Globals.HEIGHT;
+        _graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
+        _graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
         _graphics.ApplyChanges();
+        if (Desktop != null && Desktop.Root is Window window)
+        {
+            window.Width = Window.ClientBounds.Width;
+            window.Height = Window.ClientBounds.Height;
+            if (window.Content != null && window.Content is Panel panel)
+            {
+                panel.Width = window.Width;
+                panel.Height = window.Height;
+            }
+        }
     }
 
 
