@@ -125,8 +125,8 @@ namespace rurik.UI
             _card1Button = new Button()
             {
                 Id = "card1Button",
-                Width = 200,
-                Height = 100,
+                Width = 250,
+                Height = 150,
                 Border = new SolidBrush("#808000FF"),
                 BorderThickness = new Thickness(2),
             };
@@ -136,8 +136,8 @@ namespace rurik.UI
             _card2Button = new Button()
             {
                 Id = "card2Button",
-                Width = 200,
-                Height = 100,
+                Width = 250,
+                Height = 150,
                 Border = new SolidBrush("#808000FF"),
                 BorderThickness = new Thickness(2),
             };
@@ -161,10 +161,10 @@ namespace rurik.UI
             _closeButton.Click += (s, a) => Hide();
 
             // Add widgets to panel
-            _contentPanel.Widgets.Add(_titleLabel);
+            //_contentPanel.Widgets.Add(_titleLabel);
             _contentPanel.Widgets.Add(_instructionsLabel);
             _contentPanel.Widgets.Add(_cardPanel);
-            _contentPanel.Widgets.Add(_closeButton);
+            //_contentPanel.Widgets.Add(_closeButton);
         }
 
         public void Update()
@@ -216,24 +216,14 @@ namespace rurik.UI
                 _secretAgendaCards = _game.ClientPlayer.secretAgenda.ToList();
             }
 
-            // Update card buttons with card names
+            // Update card buttons with card information (name, text, points)
             if (_secretAgendaCards.Count >= 2)
             {
                 // Card 1
-                _card1Button.Content = new Label
-                {
-                    Text = _secretAgendaCards[0].name,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
+                _card1Button.Content = CreateCardContent(_secretAgendaCards[0]);
 
                 // Card 2
-                _card2Button.Content = new Label
-                {
-                    Text = _secretAgendaCards[1].name,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
+                _card2Button.Content = CreateCardContent(_secretAgendaCards[1]);
 
                 // Show both cards
                 _cardPanel.Widgets.Add(_card1Button);
@@ -242,12 +232,7 @@ namespace rurik.UI
             else if (_secretAgendaCards.Count == 1)
             {
                 // Only one card (user has already selected one)
-                _card1Button.Content = new Label
-                {
-                    Text = _secretAgendaCards[0].name,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
+                _card1Button.Content = CreateCardContent(_secretAgendaCards[0]);
 
                 // Hide card 2 button
                 _cardPanel.Widgets.Add(_card1Button);
@@ -263,6 +248,43 @@ namespace rurik.UI
                 };
                 _cardPanel.Widgets.Add(_card1Button);
             }
+        }
+
+        private Widget CreateCardContent(SecretAgendaCard card)
+        {
+            var panel = new VerticalStackPanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            // Card name (bold)
+            panel.Widgets.Add(new Label
+            {
+                Text = card.name,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            });
+
+            // Card text
+            panel.Widgets.Add(new Label
+            {
+                Text = card.text,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Wrap = true,
+                MaxWidth = 230,
+            });
+
+            // Points
+            panel.Widgets.Add(new Label
+            {
+                Text = $"Points: {card.points}",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            });
+
+            return panel;
         }
 
         private void OnCard1ButtonClicked()

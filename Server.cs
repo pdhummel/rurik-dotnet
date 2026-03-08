@@ -143,7 +143,7 @@ public class Server
 
     public void SendGameState(NetPeer peer)
     {
-        Globals.Log("sendGameState(): peer=" + peer.Id);
+        //Globals.Log("sendGameState(): peer=" + peer.Id);
         GameEvent gameEvent = new GameEvent(EVENT_GAME_STATE_UPDATE);
         gameEvent.GameState = GameState;
         string jsonString = JsonSerializer.Serialize(gameEvent);
@@ -206,7 +206,21 @@ public class Server
                     try
                     {
                         NetPeer peer = server.ConnectedPeerList[i];
+                        if (gameEvent.GameStatus != null && gameEvent.GameStatus.ClientPlayer == null)
+                        {
+                            string playerName = PeerToPlayerName.ContainsKey(peer) ? PeerToPlayerName[peer] : null;
+                            if (playerName != null) 
+                            {
+                                Player? clientPlayer = gameEvent.GameStatus.Players?.getPlayerByName(playerName);
+                                gameEvent.GameStatus.ClientPlayer = clientPlayer;
+                            }
+                            else
+                            {
+                                Globals.Log("sendGamePlayEvent(): playerName is null for peer=" + peer.Id);
+                            }
+                        }
                         SendGamePlayEvent(peer, gameEvent);
+                        gameEvent.GameStatus.ClientPlayer = null;
                     }
                     catch (Exception ex)
                     {

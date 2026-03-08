@@ -41,6 +41,7 @@ public class ChooseLeaderAction : PlayerAction
         game.ChooseLeader(ChooseLeaderValues.PlayerColor, ChooseLeaderValues.LeaderName);
         
         GameStatus gameStatus = server.Games.UpdateGameStatus(ChooseLeaderValues.GameId);
+        //gameStatus.ClientPlayer = game.Players.getPlayerByColor(ChooseLeaderValues.PlayerColor);
         GameEvent gameEvent = new(EVENT_LEADER_CHOSEN)
         {
             GameStatus = gameStatus

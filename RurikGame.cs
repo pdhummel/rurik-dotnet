@@ -205,10 +205,10 @@ namespace rurik
         public void SelectSecretAgenda(string color, string cardName)
         {
             Player player = ValidateCurrentPlayer(color, "SelectSecretAgenda");
-            if (player == null)
+            if (player == null || player.secretAgenda == null)
                 return;
 
-            if (player.secretAgenda != null)
+            if (player.secretAgenda.Count == 1)
             {
                 ThrowError("Secret agenda already selected", "SelectSecretAgenda");
                 return;
@@ -218,6 +218,7 @@ namespace rurik
             // For now, we'll just assign it
             player.secretAgenda = new List<SecretAgendaCard> { new SecretAgendaCard(cardName, "", 0) };
             Log.AddLogEntry(color + " selected secret agenda " + cardName);
+            Players.advanceToNextPlayer();
         }
 
         public void PlaceInitialTroop(string color, string locationName)
