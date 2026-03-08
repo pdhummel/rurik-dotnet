@@ -300,19 +300,14 @@ namespace rurik.UI
 
         public void Show()
         {
-            Globals.Log("Show(): enter, window=" + _window.Id + ", panel=" + _window.Content.Id);
+            //Globals.Log("Show(): enter, window=" + _window.Id + ", panel=" + _window.Content.Id);
             _isVisible = true;
-            //_desktop.Root = Window;
-            //Window window = (Window)(_desktop.Root);
-            //Panel.Width = window.Width;
-            //Panel.Height = window.Height;
             _window.Content.RemoveFromParent();
             _window.Content = null;
             _window.Content = Panel;
-            //window.Title = "Game Setup";
             _window.Title = "Rurik: Game Setup";
             _rurikMonoGame.CurrentMyraScreen = "GameSetup";
-            Globals.Log("Show(): exit, window=" + _window.Id + ", panel=" + _window.Content.Id);
+            //Globals.Log("Show(): exit, window=" + _window.Id + ", panel=" + _window.Content.Id);
         }
 
         public void Hide()
@@ -389,6 +384,13 @@ namespace rurik.UI
                     _rurikMonoGame.ChooseSecretAgendaModal.UpdateGameInfo(game);
                     _rurikMonoGame.ChooseSecretAgendaModal.Show();
                 }
+            }
+
+            // Check if game state is waitingForTroopPlacement and show MainGameScreen
+            if (game != null && game.CurrentState == "waitingForTroopPlacement")
+            {
+                // Switch to MainGameScreen
+                _rurikMonoGame.CurrentMyraScreen = "MainGameScreen";
             }
         }
 
