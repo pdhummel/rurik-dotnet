@@ -126,6 +126,26 @@ namespace rurik.UI
 
         }
 
+        private string GetUniquePlayerName(string playerName)
+        {
+            // Check if the player name already exists in any game and append timestamp if needed
+            if (RurikMonoGame.Client.Games != null)
+            {
+                //Globals.Log("GetUniquePlayerName(): checking for existing player name: " + playerName);
+                var games = RurikMonoGame.Client.Games.ListGames();
+                foreach (var game in games)
+                {
+                    //Globals.Log("GetUniquePlayerName(): checking game: " + game.GameName);
+                    if (game.Players?.playersByName != null && game.Players.playersByName.ContainsKey(playerName))
+                    {
+                        // Name exists, append timestamp
+                        return playerName + "_" + DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                    }
+                }
+            }
+            return playerName;
+        }
+
         private void setupLoginPanel()
         {
             // Login panel
@@ -149,12 +169,17 @@ namespace rurik.UI
             };
 
             string currentUser = Environment.UserName;
+            
+            // Check if the player name already exists in any game and append timestamp if needed
+            //string uniquePlayerName = GetUniquePlayerName(currentUser);
+            string uniquePlayerName = currentUser;
+        
             _playerNameInput = new TextBox()
             {
                 Id = "playerNameInput",
                 Width = 200,
                 Height = 30,
-                Text = currentUser,
+                Text = uniquePlayerName,
                 Border = new SolidBrush("#808000FF"),
                 BorderThickness = new Thickness(2),
             };
@@ -455,6 +480,7 @@ namespace rurik.UI
 
         public void Show()
         {
+            //Globals.Log("GameListScreen.Show(): enter");
             _isVisible = true;
             _window.Title = "Rurik: Dawn of Kyiv";
             _window.Content = _panel;
@@ -723,9 +749,11 @@ namespace rurik.UI
         public void JoinGameAfterGameCreated(GameStatus gameStatus)
         {
             Globals.Log("JoinGameAfterGameCreated(): enter");
+            
+            string playerName = _playerNameInput.Text;
             string playerColor = ((Label)_playerColorSelect.SelectedItem).Text;
             string playerPosition = ((Label)_playerPositionSelect.SelectedItem).Text;
-            JoinGameValues joinGameValues = new JoinGameValues(gameStatus.Id, _playerNameInput.Text, playerColor, playerPosition);
+            JoinGameValues joinGameValues = new JoinGameValues(gameStatus.Id, playerName, playerColor, playerPosition);
             JoinGame(gameStatus.Id, joinGameValues);
             if (_createGameWindow != null)
                 _createGameWindow.Close();
@@ -766,7 +794,7 @@ namespace rurik.UI
             // Determine which colors and positions are already taken
             var takenColors = new List<string>();
             var takenPositions = new List<string>();
-            
+        
             if (gameStatus?.Players != null)
             {
                 takenColors = gameStatus.Players.playersByColor.Keys.ToList();
@@ -824,6 +852,7 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
+            _currentPlayerName = GetUniquePlayerName(_currentPlayerName); // Ensure the player name is unique across all games
             // Player Name label (read-only)
             Label playerNameLabel = new Label()
             {
@@ -915,7 +944,9 @@ namespace rurik.UI
             // Set up button click event - this would need to be connected to a selected game
             joinButton.Click += (s, a) =>
             {
-                string playerName = _playerNameInput.Text; // Get player name from login panel
+                string playerName = _playerNameInput.Text; // Get player name from login panel (already unique)
+                playerName = _currentPlayerName;
+                RurikMonoGame.Client.ClientIdentifier = playerName; // Set the client identifier to the unique player name
                 string playerColor = ((Label)playerColorSelect.SelectedItem).Text; // Get color from join panel
                 string playerPosition = ((Label)playerPositionSelect.SelectedItem).Text; // Get position from join panel
            

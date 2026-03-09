@@ -27,6 +27,7 @@ namespace rurik.UI
         private GameStatus _game;
         
         private readonly Desktop _desktop;
+        private Texture2D? _mapTexture;
 
         public MainGameScreen(RurikMonoGame game, Desktop desktop)
         {
@@ -121,20 +122,24 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
-            // Add top and bottom panels to right grid
-            Grid.SetRow(_rightTopPanel, 0);
-            rightGrid.Widgets.Add(_rightTopPanel);
-
-            Grid.SetRow(_rightBottomPanel, 1);
-            rightGrid.Widgets.Add(_rightBottomPanel);
-
-            // Add right panel to main grid
-            Grid.SetColumn(_rightPanel, 1);
-            _mainGrid.Widgets.Add(_rightPanel);
-
             // Add left panel to main grid
             Grid.SetColumn(_leftPanel, 0);
+            Grid.SetRow(_leftPanel, 0);
             _mainGrid.Widgets.Add(_leftPanel);
+
+            // Add top and bottom panels to right grid
+            Grid.SetColumn(_rightTopPanel, 1);
+            Grid.SetRow(_rightTopPanel, 0);
+            _mainGrid.Widgets.Add(_rightTopPanel);
+
+            Grid.SetColumn(_rightBottomPanel, 1);
+            Grid.SetRow(_rightBottomPanel, 1);
+            _mainGrid.Widgets.Add(_rightBottomPanel);
+
+            // Add right panel to main grid
+            //Grid.SetColumn(_rightPanel, 1);
+            //_mainGrid.Widgets.Add(_rightPanel);
+
 
             // Add main grid to panel
             _panel.Widgets.Add(_mainGrid);
@@ -193,36 +198,29 @@ namespace rurik.UI
 
         private void updateMapPanel()
         {
+            Globals.Log("MainGameScreen.updateMapPanel(): enter");
             // Clear existing widgets in left panel
             _leftPanel.Widgets.Clear();
 
             // Add map texture display
             if (_rurikMonoGame.Textures != null)
             {
-                var mapTexture = _rurikMonoGame.Textures.GetTexture("map");
-                if (mapTexture != null)
-                {
-                    // Create a label with the map texture name
-                    var mapLabel = new Label()
-                    {
-                        Id = "mapLabel",
-                        Text = "Map Display (Texture: " + mapTexture.Name + ")",
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center,
-                    };
+                Globals.Log("MainGameScreen.updateMapPanel(): got textures");  
+                _mapTexture = _rurikMonoGame.Textures.GetTexture("map");
 
-                    _leftPanel.Widgets.Add(mapLabel);
+                if (_mapTexture != null)                
+                {
+                    Globals.Log("MainGameScreen.updateMapPanel(): got map texture"); 
+                    // Create an Image widget to display the map texture
+                    // Using TextureRegion from MonoGame to wrap the Texture2D
+                    var textureRegion = new Myra.Graphics2D.TextureAtlases.TextureRegion(_mapTexture);
+                    var terrainImage = new Image();
+                    terrainImage.Renderable = textureRegion;
+                    _leftPanel.Widgets.Add(terrainImage);
                 }
                 else
                 {
-                    var noMapLabel = new Label()
-                    {
-                        Id = "noMapLabel",
-                        Text = "Map texture not loaded",
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center,
-                    };
-                    _leftPanel.Widgets.Add(noMapLabel);
+                    Globals.Log("MainGameScreen.updateMapPanel(): map texture not found");
                 }
             }
         }

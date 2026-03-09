@@ -73,8 +73,8 @@ namespace rurik.UI
                 Background = new SolidBrush(Color.Black),
                 Width = 600,
                 Height = 500,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
+                //HorizontalAlignment = HorizontalAlignment.Center,
+                //VerticalAlignment = VerticalAlignment.Center,
             };
 
             _grid = new Grid()
@@ -313,7 +313,7 @@ namespace rurik.UI
         public void Hide()
         {
             _isVisible = false;
-            _window.Close();
+            //_window.Close();
         }
 
         public void HandleEvent(string eventName, object data)
@@ -390,7 +390,11 @@ namespace rurik.UI
             if (game != null && game.CurrentState == "waitingForTroopPlacement")
             {
                 // Switch to MainGameScreen
+                MainGameScreen mainGameScreen = _rurikMonoGame.MainGameScreen;
                 _rurikMonoGame.CurrentMyraScreen = "MainGameScreen";
+                mainGameScreen.UpdateGameInfo(game);
+                mainGameScreen.Show();
+                this.Hide();
             }
         }
 
