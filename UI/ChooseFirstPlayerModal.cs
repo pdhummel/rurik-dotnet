@@ -219,8 +219,9 @@ namespace rurik.UI
 
             // Clear existing player widgets
             for (int i = _playerSelect.Widgets.Count - 1; i >= 0; i--)
-            {
-                _playerSelect.Widgets.RemoveAt(i);
+            {   
+                if (_playerSelect !=  null && _playerSelect.Widgets != null && _playerSelect.Widgets.Count >  i && i >0)
+                    _playerSelect.Widgets.RemoveAt(i);
             }
 
             // Add player options to combo box
@@ -241,6 +242,7 @@ namespace rurik.UI
 
         private void OnChooseButtonClicked()
         {
+            Globals.Log("ChooseFirstPlayerModal.OnChooseButtonClicked(): enter");
             if (_game == null || _playerSelect.SelectedIndex == null || _playerSelect.SelectedIndex < 0)
                 return;
 

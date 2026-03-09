@@ -254,6 +254,7 @@ public class RurikMonoGame : Game
                 panel.Width = window.Width;
                 panel.Height = window.Height;
             }
+            ShowCurrentScreen();
         }
     }
 

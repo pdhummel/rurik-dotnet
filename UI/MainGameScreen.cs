@@ -159,11 +159,15 @@ namespace rurik.UI
         {
             //Globals.Log("MainGameScreen.Show(): enter, window=" + _window.Id + ", panel=" + _window.Content.Id);
             _isVisible = true;
-            _window.Content.RemoveFromParent();
+            if (_window.Content != null)
+            {
+                _window.Content.RemoveFromParent();
+            }
             _window.Content = null;
             _window.Content = _panel;
             _window.Title = "Rurik: Game";
             _rurikMonoGame.CurrentMyraScreen = "MainGameScreen";
+            updateMapPanel();
             //Globals.Log("MainGameScreen.Show(): exit, window=" + _window.Id + ", panel=" + _window.Content.Id);
         }
 
@@ -198,25 +202,37 @@ namespace rurik.UI
 
         private void updateMapPanel()
         {
-            Globals.Log("MainGameScreen.updateMapPanel(): enter");
+            //Globals.Log("MainGameScreen.updateMapPanel(): enter");
+
             // Clear existing widgets in left panel
             _leftPanel.Widgets.Clear();
 
             // Add map texture display
             if (_rurikMonoGame.Textures != null)
             {
-                Globals.Log("MainGameScreen.updateMapPanel(): got textures");  
+                //Globals.Log("MainGameScreen.updateMapPanel(): got textures");  
                 _mapTexture = _rurikMonoGame.Textures.GetTexture("map");
 
                 if (_mapTexture != null)                
                 {
-                    Globals.Log("MainGameScreen.updateMapPanel(): got map texture"); 
+                    //Globals.Log("MainGameScreen.updateMapPanel(): got map texture"); 
                     // Create an Image widget to display the map texture
                     // Using TextureRegion from MonoGame to wrap the Texture2D
                     var textureRegion = new Myra.Graphics2D.TextureAtlases.TextureRegion(_mapTexture);
                     var terrainImage = new Image();
                     terrainImage.Renderable = textureRegion;
                     _leftPanel.Widgets.Add(terrainImage);
+
+                    _leftPanel.Height = _window.Height;
+                    float ratio = (float)((float)_window.Height / (float)_mapTexture.Height);
+                    int leftPanelWidth = (int)((float)_mapTexture.Width * ratio);
+                    _leftPanel.Width = leftPanelWidth;
+                    //Globals.Log("MainGameScreen.updateMapPanel(): window:" + _window.Width + "x" + _window.Height + 
+                    //            ", panel:" + _panel.Width + "x" + _panel.Height +
+                    //            ", left panel:" + leftPanelWidth+ "x" + _leftPanel.Height +
+                    //            ", map texture:" + _mapTexture.Width + "x" + _mapTexture.Height + ", ratio:" + ratio );
+
+
                 }
                 else
                 {

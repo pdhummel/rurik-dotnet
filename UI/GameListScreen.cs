@@ -401,7 +401,7 @@ namespace rurik.UI
                 Id = "numberOfPlayersInput",
                 Width = 200,
                 Height = 30,
-                Text = "4",
+                Text = "2",
             };
 
 

@@ -77,6 +77,7 @@ namespace rurik.UI
                 //VerticalAlignment = VerticalAlignment.Center,
             };
 
+
             _grid = new Grid()
             {
                 Id = "gameSetupGrid",
