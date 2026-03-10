@@ -4,10 +4,12 @@ using Myra.Graphics2D;
 using Myra.Graphics2D.Brushes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using rurik;
+//using SharpDX.Direct3D11;
 
 namespace rurik.UI
 {
@@ -28,6 +30,84 @@ namespace rurik.UI
         
         private readonly Desktop _desktop;
         private Texture2D? _mapTexture;
+
+
+        // Map location bounds (x, y, width, height) relative to an 800x600 reference image
+        // The actual map texture is 1933x2544, so we need to scale from 800x600 to 1933x2544 first
+        // Then scale to the panel size at runtime
+        private const float ReferenceWidth = 1000f;
+        private const float ReferenceHeight = 1000f;
+        private const float TextureWidth = 1933f;
+        private const float TextureHeight = 2544f;
+        private static readonly float ScaleFromReferenceToTextureX = TextureWidth / ReferenceWidth;
+        private static readonly float ScaleFromReferenceToTextureY = TextureHeight / ReferenceHeight;
+
+/*
+- **Pskov**: (160, 170), (282, 240).
+- **Novgorod**: (356, 191), (516, 265).
+- **Rostov**: (654, 207), (772, 282).
+- **Suzdal**: (828, 232), (954, 315).
+- **Polotsk**: (259, 355), (367, 433).
+- **Smolensk**: (502, 360), (632, 444).
+- **Brest**: (43, 421), (172, 500).
+- **Chernigov**: (522, 487), (657, 577).
+- **Kiev**: (323, 541), (423, 633).
+- **Volyn**: (160, 592), (260, 676).
+- **Pereyaslavl**: (589, 597), (754, 686).
+- **Galich**: (205, 779), (333, 859).
+- **Peresech**: (315, 858), (452, 939).
+- **Azov**: (824, 705), (941, 791).
+
+
+            {"Novgorod", new Rectangle(394, 206, 485, 224)},
+            {"Pskov", new Rectangle(190, 185, 249, 203)},
+            {"Polotsk", new Rectangle(275, 377, 351, 394)},
+            {"Smolensk", new Rectangle(524, 381, 615, 397)},
+            {"Rostov", new Rectangle(684, 224, 755, 240)},
+            {"Chernigov", new Rectangle(547, 521, 637, 538)},
+            {"Suzdal", new Rectangle(864, 265, 934, 283)},
+            {"Pereyaslavl", new Rectangle(612, 615, 730, 638)},
+
+
+            // Yellow locations (Kiev region)
+            {"Volyn", new Rectangle(175, 615, 240, 634)},
+            {"Kiev", new Rectangle(354, 563, 396, 583)},
+            {"Galich", new Rectangle(235, 793, 294, 811)},
+            {"Murom", new Rectangle(844, 491, 910, 506)},
+
+
+            // Brown locations (Azov region)
+            {"Brest", new Rectangle(80, 438, 142, 454)},
+            {"Peresech", new Rectangle(346, 882, 427, 900)},
+            {"Azov", new Rectangle(864, 722, 910, 740)}
+*/
+        private Dictionary<string, Rectangle> _locationBounds = new Dictionary<string, Rectangle>
+        {
+            // Locations have been scaled to 0-1000.
+            // Green locations (Novgorod region)
+            {"Novgorod", new Rectangle(352,197,522,271)},
+            {"Pskov", new Rectangle(155,175,287,248)},
+            {"Polotsk", new Rectangle(252,367,370,437)},
+            {"Smolensk", new Rectangle(499,366,632,448)},
+            {"Rostov", new Rectangle(661,208,777,281)},
+            {"Chernigov", new Rectangle(517,511,666,586)},
+            {"Suzdal", new Rectangle(824,250,957,325)},
+            {"Pereyaslavl", new Rectangle(591,608,758,687)},
+
+
+            // Yellow locations (Kiev region)
+            {"Volyn", new Rectangle(155,602,262,679)},
+            {"Kiev", new Rectangle(316,554,429,632)},
+            {"Galich", new Rectangle(240,783,343,851)},
+            {"Murom", new Rectangle(813,473,952,552)},
+
+
+            // Brown locations (Azov region)
+            {"Brest", new Rectangle(60,424,180,504)},
+            {"Peresech", new Rectangle(304,861,465,948)},
+            {"Azov", new Rectangle(845, 708, 955, 794)}
+        };
+
 
         public MainGameScreen(RurikMonoGame game, Desktop desktop)
         {
@@ -187,6 +267,103 @@ namespace rurik.UI
             }
         }
 
+        public void handleLeftClick(MouseState mouseState)
+        {
+            // Only handle clicks if left panel (map) has widgets
+            if (_leftPanel.Widgets.Count == 0)
+                return;
+
+            Globals.Log("handleLeftClick(): monogame window=" + _rurikMonoGame.Window.Position.X + "," + _rurikMonoGame.Window.Position.Y);
+            int myraWindowX = _window.ActualBounds.X; // + 8; // Adjust for window border width
+            int myraWindowY = _window.ActualBounds.Y + 30; // Adjust for title bar height
+            Globals.Log("handleLeftClick(): myra window=(" + myraWindowX+ "," + myraWindowY + "," + _window.ActualBounds.Width + "," + _window.ActualBounds.Height + ")");
+
+            // Get the mouse position relative to the window
+            Point mousePosition = new Point(mouseState.X, mouseState.Y);
+            Globals.Log($"handleLeftClick(): mousePosition=({mouseState.X},{mouseState.Y})");
+
+            // Calculate the position of the left panel relative to the window
+            // The left panel is at column 0, row 0 of the main grid
+            Point panelPosition = GetPanelPosition(_leftPanel);
+            Globals.Log($"handleLeftClick(): panelPosition=({panelPosition.X},{panelPosition.Y})");
+
+            // Calculate the mouse position relative to the left panel
+            Point relativeMousePosition = new Point(mousePosition.X - myraWindowX - panelPosition.X, mousePosition.Y - myraWindowY - panelPosition.Y);
+
+            // Log the mouse position for debugging
+            Globals.Log($"handleLeftClick(): relativeMousePosition=({relativeMousePosition.X},{relativeMousePosition.Y})");
+
+            // Get the current map texture dimensions and panel dimensions for scaling
+            if (_mapTexture == null)
+                return;
+
+            int textureWidth = _mapTexture.Width;
+            int textureHeight = _mapTexture.Height;
+            int panelWidth = _leftPanel.Width ?? 0;
+            int panelHeight = _leftPanel.Height ?? 0;
+
+            // Calculate scaling factors
+            // First scale from 0-1000 reference to actual texture dimensions on panel
+            float scaleXFromReference = (float)textureWidth / ReferenceWidth;
+            //float scaleXFromReference = (float)textureWidth / panelWidth;
+            float scaleYFromReference = (float)textureHeight / ReferenceHeight;
+            //float scaleYFromReference = (float)textureHeight / panelHeight;
+            // Then scale from texture to panel
+            float scaleX = (float)panelWidth / (float)textureWidth;
+            float scaleY = (float)panelHeight / (float)textureHeight;
+
+            // Log scaling info for debugging
+            Globals.Log($"handleLeftClick(): texture=({textureWidth}x{textureHeight}), panel=({panelWidth}x{panelHeight}), scaleFromReference=({scaleXFromReference:F4},{scaleYFromReference:F4}), scaleToPanel=({scaleX:F4},{scaleY:F4})");
+
+            // Check which location was clicked
+            foreach (var kvp in _locationBounds)
+            {
+                var locationName = kvp.Key;
+                var bounds = kvp.Value;
+
+                // First scale from 1000 reference to actual texture dimensions
+                float textureX = bounds.X * scaleXFromReference;
+                float textureY = bounds.Y * scaleYFromReference;
+                // bounds.Width and bounds.Height are actual coordinates.
+                int boundsWidth = bounds.Width - bounds.X;
+                int boundsHeight = bounds.Height - bounds.Y;
+                float textureWidthScaled = boundsWidth * scaleXFromReference;
+                float textureHeightScaled = boundsHeight * scaleYFromReference;
+
+                // Then scale from texture to panel
+                int scaledX = (int)(textureX * scaleX);
+                int scaledY = (int)(textureY * scaleY);
+                int scaledWidth = (int)(textureWidthScaled * scaleX);
+                int scaledHeight = (int)(textureHeightScaled * scaleY);
+
+                // Check if mouse is within this location's bounds
+                if (relativeMousePosition.X >= scaledX && relativeMousePosition.X <= scaledX + scaledWidth &&
+                    relativeMousePosition.Y >= scaledY && relativeMousePosition.Y <= scaledY + scaledHeight)
+                {
+                    // Log bounds for debugging
+                    Globals.Log($"handleLeftClick(): location='{locationName}', bounds=({scaledX},{scaledY},{scaledWidth},{scaledHeight})");
+                    Globals.Log($"Clicked location: {locationName}");
+                    return;
+                }
+            }
+
+            Globals.Log("Clicked location: No location found");
+        }
+
+        private Point GetPanelPosition(Panel panel)
+        {
+            // Get the panel's position relative to the window
+            // This is a simplified approach - in Myra, widgets have position properties
+            if (_window.Content != null && _window.Content is Panel rootPanel)
+            {
+                // Traverse the widget tree to find the panel's position
+                // For now, we'll assume the left panel is at the origin of the grid
+                // which is at the origin of the window
+                return new Point(0, 0);
+            }
+            return new Point(0, 0);
+        }
+
         public void UpdateGameInfo(GameStatus game)
         {
             Globals.Log("MainGameScreen.UpdateGameInfo(): enter");
@@ -199,7 +376,6 @@ namespace rurik.UI
                 updateMapPanel();
             }
         }
-
         private void updateMapPanel()
         {
             //Globals.Log("MainGameScreen.updateMapPanel(): enter");
@@ -210,34 +386,67 @@ namespace rurik.UI
             // Add map texture display
             if (_rurikMonoGame.Textures != null)
             {
-                //Globals.Log("MainGameScreen.updateMapPanel(): got textures");  
+                //Globals.Log("MainGameScreen.updateMapPanel(): got textures");
                 _mapTexture = _rurikMonoGame.Textures.GetTexture("map");
 
-                if (_mapTexture != null)                
+                if (_mapTexture != null)
                 {
-                    //Globals.Log("MainGameScreen.updateMapPanel(): got map texture"); 
+                    //Globals.Log("MainGameScreen.updateMapPanel(): got map texture");
                     // Create an Image widget to display the map texture
                     // Using TextureRegion from MonoGame to wrap the Texture2D
                     var textureRegion = new Myra.Graphics2D.TextureAtlases.TextureRegion(_mapTexture);
                     var terrainImage = new Image();
                     terrainImage.Renderable = textureRegion;
+                  
                     _leftPanel.Widgets.Add(terrainImage);
 
                     _leftPanel.Height = _window.Height;
                     float ratio = (float)((float)_window.Height / (float)_mapTexture.Height);
                     int leftPanelWidth = (int)((float)_mapTexture.Width * ratio);
                     _leftPanel.Width = leftPanelWidth;
-                    //Globals.Log("MainGameScreen.updateMapPanel(): window:" + _window.Width + "x" + _window.Height + 
-                    //            ", panel:" + _panel.Width + "x" + _panel.Height +
-                    //            ", left panel:" + leftPanelWidth+ "x" + _leftPanel.Height +
-                    //            ", map texture:" + _mapTexture.Width + "x" + _mapTexture.Height + ", ratio:" + ratio );
-
+                    
+                    // Log the location bounds with scaled coordinates
+                    //logLocationBounds(_mapTexture.Width, _mapTexture.Height, leftPanelWidth, (int)_leftPanel.Height);
 
                 }
                 else
                 {
                     Globals.Log("MainGameScreen.updateMapPanel(): map texture not found");
                 }
+            }
+        }
+
+        private void logLocationBounds(int textureWidth, int textureHeight, int panelWidth, int panelHeight)
+        {
+            // Calculate scaling factors
+            // First scale from 800x600 reference to actual texture dimensions
+            float scaleXFromReference = (float)textureWidth / ReferenceWidth;
+            float scaleYFromReference = (float)textureHeight / ReferenceHeight;
+            // Then scale from texture to panel
+            float scaleX = (float)panelWidth / (float)textureWidth;
+            float scaleY = (float)panelHeight / (float)textureHeight;
+
+            //Globals.Log($"Map bounds: texture={textureWidth}x{textureHeight}, panel={panelWidth}x{panelHeight}");
+            //Globals.Log($"Scaling factors: fromReference=({scaleXFromReference:F4},{scaleYFromReference:F4}), toPanel=({scaleX:F4},{scaleY:F4})");
+
+            foreach (var kvp in _locationBounds)
+            {
+                var locationName = kvp.Key;
+                var bounds = kvp.Value;
+     
+                // First scale from 0-1000 reference to actual texture dimensions
+                float textureX = bounds.X * scaleXFromReference;
+                float textureY = bounds.Y * scaleYFromReference;
+                float textureWidthScaled = bounds.Width * scaleXFromReference;
+                float textureHeightScaled = bounds.Height * scaleYFromReference;
+
+                // Then scale from texture to panel
+                int scaledX = (int)(textureX * scaleX);
+                int scaledY = (int)(textureY * scaleY);
+                int scaledWidth = (int)(textureWidthScaled * scaleX);
+                int scaledHeight = (int)(textureHeightScaled * scaleY);
+     
+                //Globals.Log($"Location '{locationName}': X={scaledX}, Y={scaledY}, Width={scaledWidth}, Height={scaledHeight}");
             }
         }
     }

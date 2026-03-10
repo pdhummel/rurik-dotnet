@@ -13,6 +13,9 @@ using Point = Microsoft.Xna.Framework.Point;
 using Microsoft.Xna.Framework.Audio;
 using static Microsoft.Xna.Framework.Graphics.Texture2D;
 using rurik.UI;
+using Microsoft.Xna.Framework.Input;
+using SharpDX.Direct2D1.Effects;
+using Myra.Graphics2D;
 namespace rurik;
 
 public class RurikMonoGame : Game
@@ -29,6 +32,8 @@ public class RurikMonoGame : Game
     public List<GameEvent> GamePlayEvents { get; set; } = new List<GameEvent>();
     
     public Textures Textures { get; private set; } = new Textures();
+    public GameControl GameControl { get; private set; }
+
     
     // UI Screens
     //public GameLogScreen GameLogScreen { get; set; }
@@ -60,6 +65,7 @@ public class RurikMonoGame : Game
         IsMouseVisible = true;
         Window.AllowUserResizing = true;
         Client = new Client(this);
+        GameControl = new GameControl(this);
         
         // Initialize UI screens
         //GameLogScreen = new GameLogScreen();
@@ -173,6 +179,7 @@ public class RurikMonoGame : Game
 
     protected override void Update(GameTime gameTime)
     {
+        GameControl.Update(gameTime);
         base.Update(gameTime);
     }
 
@@ -187,6 +194,8 @@ public class RurikMonoGame : Game
         window.Id = "MyraMainWindow";
         window.Width = Globals.WIDTH;
         window.Height = Globals.HEIGHT;
+        //window.Padding = new Myra.Graphics2D.Thickness(0);
+        //window.BorderThickness = new Myra.Graphics2D.Thickness(0);
         Desktop.Root = window;
     }
 
@@ -257,6 +266,19 @@ public class RurikMonoGame : Game
             ShowCurrentScreen();
         }
     }
+
+    public void handleLeftClick(MouseState mouseState)
+    {
+        // Check if MainGameScreen is visible
+        if (CurrentMyraScreen == "MainGameScreen" && MainGameScreen != null)
+        {
+            MainGameScreen.handleLeftClick(mouseState);
+        }
+    }
+
+    public void handleRightClick(MouseState mouseState)
+    {
+    }   
 
 
 }
