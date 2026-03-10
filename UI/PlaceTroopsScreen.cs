@@ -21,7 +21,9 @@ namespace rurik.UI
         
         private Label _titleLabel;
         private Label _instructionsLabel;
+        private Label _troopCountLabel;
         private TextBox _troopCountInput;
+        private Label _locationLabel;
         private ComboView _locationSelect;
         private Button _placeButton;
         private Button _closeButton;
@@ -114,6 +116,15 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
+            // Troop count label
+            _troopCountLabel = new Label()
+            {
+                Id = "troopCountLabel",
+                Text = "Troop Count:",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
             // Troop count input
             _troopCountInput = new TextBox()
             {
@@ -128,6 +139,15 @@ namespace rurik.UI
                 {
                     _troopCount = result;
                 }
+            };
+
+            // Location label
+            _locationLabel = new Label()
+            {
+                Id = "locationLabel",
+                Text = "Location:",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
             };
 
             // Location selection combo box
@@ -175,7 +195,9 @@ namespace rurik.UI
             // Add widgets to panel
             //_contentPanel.Widgets.Add(_titleLabel);
             //_contentPanel.Widgets.Add(_instructionsLabel);
+            _contentPanel.Widgets.Add(_troopCountLabel);
             _contentPanel.Widgets.Add(_troopCountInput);
+            _contentPanel.Widgets.Add(_locationLabel);
             _contentPanel.Widgets.Add(_locationSelect);
             _contentPanel.Widgets.Add(_placeButton);
             //_contentPanel.Widgets.Add(_closeButton);
@@ -194,7 +216,44 @@ namespace rurik.UI
         public void Show()
         {
             _isVisible = true;
+            // Populate location list when showing the modal
+            PopulateLocationList();
             _window.ShowModal(_desktop);
+            
+        }
+        
+        private void PopulateLocationList()
+        {
+            // Clear existing location widgets
+            //if (_locationSelect != null && _locationSelect.Widgets != null)
+            //{
+            //    for (int i = _locationSelect.Widgets.Count - 1; i >= 0; i--)
+            //    {
+            //        _locationSelect.Widgets.RemoveAt(i);
+            //    }
+            //}
+            _locationSelect.Widgets.Clear();
+
+            // Add location options to combo box
+            var locationNames = new List<string>
+            {
+                "Novgorod", "Pskov", "Polotsk", "Smolensk", "Rostov", "Chernigov", "Suzdal", "Pereyaslavl",
+                "Volyn", "Kiev", "Galich", "Murom", "Brest", "Peresech", "Azov"
+            };
+            locationNames.Sort(); // Sort locations alphabetically
+            
+            foreach (var locationName in locationNames)
+            {
+                _locationSelect.Widgets.Add(new Label() { Text = locationName });
+                
+            }
+            
+            // Select the first location by default
+            if (_locationSelect.Widgets.Count > 0)
+            {
+                _locationSelect.SelectedIndex = 0;
+                _selectedLocation = locationNames[0];
+            }
         }
 
         public void Hide()
@@ -218,10 +277,12 @@ namespace rurik.UI
             _game = game;
 
             // Clear existing location widgets
-            for (int i = _locationSelect.Widgets.Count - 1; i >= 0; i--)
-            {   
-                if (_locationSelect != null && _locationSelect.Widgets != null && _locationSelect.Widgets.Count > i && i > 0)
+            if (_locationSelect != null && _locationSelect.Widgets != null)
+            {
+                for (int i = _locationSelect.Widgets.Count - 1; i >= 0; i--)
+                {
                     _locationSelect.Widgets.RemoveAt(i);
+                }
             }
 
             // Add location options to combo box
