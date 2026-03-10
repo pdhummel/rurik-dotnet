@@ -121,6 +121,7 @@ namespace rurik
                     SecretAgendaCard card = Cards.dealRandomSecretAgendaCard();
                     player.secretAgenda.Add(card);
                 }
+                // troopsToDeploy is already set to 3 in the Player constructor, so we don't need to set it here
                 Log.AddLogEntry(player.Color + " was dealt 2 secret agenda cards: " + string.Join(", ", player.secretAgenda.Select(c => c.name)));
             }
 
@@ -245,13 +246,12 @@ namespace rurik
             if (player == null)
                 return;
 
-            // Add troop to the location - need to access the actual location in the map
-            // Since we don't know the exact structure of GameMap, we'll use a different approach
-            // This is a placeholder - in a real implementation, you'd need to implement the correct GameMap structure
-            // For now, we'll just call the method but handle the error appropriately
+
             try
             {
-                // This will be implemented properly in the real GameMap implementation
+                Location location = GameMap.LocationByName[locationName];
+                location.troopsByColor[color]++;
+                player.TroopsToDeploy--;
                 Log.AddLogEntry(color + " placed initial troop at " + locationName);
             }
             catch (Exception)
@@ -260,20 +260,19 @@ namespace rurik
                 return;
             }
             
-            player.TroopsToDeploy--;
-            Log.AddLogEntry(color + " placed initial troop at " + locationName);
             
             // Check if all players have placed their initial troops
-            Player nextPlayer = Players.GetNextPlayer(player);
-            if (nextPlayer.TroopsToDeploy > 0)
+            Players.advanceToNextPlayer();
+            if (Players.getCurrentPlayer().TroopsToDeploy > 0)
             {
-                Players.setCurrentPlayerByColor(nextPlayer.Color);
+                // Still have troops to deploy, stay in the same state
+                GameStates.ChangeState("waitingForTroopPlacement");
             }
             else
             {
-                Players.setCurrentPlayerByColor(Players.getFirstPlayer().Color);
+                // All players have placed their troops, move to next state
                 GameStates.ChangeState("waitingForLeaderPlacement");
-                Players.setTroopsToDeploy(1);
+                //Players.setTroopsToDeploy(1); // Reset troops to deploy for leader placement
             }
             AiEvaluateGame();
         }

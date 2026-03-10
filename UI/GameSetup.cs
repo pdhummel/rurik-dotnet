@@ -39,6 +39,7 @@ namespace rurik.UI
         
         private bool _isVisible = false;
         private GameStatus _game;
+        private GameMap _gameMap;
         
         private readonly Desktop _desktop;
 
@@ -327,10 +328,20 @@ namespace rurik.UI
             }
         }
 
+
         public void UpdateGameInfo(GameStatus game)
+        {
+            UpdateGameInfo(game, null);
+        }
+
+        public void UpdateGameInfo(GameStatus game, GameMap map)
         {
             Globals.Log("UpdateGameInfo(): enter");
             _game = game;
+            if (map != null)
+            {
+                _gameMap = map;
+            }
         
             // Update game info labels
             if (game != null)

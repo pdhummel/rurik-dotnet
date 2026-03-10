@@ -16,7 +16,7 @@ public class Client(RurikMonoGame game)
     public string? ClientIdentifier { get; set; }   // this is the player name
     private NetPeer? serverPeer;
 
-    public RurikMonoGame RurikGame { get; set; } = game;
+    public RurikMonoGame RurikMonoGame { get; set; } = game;
     public JoinGameValues? JoinGameValues { get; set; }
 
     public ServerGameState? GameState { get; set; }
@@ -146,7 +146,7 @@ public class Client(RurikMonoGame game)
 
     private void handleGamePlayEvent(GameEvent gameEvent)
     {
-        RurikGame.handleGamePlayEvent(gameEvent);
+        RurikMonoGame.handleGamePlayEvent(gameEvent);
     }
 
 

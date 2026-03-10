@@ -27,9 +27,12 @@ namespace rurik.UI
         
         private bool _isVisible = false;
         private GameStatus _game;
+        private GameMap _gameMap;
         
         private readonly Desktop _desktop;
         private Texture2D? _mapTexture;
+        
+        private PlaceTroopsScreen? _placeTroopsModal;
 
 
         // Map location bounds (x, y, width, height) relative to an 800x600 reference image
@@ -42,45 +45,6 @@ namespace rurik.UI
         private static readonly float ScaleFromReferenceToTextureX = TextureWidth / ReferenceWidth;
         private static readonly float ScaleFromReferenceToTextureY = TextureHeight / ReferenceHeight;
 
-/*
-- **Pskov**: (160, 170), (282, 240).
-- **Novgorod**: (356, 191), (516, 265).
-- **Rostov**: (654, 207), (772, 282).
-- **Suzdal**: (828, 232), (954, 315).
-- **Polotsk**: (259, 355), (367, 433).
-- **Smolensk**: (502, 360), (632, 444).
-- **Brest**: (43, 421), (172, 500).
-- **Chernigov**: (522, 487), (657, 577).
-- **Kiev**: (323, 541), (423, 633).
-- **Volyn**: (160, 592), (260, 676).
-- **Pereyaslavl**: (589, 597), (754, 686).
-- **Galich**: (205, 779), (333, 859).
-- **Peresech**: (315, 858), (452, 939).
-- **Azov**: (824, 705), (941, 791).
-
-
-            {"Novgorod", new Rectangle(394, 206, 485, 224)},
-            {"Pskov", new Rectangle(190, 185, 249, 203)},
-            {"Polotsk", new Rectangle(275, 377, 351, 394)},
-            {"Smolensk", new Rectangle(524, 381, 615, 397)},
-            {"Rostov", new Rectangle(684, 224, 755, 240)},
-            {"Chernigov", new Rectangle(547, 521, 637, 538)},
-            {"Suzdal", new Rectangle(864, 265, 934, 283)},
-            {"Pereyaslavl", new Rectangle(612, 615, 730, 638)},
-
-
-            // Yellow locations (Kiev region)
-            {"Volyn", new Rectangle(175, 615, 240, 634)},
-            {"Kiev", new Rectangle(354, 563, 396, 583)},
-            {"Galich", new Rectangle(235, 793, 294, 811)},
-            {"Murom", new Rectangle(844, 491, 910, 506)},
-
-
-            // Brown locations (Azov region)
-            {"Brest", new Rectangle(80, 438, 142, 454)},
-            {"Peresech", new Rectangle(346, 882, 427, 900)},
-            {"Azov", new Rectangle(864, 722, 910, 740)}
-*/
         private Dictionary<string, Rectangle> _locationBounds = new Dictionary<string, Rectangle>
         {
             // Locations have been scaled to 0-1000.
@@ -115,6 +79,7 @@ namespace rurik.UI
             _desktop = desktop;
             _window = _desktop.Root as Window;
             game.MainGameScreen = this;
+            _placeTroopsModal = new PlaceTroopsScreen(game, desktop);
             Initialize();
         }
 
@@ -224,6 +189,7 @@ namespace rurik.UI
             // Add main grid to panel
             _panel.Widgets.Add(_mainGrid);
         }
+
 
         public void Update()
         {
@@ -366,16 +332,40 @@ namespace rurik.UI
 
         public void UpdateGameInfo(GameStatus game)
         {
+            UpdateGameInfo(game, null);
+        }
+
+        public void UpdateGameInfo(GameStatus game, GameMap map)
+        {
             Globals.Log("MainGameScreen.UpdateGameInfo(): enter");
             _game = game;
+
+            if (map != null)
+            {
+                _gameMap = map;
+            }
+
 
             // Update game info labels
             if (game != null)
             {
                 // Update left panel with map texture
                 updateMapPanel();
+
+                // Check if we should show the PlaceTroops modal
+                // Show modal when game state is waitingForTroopPlacement and player is the current player
+                if (game.CurrentState == "waitingForTroopPlacement" && game.ClientPlayer != null)
+                {
+                    // Check if the client player is the current player
+                    if (game.CurrentPlayerColor == game.ClientPlayer.Color)
+                    {
+                        Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlaceTroops modal");
+                        _placeTroopsModal?.Show();
+                    }
+                }
             }
         }
+
         private void updateMapPanel()
         {
             //Globals.Log("MainGameScreen.updateMapPanel(): enter");
@@ -413,40 +403,6 @@ namespace rurik.UI
                 {
                     Globals.Log("MainGameScreen.updateMapPanel(): map texture not found");
                 }
-            }
-        }
-
-        private void logLocationBounds(int textureWidth, int textureHeight, int panelWidth, int panelHeight)
-        {
-            // Calculate scaling factors
-            // First scale from 800x600 reference to actual texture dimensions
-            float scaleXFromReference = (float)textureWidth / ReferenceWidth;
-            float scaleYFromReference = (float)textureHeight / ReferenceHeight;
-            // Then scale from texture to panel
-            float scaleX = (float)panelWidth / (float)textureWidth;
-            float scaleY = (float)panelHeight / (float)textureHeight;
-
-            //Globals.Log($"Map bounds: texture={textureWidth}x{textureHeight}, panel={panelWidth}x{panelHeight}");
-            //Globals.Log($"Scaling factors: fromReference=({scaleXFromReference:F4},{scaleYFromReference:F4}), toPanel=({scaleX:F4},{scaleY:F4})");
-
-            foreach (var kvp in _locationBounds)
-            {
-                var locationName = kvp.Key;
-                var bounds = kvp.Value;
-     
-                // First scale from 0-1000 reference to actual texture dimensions
-                float textureX = bounds.X * scaleXFromReference;
-                float textureY = bounds.Y * scaleYFromReference;
-                float textureWidthScaled = bounds.Width * scaleXFromReference;
-                float textureHeightScaled = bounds.Height * scaleYFromReference;
-
-                // Then scale from texture to panel
-                int scaledX = (int)(textureX * scaleX);
-                int scaledY = (int)(textureY * scaleY);
-                int scaledWidth = (int)(textureWidthScaled * scaleX);
-                int scaledHeight = (int)(textureHeightScaled * scaleY);
-     
-                //Globals.Log($"Location '{locationName}': X={scaledX}, Y={scaledY}, Width={scaledWidth}, Height={scaledHeight}");
             }
         }
     }

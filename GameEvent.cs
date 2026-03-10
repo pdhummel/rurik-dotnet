@@ -15,6 +15,7 @@ public class GameEvent
     public static readonly string EVENT_LEADER_CHOSEN = "leaderChosen";
     public static readonly string EVENT_FIRST_PLAYER_SELECTED = "firstPlayerSelected";
     public static readonly string EVENT_SECRET_AGENDA_SELECTED = "secretAgendaSelected";
+    public static readonly string EVENT_TROOP_PLACED = "troopPlaced";
     
     // Used to send separate message to clients for Events.
     // TODO: Also keep track of these events in a server log.
@@ -25,6 +26,7 @@ public class GameEvent
     public RurikMonoGame? Game { get; set; }
     public ServerGameState? GameState {get; set; }
     public GameStatus? GameStatus {get; set;}
+    public GameMap? GameMap {get; set;}
     public Games? Games {get;set;}
     public string? EventString { get; set; }
     public string? PlayerName { get; set; }
@@ -54,7 +56,8 @@ public class GameEvent
             EVENT_LEADER_CHOSEN,
             EVENT_FIRST_PLAYER_SELECTED,
             EVENT_GAME_STATE_UPDATE,
-            EVENT_SECRET_AGENDA_SELECTED
+            EVENT_SECRET_AGENDA_SELECTED,
+            EVENT_TROOP_PLACED
         };
         GamePlayEvents.UnionWith(gamePlayEvents);
     }
@@ -147,6 +150,14 @@ public class GameEvent
         if (Game.GameSetup == null)
             return;
         Game.GameSetup.UpdateGameInfo(GameStatus);
+    }
+
+    public void troopPlacedHandler()
+    {
+        Globals.Log("troopPlacedHandler(): enter");
+        if (Game.MainGameScreen == null)
+            return;
+        Game.MainGameScreen.UpdateGameInfo(GameStatus, GameMap);
     }
 
     public void gameStateUpdateHandler()
