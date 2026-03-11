@@ -12,7 +12,7 @@ using rurik.Actions;
 
 namespace rurik.UI
 {
-    public class PlaceTroopsScreen : IGameScreen
+    public class PlaceTroopsModal : IGameScreen
     {
         private Window _window = new Window();
         private Panel _panel;
@@ -35,7 +35,7 @@ namespace rurik.UI
         private int _troopCount = 1;
         private string _selectedLocation = "";
 
-        public PlaceTroopsScreen(RurikMonoGame game, Desktop desktop)
+        public PlaceTroopsModal(RurikMonoGame game, Desktop desktop)
         {
             _rurikMonoGame = game;
             _desktop = desktop;
@@ -267,32 +267,35 @@ namespace rurik.UI
             switch (eventName)
             {
                 case "updateGameInfo":
-                    UpdateGameInfo(data as GameStatus);
+                    UpdateGameInfo(data as GameStatus, null);
                     break;
             }
         }
 
-        public void UpdateGameInfo(GameStatus game)
+        public void UpdateGameInfo(GameStatus game, GameMap map)
         {
             _game = game;
 
             // Clear existing location widgets
             if (_locationSelect != null && _locationSelect.Widgets != null)
             {
-                for (int i = _locationSelect.Widgets.Count - 1; i >= 0; i--)
-                {
-                    _locationSelect.Widgets.RemoveAt(i);
-                }
+                _locationSelect.Widgets.Clear();
             }
 
-            // Add location options to combo box
-            // Note: GameStatus doesn't directly expose the game map, so we need to get it from the RurikGame
-            // For now, we'll use the hardcoded location names from MainGameScreen
-            var locationNames = new List<string>
+            // Add location options to combo box.
+            var locationNames = new List<string>();
+            if (map != null)
             {
-                "Novgorod", "Pskov", "Polotsk", "Smolensk", "Rostov", "Chernigov", "Suzdal", "Pereyaslavl",
-                "Volyn", "Kiev", "Galich", "Murom", "Brest", "Peresech", "Azov"
-            };
+                locationNames = map.GetLocationsForGameNames();
+            }
+            else
+            {
+                locationNames = new List<string>
+                {
+                    "Novgorod", "Pskov", "Polotsk", "Smolensk", "Rostov", "Chernigov", "Suzdal", "Pereyaslavl",
+                    "Volyn", "Kiev", "Galich", "Murom", "Brest", "Peresech", "Azov"
+                };
+            }
             locationNames.Sort(); // Sort locations alphabetically
 
             foreach (var locationName in locationNames)
@@ -313,12 +316,14 @@ namespace rurik.UI
             Globals.Log("PlaceTroops.OnPlaceButtonClicked(): enter");
             if (_game == null || _locationSelect.SelectedIndex == null || _locationSelect.SelectedIndex < 0)
                 return;
+            Globals.Log("PlaceTroops.OnPlaceButtonClicked(): get selectedItem");
+
 
             // Get the selected location
             var selectedItem = _locationSelect.Widgets[(int)_locationSelect.SelectedIndex] as Label;
             if (selectedItem == null)
                 return;
-
+            Globals.Log("PlaceTroops.OnPlaceButtonClicked(): selectedItem=" + selectedItem);
             _selectedLocation = selectedItem.Text;
 
             // Validate troop count

@@ -149,7 +149,7 @@ public class GameEvent
         Globals.Log("secretAgendaSelectedHandler(): enter");
         if (Game.GameSetup == null)
             return;
-        Game.GameSetup.UpdateGameInfo(GameStatus);
+        Game.GameSetup.UpdateGameInfo(GameStatus, GameMap);
     }
 
     public void troopPlacedHandler()

@@ -11,7 +11,7 @@ using rurik;
 
 namespace rurik.UI
 {
-    public class GameSetup : IGameScreen
+    public class GameSetupScreen : IGameScreen
     {
         private Window _window;
         private RurikMonoGame _rurikMonoGame;
@@ -43,7 +43,7 @@ namespace rurik.UI
         
         private readonly Desktop _desktop;
 
-        public GameSetup(RurikMonoGame game, Desktop desktop)
+        public GameSetupScreen(RurikMonoGame game, Desktop desktop)
         {
             _rurikMonoGame = game;
             _desktop = desktop;
@@ -404,7 +404,7 @@ namespace rurik.UI
                 // Switch to MainGameScreen
                 MainGameScreen mainGameScreen = _rurikMonoGame.MainGameScreen;
                 _rurikMonoGame.CurrentMyraScreen = "MainGameScreen";
-                mainGameScreen.UpdateGameInfo(game);
+                mainGameScreen.UpdateGameInfo(game, _gameMap);
                 mainGameScreen.Show();
                 this.Hide();
             }

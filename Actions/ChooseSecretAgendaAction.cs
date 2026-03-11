@@ -53,7 +53,8 @@ public class ChooseSecretAgendaAction : PlayerAction
         //gameStatus.ClientPlayer = game.Players.getPlayerByColor(ChooseSecretAgendaValues.PlayerColor);
         GameEvent gameEvent = new(EVENT_SECRET_AGENDA_SELECTED)
         {
-            GameStatus = gameStatus
+            GameStatus = gameStatus,
+            GameMap = game.GameMap
         };
         server.SendGamePlayEvent(gameEvent);
         server.SendGames();

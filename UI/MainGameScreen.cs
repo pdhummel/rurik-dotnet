@@ -32,8 +32,16 @@ namespace rurik.UI
         private readonly Desktop _desktop;
         private Texture2D? _mapTexture;
         
-        private PlaceTroopsScreen? _placeTroopsModal;
+        private PlaceTroopsModal? _placeTroopsModal;
 
+        // Color mapping for factions
+        private static readonly Dictionary<string, Color> FactionColors = new Dictionary<string, Color>
+        {
+            {"red", Color.Red},
+            {"blue", Color.Blue},
+            {"white", Color.White},
+            {"yellow", Color.Yellow}
+        };
 
         // Map location bounds (x, y, width, height) relative to an 800x600 reference image
         // The actual map texture is 1933x2544, so we need to scale from 800x600 to 1933x2544 first
@@ -79,7 +87,7 @@ namespace rurik.UI
             _desktop = desktop;
             _window = _desktop.Root as Window;
             game.MainGameScreen = this;
-            _placeTroopsModal = new PlaceTroopsScreen(game, desktop);
+            _placeTroopsModal = new PlaceTroopsModal(game, desktop);
             Initialize();
         }
 
@@ -239,25 +247,25 @@ namespace rurik.UI
             if (_leftPanel.Widgets.Count == 0)
                 return;
 
-            Globals.Log("handleLeftClick(): monogame window=" + _rurikMonoGame.Window.Position.X + "," + _rurikMonoGame.Window.Position.Y);
+            //Globals.Log("handleLeftClick(): monogame window=" + _rurikMonoGame.Window.Position.X + "," + _rurikMonoGame.Window.Position.Y);
             int myraWindowX = _window.ActualBounds.X; // + 8; // Adjust for window border width
             int myraWindowY = _window.ActualBounds.Y + 30; // Adjust for title bar height
-            Globals.Log("handleLeftClick(): myra window=(" + myraWindowX+ "," + myraWindowY + "," + _window.ActualBounds.Width + "," + _window.ActualBounds.Height + ")");
+            //Globals.Log("handleLeftClick(): myra window=(" + myraWindowX+ "," + myraWindowY + "," + _window.ActualBounds.Width + "," + _window.ActualBounds.Height + ")");
 
             // Get the mouse position relative to the window
             Point mousePosition = new Point(mouseState.X, mouseState.Y);
-            Globals.Log($"handleLeftClick(): mousePosition=({mouseState.X},{mouseState.Y})");
+            //Globals.Log($"handleLeftClick(): mousePosition=({mouseState.X},{mouseState.Y})");
 
             // Calculate the position of the left panel relative to the window
             // The left panel is at column 0, row 0 of the main grid
             Point panelPosition = GetPanelPosition(_leftPanel);
-            Globals.Log($"handleLeftClick(): panelPosition=({panelPosition.X},{panelPosition.Y})");
+            //Globals.Log($"handleLeftClick(): panelPosition=({panelPosition.X},{panelPosition.Y})");
 
             // Calculate the mouse position relative to the left panel
             Point relativeMousePosition = new Point(mousePosition.X - myraWindowX - panelPosition.X, mousePosition.Y - myraWindowY - panelPosition.Y);
 
             // Log the mouse position for debugging
-            Globals.Log($"handleLeftClick(): relativeMousePosition=({relativeMousePosition.X},{relativeMousePosition.Y})");
+            //Globals.Log($"handleLeftClick(): relativeMousePosition=({relativeMousePosition.X},{relativeMousePosition.Y})");
 
             // Get the current map texture dimensions and panel dimensions for scaling
             if (_mapTexture == null)
@@ -279,7 +287,7 @@ namespace rurik.UI
             float scaleY = (float)panelHeight / (float)textureHeight;
 
             // Log scaling info for debugging
-            Globals.Log($"handleLeftClick(): texture=({textureWidth}x{textureHeight}), panel=({panelWidth}x{panelHeight}), scaleFromReference=({scaleXFromReference:F4},{scaleYFromReference:F4}), scaleToPanel=({scaleX:F4},{scaleY:F4})");
+            //Globals.Log($"handleLeftClick(): texture=({textureWidth}x{textureHeight}), panel=({panelWidth}x{panelHeight}), scaleFromReference=({scaleXFromReference:F4},{scaleYFromReference:F4}), scaleToPanel=({scaleX:F4},{scaleY:F4})");
 
             // Check which location was clicked
             foreach (var kvp in _locationBounds)
@@ -307,13 +315,13 @@ namespace rurik.UI
                     relativeMousePosition.Y >= scaledY && relativeMousePosition.Y <= scaledY + scaledHeight)
                 {
                     // Log bounds for debugging
-                    Globals.Log($"handleLeftClick(): location='{locationName}', bounds=({scaledX},{scaledY},{scaledWidth},{scaledHeight})");
+                    //Globals.Log($"handleLeftClick(): location='{locationName}', bounds=({scaledX},{scaledY},{scaledWidth},{scaledHeight})");
                     Globals.Log($"Clicked location: {locationName}");
                     return;
                 }
             }
 
-            Globals.Log("Clicked location: No location found");
+            //Globals.Log("Clicked location: No location found");
         }
 
         private Point GetPanelPosition(Panel panel)
@@ -360,6 +368,7 @@ namespace rurik.UI
                     if (game.CurrentPlayerColor == game.ClientPlayer.Color)
                     {
                         Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlaceTroops modal");
+                        _placeTroopsModal?.UpdateGameInfo(_game, _gameMap);
                         _placeTroopsModal?.Show();
                     }
                 }
@@ -387,21 +396,99 @@ namespace rurik.UI
                     var textureRegion = new Myra.Graphics2D.TextureAtlases.TextureRegion(_mapTexture);
                     var terrainImage = new Image();
                     terrainImage.Renderable = textureRegion;
-                  
+      
                     _leftPanel.Widgets.Add(terrainImage);
 
                     _leftPanel.Height = _window.Height;
                     float ratio = (float)((float)_window.Height / (float)_mapTexture.Height);
                     int leftPanelWidth = (int)((float)_mapTexture.Width * ratio);
                     _leftPanel.Width = leftPanelWidth;
-                    
+                  
                     // Log the location bounds with scaled coordinates
                     //logLocationBounds(_mapTexture.Width, _mapTexture.Height, leftPanelWidth, (int)_leftPanel.Height);
 
+                    // Draw troop overlays
+                    drawTroopOverlays();
                 }
                 else
                 {
                     Globals.Log("MainGameScreen.updateMapPanel(): map texture not found");
+                }
+            }
+        }
+
+        private void drawTroopOverlays()
+        {
+            //Globals.Log("drawTroopOverlays(): enter");
+            //Globals.Log("drawTroopOverlays(): gameMap=" + _gameMap);
+            //Globals.Log("drawTroopOverlays(): _mapTexture=" + _mapTexture);
+            if (_gameMap == null || _mapTexture == null)
+                return;
+
+            //Globals.Log("drawTroopOverlays(): leftPanel=" + _leftPanel);
+            // Get panel dimensions
+            int panelWidth = _leftPanel.Width ?? 0;
+            int panelHeight = _leftPanel.Height ?? 0;
+
+            // Calculate scaling factors from reference (0-1000) to panel
+            float scaleXFromReference = (float)_mapTexture.Width / ReferenceWidth;
+            float scaleYFromReference = (float)_mapTexture.Height / ReferenceHeight;
+            float scaleX = (float)panelWidth / (float)_mapTexture.Width;
+            float scaleY = (float)panelHeight / (float)_mapTexture.Height;
+ 
+            // Draw overlays for each location that has troops
+            foreach (var location in _gameMap.LocationsForGame)
+            {
+                //Globals.Log("drawTroopOverlays(): location=" + location.name);
+                foreach (var kvp in location.troopsByColor)
+                {
+                    string color = kvp.Key;
+                    int troopCount = kvp.Value;
+                    //Globals.Log("drawTroopOverlays(): color=" + color + "count=" + troopCount);
+
+                    if (troopCount > 0)
+                    {
+                        // Get location bounds
+                        if (_locationBounds.TryGetValue(location.name, out Rectangle bounds))
+                        {
+                            // Scale bounds to panel coordinates
+                            float textureX = bounds.X * scaleXFromReference;
+                            float textureY = bounds.Y * scaleYFromReference;
+                            int boundsWidth = bounds.Width - bounds.X;
+                            int boundsHeight = bounds.Height - bounds.Y;
+                            float textureWidthScaled = boundsWidth * scaleXFromReference;
+                            float textureHeightScaled = boundsHeight * scaleYFromReference;
+
+                            int overlayX = (int)(textureX * scaleX);
+                            int overlayY = (int)(textureY * scaleY);
+                            int overlayWidth = (int)(textureWidthScaled * scaleX);
+                            int overlayHeight = (int)(textureHeightScaled * scaleY);
+
+                            // Create overlay panel
+                            Panel overlayPanel = new Panel()
+                            {
+                                Id = $"overlay_{location.name}_{color}",
+                                //Background = new SolidBrush(FactionColors[color] with { A = 128 }), // Semi-transparent
+                                Background = new SolidBrush(FactionColors[color]), // Semi-transparent
+                                Width = overlayWidth,
+                                Height = overlayHeight,
+                                HorizontalAlignment = HorizontalAlignment.Stretch,
+                                VerticalAlignment = VerticalAlignment.Stretch,
+                                Margin = new Thickness(overlayX, overlayY, 0, 0)
+                            };
+
+                            // Add troop count label
+                            Label troopLabel = new Label()
+                            {
+                                Text = troopCount.ToString(),
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Center
+                            };
+
+                            overlayPanel.Widgets.Add(troopLabel);
+                            _leftPanel.Widgets.Add(overlayPanel);
+                        }
+                    }
                 }
             }
         }

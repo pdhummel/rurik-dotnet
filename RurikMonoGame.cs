@@ -39,7 +39,7 @@ public class RurikMonoGame : Game
     //public GameLogScreen GameLogScreen { get; set; }
     //public EndGameScreen EndGameScreen { get; set; }
     public GameListScreen? GameListScreen { get; set; }
-    public GameSetup? GameSetup { get; set; }
+    public GameSetupScreen? GameSetup { get; set; }
     public MainGameScreen? MainGameScreen { get; set; }
     public string CurrentMyraScreen { get; set; } = "GameListScreen";
     public ChooseFirstPlayerModal? ChooseFirstPlayerModal { get; set; }
@@ -141,7 +141,7 @@ public class RurikMonoGame : Game
         setupDesktop();
         GameListScreen = new GameListScreen(this, Desktop);
         GameListScreen.Initialize();
-        GameSetup = new GameSetup(this, Desktop);
+        GameSetup = new GameSetupScreen(this, Desktop);
         GameSetup.Initialize();
         MainGameScreen = new MainGameScreen(this, Desktop);
         MainGameScreen.Initialize();
@@ -272,7 +272,7 @@ public class RurikMonoGame : Game
         // Check if MainGameScreen is visible
         if (CurrentMyraScreen == "MainGameScreen" && MainGameScreen != null)
         {
-            MainGameScreen.handleLeftClick(mouseState);
+            //MainGameScreen.handleLeftClick(mouseState);
         }
     }
 

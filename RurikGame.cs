@@ -111,7 +111,7 @@ namespace rurik
                 ThrowError("Not enough players to start the game", "StartGame");
                 return;
             }
-
+            GameMap.SetLocationsForGame(Players.getNumberOfPlayers());
             // Deal 2 Secret Agenda cards to each player
             for (int i = 0; i < Players.getNumberOfPlayers(); i++)
             {
