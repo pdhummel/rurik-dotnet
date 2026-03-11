@@ -24,7 +24,7 @@ public class Location
         this.neighbors = neighbors;
         this.troopsByColor = new Dictionary<string, int>
         {
-            {"red", 1},
+            {"red", 0},
             {"blue", 0},
             {"white", 0},
             {"yellow", 0}

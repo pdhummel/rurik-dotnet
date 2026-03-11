@@ -213,7 +213,7 @@ namespace rurik.UI
         {
             //Globals.Log("MainGameScreen.Show(): enter, window=" + _window.Id + ", panel=" + _window.Content.Id);
             _isVisible = true;
-            if (_window.Content != null)
+            if (_window != null && _window.Content != null)
             {
                 _window.Content.RemoveFromParent();
             }
@@ -446,6 +446,7 @@ namespace rurik.UI
                     int troopCount = kvp.Value;
                     //Globals.Log("drawTroopOverlays(): color=" + color + "count=" + troopCount);
 
+                    troopCount = 1;
                     if (troopCount > 0)
                     {
                         // Get location bounds
@@ -469,7 +470,8 @@ namespace rurik.UI
                             {
                                 Id = $"overlay_{location.name}_{color}",
                                 //Background = new SolidBrush(FactionColors[color] with { A = 128 }), // Semi-transparent
-                                Background = new SolidBrush(FactionColors[color]), // Semi-transparent
+                                //Background = new SolidBrush(FactionColors[color]), // Semi-transparent
+                                Background = new SolidBrush(Color.Black),
                                 Width = overlayWidth,
                                 Height = overlayHeight,
                                 HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -481,14 +483,23 @@ namespace rurik.UI
                             Label troopLabel = new Label()
                             {
                                 Text = troopCount.ToString(),
+                                //Background = new SolidBrush(Color.Black),//new SolidBrush(FactionColors[color]),
                                 HorizontalAlignment = HorizontalAlignment.Center,
                                 VerticalAlignment = VerticalAlignment.Center
                             };
 
-                            overlayPanel.Widgets.Add(troopLabel);
-                            _leftPanel.Widgets.Add(overlayPanel);
+                            //overlayPanel.Widgets.Add(troopLabel);
+                            //_leftPanel.Widgets.Add(overlayPanel);
+                            LocationItemsPanel locationItemsPanel = new LocationItemsPanel();
+                            //locationItemsPanel.Panel.Margin = new Thickness(overlayX, overlayY, 0, 0);
+                            locationItemsPanel.Panel.HorizontalAlignment = HorizontalAlignment.Center;
+                            locationItemsPanel.Panel.VerticalAlignment = VerticalAlignment.Center;
+                            //locationItemsPanel.Panel.Position
+                            _leftPanel.Widgets.Add(locationItemsPanel.Panel);
+
                         }
                     }
+
                 }
             }
         }
