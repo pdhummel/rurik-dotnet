@@ -140,18 +140,18 @@ public class RurikMonoGame : Game
         //EndGameScreen = new EndGameScreen();
         setupDesktop();
         GameListScreen = new GameListScreen(this, Desktop);
-        GameListScreen.Initialize();
+        //GameListScreen.Initialize();
         GameSetup = new GameSetupScreen(this, Desktop);
-        GameSetup.Initialize();
+        //GameSetup.Initialize();
         MainGameScreen = new MainGameScreen(this, Desktop);
-        MainGameScreen.Initialize();
+        //MainGameScreen.Initialize();
 
         ChooseFirstPlayerModal = new ChooseFirstPlayerModal(this, Desktop);
-        ChooseFirstPlayerModal.Initialize();
+        //ChooseFirstPlayerModal.Initialize();
         ChooseLeaderModal = new ChooseLeaderModal(this, Desktop);
-        ChooseLeaderModal.Initialize();
+        //ChooseLeaderModal.Initialize();
         ChooseSecretAgendaModal = new ChooseSecretAgendaModal(this, Desktop);
-        ChooseSecretAgendaModal.Initialize();
+        //ChooseSecretAgendaModal.Initialize();
         
         // Load textures
         Textures.LoadContent(Content);

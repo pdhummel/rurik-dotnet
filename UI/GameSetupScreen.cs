@@ -357,7 +357,7 @@ namespace rurik.UI
             updatePlayersList();
 
             // Check if game state is waitingForFirstPlayerSelection and show modal
-            if (game != null && game.CurrentState == "waitingForFirstPlayerSelection")
+            if (game != null && game.CurrentState == "waitingForFirstPlayerSelection" && ! _rurikMonoGame.ChooseFirstPlayerModal.IsVisible)
             {
                 // Check if this client is the game owner
                 if (game.Owner != null && _rurikMonoGame.Client.ClientIdentifier != null &&

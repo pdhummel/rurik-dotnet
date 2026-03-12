@@ -26,7 +26,7 @@ namespace rurik.UI
         private Button _randomButton;
         private Button _closeButton;
         
-        private bool _isVisible = false;
+        public bool IsVisible = false;
         private GameStatus _game;
         private readonly Desktop _desktop;
         private readonly RurikMonoGame _rurikMonoGame;
@@ -34,6 +34,7 @@ namespace rurik.UI
 
         public ChooseFirstPlayerModal(RurikMonoGame game, Desktop desktop)
         {
+            Globals.Log("ChooseFirstPlayerModal(): enter");
             _rurikMonoGame = game;
             _desktop = desktop;
             Initialize();
@@ -41,6 +42,7 @@ namespace rurik.UI
 
         public void Initialize()
         {
+            Globals.Log("Initialize(): enter");
             _window.Title = "Choose First Player";
             _window.Width = 400;
             _window.Height = 300;
@@ -85,6 +87,7 @@ namespace rurik.UI
 
         private void setupContentPanel()
         {
+            Globals.Log("setupContentPanel(): enter");
             _contentPanel = new VerticalStackPanel()
             {
                 Id = "chooseFirstPlayerContentPanel",
@@ -193,13 +196,14 @@ namespace rurik.UI
 
         public void Show()
         {
-            _isVisible = true;
+            Globals.Log("Show(): enter");
+            IsVisible = true;
             _window.ShowModal(_desktop);
         }
 
         public void Hide()
         {
-            _isVisible = false;
+            IsVisible = false;
             _window.Close();
         }
 
@@ -215,14 +219,10 @@ namespace rurik.UI
 
         public void UpdateGameInfo(GameStatus game)
         {
+            Globals.Log("UpdateGameInfo(): enter");
             _game = game;
 
-            // Clear existing player widgets
-            for (int i = _playerSelect.Widgets.Count - 1; i >= 0; i--)
-            {   
-                if (_playerSelect !=  null && _playerSelect.Widgets != null && _playerSelect.Widgets.Count >  i && i >0)
-                    _playerSelect.Widgets.RemoveAt(i);
-            }
+            _playerSelect.Widgets.Clear();
 
             // Add player options to combo box
             if (_game != null && _game.Players != null)
@@ -270,6 +270,7 @@ namespace rurik.UI
 
         private void OnRandomButtonClicked()
         {
+            Globals.Log("ChooseFirstPlayerModal.OnRandomButtonClicked(): enter");
             if (_game == null)
                 return;
 
