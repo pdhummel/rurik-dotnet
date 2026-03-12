@@ -112,7 +112,7 @@ public class Server
 
     public void SendGameState()
     {
-        Globals.Log("sendGameState(): enter");
+        //Globals.Log("sendGameState(): enter");
         if (server != null)
         {
             int count = server.ConnectedPeerList.Count;
@@ -152,7 +152,7 @@ public class Server
 
     public void SendGames()
     {
-        Globals.Log("sendGames(): enter");
+        //Globals.Log("sendGames(): enter");
         if (server != null)
         {
             int count = server.ConnectedPeerList.Count;
@@ -183,7 +183,7 @@ public class Server
 
     public void SendGames(NetPeer peer)
     {
-        Globals.Log("sendGames(): peer=" + peer.Id);
+        //Globals.Log("sendGames(): peer=" + peer.Id);
         GameEvent gameEvent = new(EVENT_GAMES_UPDATE)
         {
             Games = this.Games
@@ -195,7 +195,7 @@ public class Server
 
     public void SendGamePlayEvent(GameEvent gameEvent)
     {
-        Globals.Log("sendGamePlayEvent(): enter");
+        //Globals.Log("sendGamePlayEvent(): enter");
         if (server != null)
         {
             int count = server.ConnectedPeerList.Count;
@@ -249,7 +249,7 @@ public class Server
 
     public void SendGamePlayEvent(NetPeer peer, GameEvent gameEvent)
     {
-        Globals.Log("sendGamePlayEvent(): peer=" + peer.Id);
+        //Globals.Log("sendGamePlayEvent(): peer=" + peer.Id);
         string jsonString = JsonSerializer.Serialize(gameEvent);
         SendJsonString(peer, jsonString);
     }
@@ -257,7 +257,7 @@ public class Server
     public void SendJsonString(NetPeer peer, String jsonString)
     {
         //Globals.Log("sendJsonString(): peer=" + peer.Id + ", json=" + jsonString);
-        Globals.Log("sendJsonString(): peer=" + peer.Id);
+        //Globals.Log("sendJsonString(): peer=" + peer.Id);
         int value = random.Next(0, 60);
         if (value == 0)
             checkQueueCount(peer);

@@ -286,7 +286,9 @@ namespace rurik
             // Add leader to the location - need to access the actual location in the map
             try
             {
-                // This will be implemented properly in the real GameMap implementation
+                Location location = GameMap.LocationByName[locationName];
+                location.leaderByColor[color] = 1;
+                player.TroopsToDeploy = 0;
                 Log.AddLogEntry(color + " placed leader at " + locationName);
             }
             catch (Exception)
@@ -294,9 +296,7 @@ namespace rurik
                 ThrowError("Location not found: " + locationName, "PlaceLeader");
                 return;
             }
-            
-            player.TroopsToDeploy--;
-            Log.AddLogEntry(color + " placed leader at " + locationName);
+    
             
             // Check if all players have placed their leaders
             Players.advanceToNextPlayer();

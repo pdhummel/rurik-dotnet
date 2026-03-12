@@ -359,7 +359,7 @@ namespace rurik.UI
             // Update game info labels
             if (game != null)
             {
-                // Update left panel with map texture
+                // Update left panel with map texture and location items
                 updateMapPanel();
 
                 // Check if we should show the PlaceTroops modal
@@ -420,7 +420,7 @@ namespace rurik.UI
                     _leftPanel.Width = leftPanelWidth;
                   
                     // Draw troop and building overlays for the location
-                    drawTroopOverlays();
+                    drawLocationOverlays();
                 }
                 else
                 {
@@ -429,7 +429,7 @@ namespace rurik.UI
             }
         }
 
-        private void drawTroopOverlays()
+        private void drawLocationOverlays()
         {
             //Globals.Log("drawTroopOverlays(): enter");
             //Globals.Log("drawTroopOverlays(): gameMap=" + _gameMap);
@@ -456,10 +456,11 @@ namespace rurik.UI
                 {
                     string color = kvp.Key;
                     int troopCount = kvp.Value;
+                    int leaderCount = location.leaderByColor[color];
                     //Globals.Log("drawTroopOverlays(): color=" + color + "count=" + troopCount);
 
                     troopCount = 1;
-                    if (troopCount > 0)
+                    if (troopCount > 0 || leaderCount >0)
                     {
                         // Get location bounds
                         if (_locationBounds.TryGetValue(location.name, out Rectangle bounds))
