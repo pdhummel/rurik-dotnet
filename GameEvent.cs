@@ -16,6 +16,7 @@ public class GameEvent
     public static readonly string EVENT_FIRST_PLAYER_SELECTED = "firstPlayerSelected";
     public static readonly string EVENT_SECRET_AGENDA_SELECTED = "secretAgendaSelected";
     public static readonly string EVENT_TROOP_PLACED = "troopPlaced";
+    public static readonly string EVENT_LEADER_PLACED = "leaderPlaced";
     
     // Used to send separate message to clients for Events.
     // TODO: Also keep track of these events in a server log.
@@ -57,7 +58,8 @@ public class GameEvent
             EVENT_FIRST_PLAYER_SELECTED,
             EVENT_GAME_STATE_UPDATE,
             EVENT_SECRET_AGENDA_SELECTED,
-            EVENT_TROOP_PLACED
+            EVENT_TROOP_PLACED,
+            EVENT_LEADER_PLACED
         };
         GamePlayEvents.UnionWith(gamePlayEvents);
     }
@@ -155,6 +157,14 @@ public class GameEvent
     public void troopPlacedHandler()
     {
         Globals.Log("troopPlacedHandler(): enter");
+        if (Game.MainGameScreen == null)
+            return;
+        Game.MainGameScreen.UpdateGameInfo(GameStatus, GameMap);
+    }
+
+    public void leaderPlacedHandler()
+    {
+        Globals.Log("leaderPlacedHandler(): enter");
         if (Game.MainGameScreen == null)
             return;
         Game.MainGameScreen.UpdateGameInfo(GameStatus, GameMap);

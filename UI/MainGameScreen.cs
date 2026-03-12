@@ -33,6 +33,7 @@ namespace rurik.UI
         private Texture2D? _mapTexture;
         
         private PlaceTroopsModal? _placeTroopsModal;
+        private PlaceLeaderModal? _placeLeaderModal;
 
         // Color mapping for factions
         private static readonly Dictionary<string, Color> FactionColors = new Dictionary<string, Color>
@@ -88,6 +89,7 @@ namespace rurik.UI
             _window = _desktop.Root as Window;
             game.MainGameScreen = this;
             _placeTroopsModal = new PlaceTroopsModal(game, desktop);
+            _placeLeaderModal = new PlaceLeaderModal(game, desktop);
             Initialize();
         }
 
@@ -370,6 +372,19 @@ namespace rurik.UI
                         Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlaceTroops modal");
                         _placeTroopsModal?.UpdateGameInfo(_game, _gameMap);
                         _placeTroopsModal?.Show();
+                    }
+                }
+
+                // Check if we should show the PlaceLeader modal
+                // Show modal when game state is waitingForLeaderPlacement and player is the current player
+                if (game.CurrentState == "waitingForLeaderPlacement" && game.ClientPlayer != null)
+                {
+                    // Check if the client player is the current player
+                    if (game.CurrentPlayerColor == game.ClientPlayer.Color)
+                    {
+                        Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlaceLeader modal");
+                        _placeLeaderModal?.UpdateGameInfo(_game, _gameMap);
+                        _placeLeaderModal?.Show();
                     }
                 }
             }

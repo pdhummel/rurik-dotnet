@@ -299,10 +299,10 @@ namespace rurik
             Log.AddLogEntry(color + " placed leader at " + locationName);
             
             // Check if all players have placed their leaders
-            Player nextPlayer = Players.GetNextPlayer(player);
-            if (nextPlayer.TroopsToDeploy > 0)
+            Players.advanceToNextPlayer();
+            if (Players.getCurrentPlayer().TroopsToDeploy > 0)
             {
-                Players.setCurrentPlayerByColor(nextPlayer.Color);
+                GameStates.ChangeState("waitingForLeaderPlacement");
             }
             else
             {
