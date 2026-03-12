@@ -157,9 +157,61 @@ namespace rurik.UI
             return "unknown";
         }
 
-        private Panel CreateColoredSquare(Color color)
+
+        public void UpdateLocation(Location location)
         {
-            return new Panel()
+            Location = location;
+            UpdateLocation();
+        }
+
+        public void UpdateLocation()
+        {
+            leftColumnGrid.Widgets.Clear();
+            int index = 0;
+            foreach (string color in FactionColors.Keys)
+            {
+                int troops = Location.troopsByColor[color];
+                int leader = Location.leaderByColor[color];
+                if (troops > 0 || leader > 0)
+                {
+                    if (troops > 0)
+                    {
+                        //lobals.Log("UpdateLocation(): " + index + " " + color + " " + troops);
+                        Panel square = CreateColoredSquare(FactionColors[color], troops);
+                        troopPanels[index] = square;
+                        Grid.SetRow(square, index);
+                        Grid.SetColumn(square, 0);
+                        leftColumnGrid.Widgets.Add(square);
+                    }
+                    if (leader > 0)
+                    {
+                        Panel circle = CreateColoredCircle(FactionColors[color]);
+                        leaderPanels[index] = circle;
+                        Grid.SetRow(circle, index);
+                        Grid.SetColumn(circle, 1);
+                        leftColumnGrid.Widgets.Add(circle);
+                    }
+                    index += 1;
+                }
+            }
+
+            rightColumnGrid.Widgets.Clear();
+            index = 0;
+            foreach (Building building in Location.buildings)
+            {
+                Panel buildingSpace = CreateBuildingSpace();
+                buildingPanels[index] = buildingSpace;
+                Grid.SetRow(buildingSpace, index);
+                Grid.SetColumn(buildingSpace, 0);
+                rightColumnGrid.Widgets.Add(buildingSpace);
+                index += 1;
+            }
+
+        }
+
+        private Panel CreateColoredSquare(Color color, int troops = 0)
+        {
+            var panel = new Panel()
             {
                 Id = $"coloredSquare_{GetColorName(color)}",
                 Background = new SolidBrush(color with { A = 128 }),
@@ -169,6 +221,21 @@ namespace rurik.UI
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
+            
+            // Add troop count label in black foreground
+            if (troops > 0)
+            {
+                var label = new Label()
+                {
+                    Text = troops.ToString(),
+                    TextColor =  Color.Black,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                panel.Widgets.Add(label);
+            }
+            
+            return panel;
         }
 
         private Panel CreateColoredCircle(Color color)
@@ -184,6 +251,17 @@ namespace rurik.UI
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
+
+            var label = new Label()
+            {
+                Text = "L",
+                TextColor =  Color.Black,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            panel.Widgets.Add(label);
+
+
             return panel;
         }
 
@@ -215,56 +293,6 @@ namespace rurik.UI
             };
         }
 
-        public void UpdateLocation(Location location)
-        {
-            Location = location;
-            UpdateLocation();
-        }
-
-        public void UpdateLocation()
-        {
-            leftColumnGrid.Widgets.Clear();
-            int index = 0;
-            foreach (string color in FactionColors.Keys)
-            {
-                int troops = Location.troopsByColor[color];
-                int leader = Location.leaderByColor[color];
-                if (troops > 0 || leader > 0)
-                {
-                    if (troops > 0)
-                    {
-                        //lobals.Log("UpdateLocation(): " + index + " " + color + " " + troops);
-                        Panel square = CreateColoredSquare(FactionColors[color]);
-                        troopPanels[index] = square;
-                        Grid.SetRow(square, index);
-                        Grid.SetColumn(square, 0);
-                        leftColumnGrid.Widgets.Add(square);
-                    }
-                    if (leader > 0)
-                    {
-                        Panel circle = CreateColoredCircle(FactionColors[color]);
-                        leaderPanels[index] = circle;
-                        Grid.SetRow(circle, index);
-                        Grid.SetColumn(circle, 1);
-                        leftColumnGrid.Widgets.Add(circle);
-                    }
-                    index += 1;
-                }
-            }
-
-            rightColumnGrid.Widgets.Clear();
-            index = 0;
-            foreach (Building building in Location.buildings)
-            {
-                Panel buildingSpace = CreateBuildingSpace();
-                buildingPanels[index] = buildingSpace;
-                Grid.SetRow(buildingSpace, index);
-                Grid.SetColumn(buildingSpace, 0);
-                rightColumnGrid.Widgets.Add(buildingSpace);
-                index += 1;
-            }
-
-        }
 
     }
 
