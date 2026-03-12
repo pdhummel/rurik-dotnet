@@ -28,6 +28,12 @@ namespace rurik.UI
         public Panel LeftColumnPanel => _leftColumnPanel;
         public Panel RightColumnPanel => _rightColumnPanel;
 
+        private Panel[] troopPanels = new Panel[4];
+        private Panel[] leaderPanels = new Panel[4];
+        private Panel[] buildingPanels = new Panel[3];
+        private Grid leftColumnGrid;
+        private Grid rightColumnGrid;
+
         public LocationItemsPanel(Location location)
         {
             Location = location;
@@ -77,7 +83,7 @@ namespace rurik.UI
             };
 
             // Left column grid: 2 rows x 4 columns
-            Grid leftColumnGrid = new Grid()
+            leftColumnGrid = new Grid()
             {
                 Id = "leftColumnGrid",
                 Background = new SolidBrush(Color.Transparent),
@@ -92,58 +98,8 @@ namespace rurik.UI
             leftColumnGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
             leftColumnGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
             leftColumnGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
-            //leftColumnGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
-            //leftColumnGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
-
-            // Add colored squares (16x16px) in the first column of the 2x4 grid
-            // Row 0, Column 0
-            Panel square0 = CreateColoredSquare(FactionColors["red"]);
-            Grid.SetRow(square0, 0);
-            Grid.SetColumn(square0, 0);
-            leftColumnGrid.Widgets.Add(square0);
-
-            // Row 1, Column 0
-            Panel square1 = CreateColoredSquare(FactionColors["blue"]);
-            Grid.SetRow(square1, 1);
-            Grid.SetColumn(square1, 0);
-            leftColumnGrid.Widgets.Add(square1);
-
-            Panel square2 = CreateColoredSquare(FactionColors["white"]);
-            Grid.SetRow(square2, 2);
-            Grid.SetColumn(square2, 0);
-            leftColumnGrid.Widgets.Add(square2);
-
-            Panel square3 = CreateColoredSquare(FactionColors["yellow"]);
-            Grid.SetRow(square3, 3);
-            Grid.SetColumn(square3, 0);
-            leftColumnGrid.Widgets.Add(square3);
-
-            // Add colored circles (16px diameter) in the second column of the 2x4 grid
-            // Row 0, Column 1
-            Panel circle0 = CreateColoredCircle(FactionColors["red"]);
-            Grid.SetRow(circle0, 0);
-            Grid.SetColumn(circle0, 1);
-            leftColumnGrid.Widgets.Add(circle0);
-
-            // Row 1, Column 1
-            Panel circle1 = CreateColoredCircle(FactionColors["blue"]);
-            Grid.SetRow(circle1, 1);
-            Grid.SetColumn(circle1, 1);
-            leftColumnGrid.Widgets.Add(circle1);
-
-            Panel circle2 = CreateColoredCircle(FactionColors["white"]);
-            Grid.SetRow(circle2, 2);
-            Grid.SetColumn(circle2, 1);
-            leftColumnGrid.Widgets.Add(circle2);
-
-
-            Panel circle3 = CreateColoredCircle(FactionColors["yellow"]);
-            Grid.SetRow(circle3, 3);
-            Grid.SetColumn(circle3, 1);
-            leftColumnGrid.Widgets.Add(circle3);
-
-            // Add left column grid to left column panel
             _leftColumnPanel.Widgets.Add(leftColumnGrid);
+
 
             // Create right column panel (contains 3 vertical 50x50px spaces)
             _rightColumnPanel = new Panel()
@@ -155,7 +111,7 @@ namespace rurik.UI
             };
 
             // Right column grid: 3 rows, 1 column
-            Grid rightColumnGrid = new Grid()
+            rightColumnGrid = new Grid()
             {
                 Id = "rightColumnGrid",
                 Background = new SolidBrush(Color.Transparent),
@@ -168,22 +124,9 @@ namespace rurik.UI
             rightColumnGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
             rightColumnGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
             rightColumnGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
+            _rightColumnPanel.Widgets.Add(rightColumnGrid);
 
-            // Add three 50x50px spaces
-            Panel space0 = CreateBuildingSpace();
-            Grid.SetRow(space0, 0);
-            Grid.SetColumn(space0, 0);
-            rightColumnGrid.Widgets.Add(space0);
-
-            Panel space1 = CreateBuildingSpace();
-            Grid.SetRow(space1, 1);
-            Grid.SetColumn(space1, 0);
-            rightColumnGrid.Widgets.Add(space1);
-
-            Panel space2 = CreateBuildingSpace();
-            Grid.SetRow(space2, 2);
-            Grid.SetColumn(space2, 0);
-            rightColumnGrid.Widgets.Add(space2);
+            UpdateLocation();
 
             // Add right column grid to right column panel
             _rightColumnPanel.Widgets.Add(rightColumnGrid);
@@ -271,5 +214,58 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
         }
+
+        public void UpdateLocation(Location location)
+        {
+            Location = location;
+            UpdateLocation();
+        }
+
+        public void UpdateLocation()
+        {
+            leftColumnGrid.Widgets.Clear();
+            int index = 0;
+            foreach (string color in FactionColors.Keys)
+            {
+                int troops = Location.troopsByColor[color];
+                int leader = Location.leaderByColor[color];
+                if (troops > 0 || leader > 0)
+                {
+                    if (troops > 0)
+                    {
+                        //lobals.Log("UpdateLocation(): " + index + " " + color + " " + troops);
+                        Panel square = CreateColoredSquare(FactionColors[color]);
+                        troopPanels[index] = square;
+                        Grid.SetRow(square, index);
+                        Grid.SetColumn(square, 0);
+                        leftColumnGrid.Widgets.Add(square);
+                    }
+                    if (leader > 0)
+                    {
+                        Panel circle = CreateColoredCircle(FactionColors[color]);
+                        leaderPanels[index] = circle;
+                        Grid.SetRow(circle, index);
+                        Grid.SetColumn(circle, 1);
+                        leftColumnGrid.Widgets.Add(circle);
+                    }
+                    index += 1;
+                }
+            }
+
+            rightColumnGrid.Widgets.Clear();
+            index = 0;
+            foreach (Building building in Location.buildings)
+            {
+                Panel buildingSpace = CreateBuildingSpace();
+                buildingPanels[index] = buildingSpace;
+                Grid.SetRow(buildingSpace, index);
+                Grid.SetColumn(buildingSpace, 0);
+                rightColumnGrid.Widgets.Add(buildingSpace);
+                index += 1;
+            }
+
+        }
+
     }
+
 }

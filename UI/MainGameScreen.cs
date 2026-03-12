@@ -459,7 +459,11 @@ namespace rurik.UI
                             LocationItemsPanel locationItemsPanel = new LocationItemsPanel(location);
                             locationItemsPanel.Panel.Left = overlayX;
                             locationItemsPanel.Panel.Top = overlayY;
-                            _leftPanel.Widgets.Add(locationItemsPanel.Panel);
+                            try
+                            {
+                                _leftPanel.Widgets.Add(locationItemsPanel.Panel);    
+                            }
+                            catch(Exception ex) {}
                             //locationItemsPanel.Window.Left = overlayX;
                             //locationItemsPanel.Window.Top = overlayY;
                             //_leftPanel.Widgets.Add(locationItemsPanel.Window);

@@ -211,7 +211,7 @@ public class RurikMonoGame : Game
             }
             catch(Exception ex)
             {
-                Globals.Log("Draw(): exception with Desktop Render: " + ex);
+                //Globals.Log("Draw(): exception with Desktop Render: " + ex);
             }
         }        
 
