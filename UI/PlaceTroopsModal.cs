@@ -290,6 +290,7 @@ namespace rurik.UI
             }
             else
             {
+                Globals.Log("UpdateGameInfo(): map is null, using default locationNames.");
                 locationNames = new List<string>
                 {
                     "Novgorod", "Pskov", "Polotsk", "Smolensk", "Rostov", "Chernigov", "Suzdal", "Pereyaslavl",

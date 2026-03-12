@@ -404,10 +404,7 @@ namespace rurik.UI
                     int leftPanelWidth = (int)((float)_mapTexture.Width * ratio);
                     _leftPanel.Width = leftPanelWidth;
                   
-                    // Log the location bounds with scaled coordinates
-                    //logLocationBounds(_mapTexture.Width, _mapTexture.Height, leftPanelWidth, (int)_leftPanel.Height);
-
-                    // Draw troop overlays
+                    // Draw troop and building overlays for the location
                     drawTroopOverlays();
                 }
                 else
@@ -455,47 +452,19 @@ namespace rurik.UI
                             // Scale bounds to panel coordinates
                             float textureX = bounds.X * scaleXFromReference;
                             float textureY = bounds.Y * scaleYFromReference;
-                            int boundsWidth = bounds.Width - bounds.X;
-                            int boundsHeight = bounds.Height - bounds.Y;
-                            float textureWidthScaled = boundsWidth * scaleXFromReference;
-                            float textureHeightScaled = boundsHeight * scaleYFromReference;
 
                             int overlayX = (int)(textureX * scaleX);
                             int overlayY = (int)(textureY * scaleY);
-                            int overlayWidth = (int)(textureWidthScaled * scaleX);
-                            int overlayHeight = (int)(textureHeightScaled * scaleY);
 
-                            // Create overlay panel
-                            Panel overlayPanel = new Panel()
-                            {
-                                Id = $"overlay_{location.name}_{color}",
-                                //Background = new SolidBrush(FactionColors[color] with { A = 128 }), // Semi-transparent
-                                //Background = new SolidBrush(FactionColors[color]), // Semi-transparent
-                                Background = new SolidBrush(Color.Black),
-                                Width = overlayWidth,
-                                Height = overlayHeight,
-                                HorizontalAlignment = HorizontalAlignment.Stretch,
-                                VerticalAlignment = VerticalAlignment.Stretch,
-                                Margin = new Thickness(overlayX, overlayY, 0, 0)
-                            };
-
-                            // Add troop count label
-                            Label troopLabel = new Label()
-                            {
-                                Text = troopCount.ToString(),
-                                //Background = new SolidBrush(Color.Black),//new SolidBrush(FactionColors[color]),
-                                HorizontalAlignment = HorizontalAlignment.Center,
-                                VerticalAlignment = VerticalAlignment.Center
-                            };
-
-                            //overlayPanel.Widgets.Add(troopLabel);
-                            //_leftPanel.Widgets.Add(overlayPanel);
-                            LocationItemsPanel locationItemsPanel = new LocationItemsPanel();
-                            //locationItemsPanel.Panel.Margin = new Thickness(overlayX, overlayY, 0, 0);
-                            locationItemsPanel.Panel.HorizontalAlignment = HorizontalAlignment.Center;
-                            locationItemsPanel.Panel.VerticalAlignment = VerticalAlignment.Center;
-                            //locationItemsPanel.Panel.Position
+                            LocationItemsPanel locationItemsPanel = new LocationItemsPanel(location);
+                            locationItemsPanel.Panel.Left = overlayX;
+                            locationItemsPanel.Panel.Top = overlayY;
                             _leftPanel.Widgets.Add(locationItemsPanel.Panel);
+                            //locationItemsPanel.Window.Left = overlayX;
+                            //locationItemsPanel.Window.Top = overlayY;
+                            //_leftPanel.Widgets.Add(locationItemsPanel.Window);
+                            //locationItemsPanel.Window.Show(_desktop);
+
 
                         }
                     }

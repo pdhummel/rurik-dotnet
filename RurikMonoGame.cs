@@ -205,7 +205,14 @@ public class RurikMonoGame : Game
         if (Desktop != null)
         {
             ShowCurrentScreen();
-            Desktop.Render();
+            try
+            {
+                Desktop.Render();    
+            }
+            catch(Exception ex)
+            {
+                Globals.Log("Draw(): exception with Desktop Render: " + ex);
+            }
         }        
 
         base.Draw(gameTime);

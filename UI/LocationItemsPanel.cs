@@ -12,6 +12,7 @@ namespace rurik.UI
         private Grid _mainGrid;
         private Panel _leftColumnPanel;
         private Panel _rightColumnPanel;
+        public Location Location {get;set;}
         
         // Color mapping for factions
         private static readonly Dictionary<string, Color> FactionColors = new Dictionary<string, Color>
@@ -22,17 +23,20 @@ namespace rurik.UI
             {"yellow", Color.Yellow}
         };
 
+        public Window Window {get; set;} = new Window();
         public Panel Panel => _panel;
         public Panel LeftColumnPanel => _leftColumnPanel;
         public Panel RightColumnPanel => _rightColumnPanel;
 
-        public LocationItemsPanel()
+        public LocationItemsPanel(Location location)
         {
+            Location = location;
             Initialize();
         }
 
         private void Initialize()
         {
+            Window.Title = Location.name;
             // Main panel
             _panel = new Panel()
             {
@@ -43,6 +47,7 @@ namespace rurik.UI
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
             };
+            Window.Content = _panel;
 
             // Main grid with 2 columns
             _mainGrid = new Grid()
