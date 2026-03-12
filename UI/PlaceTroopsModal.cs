@@ -217,37 +217,41 @@ namespace rurik.UI
         {
             _isVisible = true;
             // Populate location list when showing the modal
-            PopulateLocationList();
             _window.ShowModal(_desktop);
             
         }
         
-        private void PopulateLocationList()
+        private void PopulateLocationList(GameMap map)
         {
             // Clear existing location widgets
-            //if (_locationSelect != null && _locationSelect.Widgets != null)
-            //{
-            //    for (int i = _locationSelect.Widgets.Count - 1; i >= 0; i--)
-            //    {
-            //        _locationSelect.Widgets.RemoveAt(i);
-            //    }
-            //}
-            _locationSelect.Widgets.Clear();
-
-            // Add location options to combo box
-            var locationNames = new List<string>
+            if (_locationSelect != null && _locationSelect.Widgets != null)
             {
-                "Novgorod", "Pskov", "Polotsk", "Smolensk", "Rostov", "Chernigov", "Suzdal", "Pereyaslavl",
-                "Volyn", "Kiev", "Galich", "Murom", "Brest", "Peresech", "Azov"
-            };
+                _locationSelect.Widgets.Clear();
+            }
+
+            // Add location options to combo box.
+            var locationNames = new List<string>();
+            if (map != null)
+            {
+                locationNames = map.GetLocationsForGameNames();
+                Globals.Log("UpdateGameInfo(): locations=" + locationNames.Count);
+            }
+            else
+            {
+                Globals.Log("UpdateGameInfo(): map is null, using default locationNames.");
+                locationNames = new List<string>
+                {
+                    "Novgorod", "Pskov", "Polotsk", "Smolensk", "Rostov", "Chernigov", "Suzdal", "Pereyaslavl",
+                    "Volyn", "Kiev", "Galich", "Murom", "Brest", "Peresech", "Azov"
+                };
+            }
             locationNames.Sort(); // Sort locations alphabetically
-            
+
             foreach (var locationName in locationNames)
             {
                 _locationSelect.Widgets.Add(new Label() { Text = locationName });
-                
             }
-            
+
             // Select the first location by default
             if (_locationSelect.Widgets.Count > 0)
             {
@@ -274,42 +278,9 @@ namespace rurik.UI
 
         public void UpdateGameInfo(GameStatus game, GameMap map)
         {
+            Globals.Log("UpdateGameInfo(): GameMap=" + map);
             _game = game;
-
-            // Clear existing location widgets
-            if (_locationSelect != null && _locationSelect.Widgets != null)
-            {
-                _locationSelect.Widgets.Clear();
-            }
-
-            // Add location options to combo box.
-            var locationNames = new List<string>();
-            if (map != null)
-            {
-                locationNames = map.GetLocationsForGameNames();
-            }
-            else
-            {
-                Globals.Log("UpdateGameInfo(): map is null, using default locationNames.");
-                locationNames = new List<string>
-                {
-                    "Novgorod", "Pskov", "Polotsk", "Smolensk", "Rostov", "Chernigov", "Suzdal", "Pereyaslavl",
-                    "Volyn", "Kiev", "Galich", "Murom", "Brest", "Peresech", "Azov"
-                };
-            }
-            locationNames.Sort(); // Sort locations alphabetically
-
-            foreach (var locationName in locationNames)
-            {
-                _locationSelect.Widgets.Add(new Label() { Text = locationName });
-            }
-
-            // Select the first location by default
-            if (_locationSelect.Widgets.Count > 0)
-            {
-                _locationSelect.SelectedIndex = 0;
-                _selectedLocation = locationNames[0];
-            }
+            PopulateLocationList(map);
         }
 
         private void OnPlaceButtonClicked()

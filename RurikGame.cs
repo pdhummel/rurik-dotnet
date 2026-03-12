@@ -106,7 +106,7 @@ namespace rurik
 
         public void StartGame()
         {
-            if (Players.getNumberOfPlayers() < 1)
+            if (Players.getNumberOfPlayers() < 1) // 2
             {
                 ThrowError("Not enough players to start the game", "StartGame");
                 return;
