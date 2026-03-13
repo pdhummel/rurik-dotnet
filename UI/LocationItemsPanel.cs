@@ -175,8 +175,6 @@ namespace rurik.UI
             {
                 int troops = Location.troopsByColor[color];
                 int leader = Location.leaderByColor[color];
-                troops = 1;
-                leader = 1;
                 if (troops > 0 || leader > 0)
                 {
                     if (troops > 0)
@@ -202,12 +200,11 @@ namespace rurik.UI
 
             rightColumnGrid.Widgets.Clear();
             index = 0;
-            // TODO: remove test building
-            Location.buildings.Clear();
-            Building testBuilding = new Building("yellow", "stronghold");
-            Location.buildings.Add(testBuilding);
-            Location.buildings.Add(testBuilding);
-            Location.buildings.Add(testBuilding);
+            //Location.buildings.Clear();
+            //Building testBuilding = new Building("yellow", "stronghold");
+            //Location.buildings.Add(testBuilding);
+            //Location.buildings.Add(testBuilding);
+            //Location.buildings.Add(testBuilding);
             List<Building> buildingList = new List<Building>(Location.buildings);
             foreach (Building building in buildingList)
             {

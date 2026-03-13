@@ -61,7 +61,7 @@ namespace rurik.UI
             {"Novgorod", new Rectangle(275,100,522,271)},
             {"Pskov", new Rectangle(80,175,287,248)},
             {"Polotsk", new Rectangle(285,385,370,437)},
-            {"Smolensk", new Rectangle(425,315,632,448)},
+            {"Smolensk", new Rectangle(430,315,632,448)},
             {"Rostov", new Rectangle(660,75,777,281)},
             {"Chernigov", new Rectangle(650,375,666,586)},
             {"Suzdal", new Rectangle(820,100,957,325)},
@@ -372,8 +372,11 @@ namespace rurik.UI
                     if (game.CurrentPlayerColor == game.ClientPlayer.Color)
                     {
                         Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlaceTroops modal");
-                        _placeTroopsModal?.UpdateGameInfo(_game, _gameMap);
-                        _placeTroopsModal?.Show();
+                        if (!_placeTroopsModal.IsVisible)
+                        {
+                            _placeTroopsModal?.UpdateGameInfo(_game, _gameMap);
+                            _placeTroopsModal?.Show();
+                        }
                     }
                 }
 
@@ -385,8 +388,11 @@ namespace rurik.UI
                     if (game.CurrentPlayerColor == game.ClientPlayer.Color)
                     {
                         Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlaceLeader modal");
-                        _placeLeaderModal?.UpdateGameInfo(_game, _gameMap);
-                        _placeLeaderModal?.Show();
+                        if (!_placeLeaderModal.IsVisible)
+                        {
+                            _placeLeaderModal?.UpdateGameInfo(_game, _gameMap);
+                            _placeLeaderModal?.Show();
+                        }
                     }
                 }
             }

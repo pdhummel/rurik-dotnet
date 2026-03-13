@@ -26,7 +26,7 @@ namespace rurik.UI
         private Button _placeButton;
         private Button _closeButton;
         
-        private bool _isVisible = false;
+        public bool IsVisible {get; set;} = false;
         private GameStatus _game;
         private GameMap? _gameMap;
         private readonly Desktop _desktop;
@@ -185,7 +185,7 @@ namespace rurik.UI
 
         public void Show()
         {
-            _isVisible = true;
+            IsVisible = true;
             // Populate location list when showing the modal
             PopulateLocationList();
             _window.ShowModal(_desktop);
@@ -227,7 +227,7 @@ namespace rurik.UI
 
         public void Hide()
         {
-            _isVisible = false;
+            IsVisible = false;
             _window.Close();
         }
 

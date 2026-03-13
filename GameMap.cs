@@ -49,8 +49,6 @@ namespace rurik
 
         public void SetLocationsForGame(int numberOfPlayers)
         {
-            // TODO: remove this
-            numberOfPlayers = 4;
             List<Location> locations;
             // green
             if (numberOfPlayers <= 2)

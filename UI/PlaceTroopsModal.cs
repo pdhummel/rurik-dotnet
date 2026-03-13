@@ -28,7 +28,7 @@ namespace rurik.UI
         private Button _placeButton;
         private Button _closeButton;
         
-        private bool _isVisible = false;
+        public bool IsVisible {get; set;} = false;
         private GameStatus _game;
         private readonly Desktop _desktop;
         private readonly RurikMonoGame _rurikMonoGame;
@@ -215,9 +215,12 @@ namespace rurik.UI
 
         public void Show()
         {
-            _isVisible = true;
-            // Populate location list when showing the modal
-            _window.ShowModal(_desktop);
+            if (! IsVisible)
+            {
+                IsVisible = true;
+                // Populate location list when showing the modal
+                _window.ShowModal(_desktop);
+            }
             
         }
         
@@ -234,11 +237,11 @@ namespace rurik.UI
             if (map != null)
             {
                 locationNames = map.GetLocationsForGameNames();
-                Globals.Log("UpdateGameInfo(): locations=" + locationNames.Count);
+                Globals.Log("PopulateLocationList(): locations=" + locationNames.Count);
             }
             else
             {
-                Globals.Log("UpdateGameInfo(): map is null, using default locationNames.");
+                Globals.Log("PopulateLocationList(): map is null, using default locationNames.");
                 locationNames = new List<string>
                 {
                     "Novgorod", "Pskov", "Polotsk", "Smolensk", "Rostov", "Chernigov", "Suzdal", "Pereyaslavl",
@@ -262,7 +265,7 @@ namespace rurik.UI
 
         public void Hide()
         {
-            _isVisible = false;
+            IsVisible = false;
             _window.Close();
         }
 
