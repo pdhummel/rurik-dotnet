@@ -1,159 +1,149 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace rurik
 {
+    /// <summary>
+    /// Represents the Advisor Board (auction board) for the game.
+    /// Has 6 columns: muster, move, attack, tax, build, scheme.
+    /// Each column has 3-4 rows depending on player count.
+    /// </summary>
     public class AuctionBoard
     {
-        public int numberOfPlayers { get; set; }
-        public Dictionary<string, List<AuctionSpace>> board { get; set; }
-        public int numberOfRows { get; set; }
+        private readonly Dictionary<string, List<AuctionSpace>> _board;
+        public int numberOfRows { get; private set; }
 
         public AuctionBoard(int numberOfPlayers)
         {
-            this.numberOfPlayers = numberOfPlayers;
-            this.board = new Dictionary<string, List<AuctionSpace>>();
+            NumberOfPlayers = numberOfPlayers;
+            _board = new Dictionary<string, List<AuctionSpace>>
+            {
+                { "muster", new List<AuctionSpace>() },
+                { "move", new List<AuctionSpace>() },
+                { "attack", new List<AuctionSpace>() },
+                { "tax", new List<AuctionSpace>() },
+                { "build", new List<AuctionSpace>() },
+                { "scheme", new List<AuctionSpace>() }
+            };
+
             Reset();
-            this.numberOfRows = this.board["muster"].Count;
+        }
+
+        public int NumberOfPlayers { get; private set; }
+
+        public Dictionary<string, List<AuctionSpace>> board => _board;
+
+        public List<AuctionSpace> GetColumn(string actionName)
+        {
+            return _board.TryGetValue(actionName, out var column) ? column : new List<AuctionSpace>();
+        }
+
+        public bool IsColumnFull(string actionName)
+        {
+            var column = GetColumn(actionName);
+            var count = column.Count(space => space.advisor > 0);
+            return count >= numberOfRows;
         }
 
         public bool IsPlayerAlreadyInColumn(string actionName, string color)
         {
-            for (int i = 0; i < numberOfRows; i++)
-            {
-                if (this.board[actionName][i].color == color)
-                {
-                    return true;
-                }
-            }
-            return false;        
+            var column = GetColumn(actionName);
+            return column.Any(space => space.color == color);
         }
 
         public bool IsPlayerIn3Columns(string color)
         {
-            int count = 0;
-            List<string> columns = new List<string>(this.board.Keys);
-            for (int k = 0; k < columns.Count; k++)
+            var count = 0;
+            foreach (var column in _board.Values)
             {
-                string actionName = columns[k];
-                for (int i = 0; i < numberOfRows; i++)
+                if (column.Any(space => space.color == color))
                 {
-                    if (this.board[actionName][i].color == color)
-                    {
-                        count = count + 1;
-                        break;
-                    }
+                    count++;
                 }
             }
-            if (count >= 3)
-            {
-                return true;
-            }
-            return false;
+            return count >= 3;
         }
 
         public List<AuctionSpace> GetNextAuctionSpaceAdvisor(string color)
         {
-            int currentValue = 6;
-            List<AuctionSpace> advisors = new List<AuctionSpace>();
-            List<string> columns = new List<string>(this.board.Keys);
-            for (int k = 0; k < columns.Count; k++)
+            var currentValue = 6;
+            var advisors = new List<AuctionSpace>();
+            
+            foreach (var column in _board.Values)
             {
-                string actionName = columns[k];
-                for (int i = 0; i < numberOfRows; i++)
+                foreach (var space in column)
                 {
-                    if (this.board[actionName][i].color == color)
+                    if (space.color == color)
                     {
-                        if (this.board[actionName][i].advisor == currentValue)
+                        if (space.advisor == currentValue)
                         {
-                            this.board[actionName][i].row = i;
-                            advisors.Add(this.board[actionName][i]);
+                            space.row = column.IndexOf(space);
+                            advisors.Add(space);
                         }
-                        else if (this.board[actionName][i].advisor < currentValue)
+                        else if (space.advisor < currentValue)
                         {
                             advisors.Clear();
-                            this.board[actionName][i].row = i;
-                            advisors.Add(this.board[actionName][i]);
-                            currentValue = this.board[actionName][i].advisor;
-                        }    
+                            space.row = column.IndexOf(space);
+                            advisors.Add(space);
+                            currentValue = space.advisor;
+                        }
                     }
                 }
             }
             return advisors;
         }
 
-        // row=0-3
         public void AuctionBid(string actionName, string color, int advisor, int bidCoins = 0)
         {
-            Globals.Log("auctionBid(): " + color + " " + actionName + " " + advisor);
             if (IsColumnFull(actionName))
             {
-                throw new Exception("Cannot place advisor in " + actionName + " column, because it is full.");
+                throw new InvalidOperationException($"Cannot place advisor in {actionName} column, because it is full.");
             }
-            // check for 2 advisors from the same player
+
             if (IsPlayerAlreadyInColumn(actionName, color))
             {
                 if (!IsPlayerIn3Columns(color))
                 {
-                    throw new Exception("Cannot place advisor in " + actionName + " column, because you can only place a second advisor in the same column, if you are in three or more different columns.");
+                    throw new InvalidOperationException($"Cannot place advisor in {actionName} column, because you can only place a second advisor in the same column, if you are in three or more different columns.");
                 }
             }
 
-            int totalBid = advisor + bidCoins;
-            Globals.Log("auctionBid(): totalBid=" + totalBid);
+            var totalBid = advisor + bidCoins;
+            var column = GetColumn(actionName);
+
             for (int i = 0; i < numberOfRows; i++)
             {
-                int currentBid = this.board[actionName][i].advisor + this.board[actionName][i].bidCoins;
-                Globals.Log("auctionBid(): currentBid=" + currentBid + ", row " + i);
+                var currentBid = column[i].advisor + column[i].bidCoins;
                 if (totalBid > currentBid)
                 {
-                    // "move" everything down
+                    // Move everything down
                     for (int j = numberOfRows - 1; j > i; j--)
                     {
-                        AuctionSpace aboveAuctionSpace = this.board[actionName][j - 1];
-                        Globals.Log("auctionBid(): aboveAuctionSpace " + (j - 1) + "=" + aboveAuctionSpace.ToString());
-                        this.board[actionName][j].CopyBid(aboveAuctionSpace);
+                        var aboveSpace = column[j - 1];
+                        column[j].CopyFrom(aboveSpace);
                     }
-                    Globals.Log("auctionBid(): auctionBid " + i + ":" + color + " " + advisor + " " + bidCoins);
-                    this.board[actionName][i].AuctionBid(color, advisor, bidCoins);
-                    break;
-                }
-            }
-        }
 
-        public bool IsColumnFull(string actionName)
-        {
-            bool isFull = false;
-            int count = 0;
-            for (int i = 0; i < numberOfRows; i++)
-            {
-                if (this.board[actionName][i].advisor > 0)
-                {
-                    count++;
-                }
-                else
-                {
+                    column[i].color = color;
+                    column[i].advisor = advisor;
+                    column[i].bidCoins = bidCoins;
                     break;
                 }
             }
-            if (count >= numberOfRows)
-            {
-                isFull = true;
-            }
-            return isFull;
         }
 
         public void Reset()
         {
-            this.board["muster"] = new List<AuctionSpace>();
-            this.board["move"] = new List<AuctionSpace>();
-            this.board["attack"] = new List<AuctionSpace>();
-            this.board["tax"] = new List<AuctionSpace>();
-            this.board["build"] = new List<AuctionSpace>();
-            this.board["scheme"] = new List<AuctionSpace>();
-            
-            if (this.numberOfPlayers <= 2)
+            _board["muster"].Clear();
+            _board["move"].Clear();
+            _board["attack"].Clear();
+            _board["tax"].Clear();
+            _board["build"].Clear();
+            _board["scheme"].Clear();
+
+            if (NumberOfPlayers <= 2)
             {
+                // 3 rows per column for 1-2 players
                 AddAuctionSpace("muster", 3, 0);
                 AddAuctionSpace("muster", 2, 0);
                 AddAuctionSpace("muster", 1, 1);
@@ -175,6 +165,7 @@ namespace rurik
             }
             else
             {
+                // 4 rows per column for 3-4 players
                 AddAuctionSpace("muster", 3, 0);
                 AddAuctionSpace("muster", 2, 0);
                 AddAuctionSpace("muster", 1, 0);
@@ -200,12 +191,14 @@ namespace rurik
                 AddAuctionSpace("scheme", 1, 0);
                 AddAuctionSpace("scheme", 1, 1);
             }
+
+            numberOfRows = NumberOfPlayers <= 2 ? 3 : 4;
         }
 
-        public void AddAuctionSpace(string action, int quantity, int extraCoin)
+        private void AddAuctionSpace(string action, int quantity, int extraCoin)
         {
-            int row = this.board[action].Count;
-            this.board[action].Add(new AuctionSpace(action, quantity, row, extraCoin));
+            var row = _board[action].Count;
+            _board[action].Add(new AuctionSpace(action, quantity, row, extraCoin));
         }
     }
 }

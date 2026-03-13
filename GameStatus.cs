@@ -29,6 +29,7 @@ namespace rurik
         public int Round { get; set; }
         public GamePlayers? Players { get; set; }
         public AvailableLeaders? AvailableLeaders { get; set; }
+        public AuctionBoard? AuctionBoard { get; set; }
 
         public GameStatus()
         {}
@@ -42,6 +43,7 @@ namespace rurik
             Name = game.Name;
             Players = game.Players;
             AvailableLeaders = game.AvailableLeaders;
+            AuctionBoard = game.AuctionBoard;
             PlayerNames = "";
             CurrentPlayerName = null;
             CurrentPlayerColor = null;

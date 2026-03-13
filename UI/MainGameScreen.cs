@@ -34,6 +34,9 @@ namespace rurik.UI
         
         private PlaceTroopsModal? _placeTroopsModal;
         private PlaceLeaderModal? _placeLeaderModal;
+        
+        private AdvisorBoardPanel? _advisorBoardPanel;
+        private AuctionBoard? _auctionBoard;
 
         // Color mapping for factions
         private static readonly Dictionary<string, Color> FactionColors = new Dictionary<string, Color>
@@ -91,6 +94,9 @@ namespace rurik.UI
             _placeTroopsModal = new PlaceTroopsModal(game, desktop);
             _placeLeaderModal = new PlaceLeaderModal(game, desktop);
             Initialize();
+            
+            // Initialize the AdvisorBoardPanel
+            _advisorBoardPanel = new AdvisorBoardPanel(desktop, new AuctionBoard(4));
         }
 
         public void Initialize()
@@ -226,6 +232,18 @@ namespace rurik.UI
             _window.Title = "Rurik: Game";
             _rurikMonoGame.CurrentMyraScreen = "MainGameScreen";
             updateMapPanel();
+            
+            // Show AdvisorBoardPanel if game state is strategyPhase
+            if (_game != null && _game.CurrentState == "strategyPhase")
+            {
+                if (_advisorBoardPanel != null && _auctionBoard != null)
+                {
+                    _advisorBoardPanel.UpdateBoard();
+                    _rightTopPanel.Widgets.Clear();
+                    _rightTopPanel.Widgets.Add(_advisorBoardPanel);
+                }
+            }
+            
             //Globals.Log("MainGameScreen.Show(): exit, window=" + _window.Id + ", panel=" + _window.Content.Id);
         }
 
@@ -394,6 +412,31 @@ namespace rurik.UI
                             _placeLeaderModal?.Show();
                         }
                     }
+                }
+                
+                // Check if we should show the AdvisorBoardPanel
+                // Show panel when game state is strategyPhase
+                if (game.CurrentState == "strategyPhase")
+                {
+                    Globals.Log("MainGameScreen.UpdateGameInfo(): Showing AdvisorBoardPanel");
+                    if (_advisorBoardPanel != null)
+                    {
+                        // Update the auction board with the game's auction board data
+                        if (game.AuctionBoard != null)
+                        {
+                            _auctionBoard = game.AuctionBoard;
+                            // Update the advisor board panel with the current auction board
+                            _advisorBoardPanel.UpdateBoard();
+                        }
+                        // Add the advisor board panel to the right top panel
+                        _rightTopPanel.Widgets.Clear();
+                        _rightTopPanel.Widgets.Add(_advisorBoardPanel);
+                    }
+                }
+                else
+                {
+                    // Clear the right top panel if not in strategyPhase
+                    _rightTopPanel.Widgets.Clear();
                 }
             }
         }
