@@ -61,7 +61,7 @@ namespace rurik.UI
             {"Novgorod", new Rectangle(275,100,522,271)},
             {"Pskov", new Rectangle(80,175,287,248)},
             {"Polotsk", new Rectangle(285,385,370,437)},
-            {"Smolensk", new Rectangle(430,315,632,448)},
+            {"Smolensk", new Rectangle(460,250,632,448)},
             {"Rostov", new Rectangle(660,75,777,281)},
             {"Chernigov", new Rectangle(650,375,666,586)},
             {"Suzdal", new Rectangle(820,100,957,325)},
@@ -467,8 +467,8 @@ namespace rurik.UI
                     int troopCount = kvp.Value;
                     int leaderCount = location.leaderByColor[color];
                     //Globals.Log("drawTroopOverlays(): color=" + color + "count=" + troopCount);
-
-                    troopCount = 1;
+                    // remove this
+                    //troopCount = 1;
                     if (troopCount > 0 || leaderCount > 0)
                     {
                         // Get location bounds
@@ -489,11 +489,6 @@ namespace rurik.UI
                                 _leftPanel.Widgets.Add(locationItemsPanel.Panel);    
                             }
                             catch(Exception ex) {}
-                            //locationItemsPanel.Window.Left = overlayX;
-                            //locationItemsPanel.Window.Top = overlayY;
-                            //_leftPanel.Widgets.Add(locationItemsPanel.Window);
-                            //locationItemsPanel.Window.Show(_desktop);
-
 
                         }
                     }
