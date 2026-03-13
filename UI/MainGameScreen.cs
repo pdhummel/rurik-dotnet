@@ -58,27 +58,27 @@ namespace rurik.UI
         {
             // Locations have been scaled to 0-1000.
             // Green locations (Novgorod region)
-            {"Novgorod", new Rectangle(352,197,522,271)},
-            {"Pskov", new Rectangle(155,175,287,248)},
-            {"Polotsk", new Rectangle(252,367,370,437)},
-            {"Smolensk", new Rectangle(499,366,632,448)},
-            {"Rostov", new Rectangle(661,208,777,281)},
-            {"Chernigov", new Rectangle(517,511,666,586)},
-            {"Suzdal", new Rectangle(824,250,957,325)},
-            {"Pereyaslavl", new Rectangle(591,608,758,687)},
+            {"Novgorod", new Rectangle(275,100,522,271)},
+            {"Pskov", new Rectangle(80,175,287,248)},
+            {"Polotsk", new Rectangle(285,385,370,437)},
+            {"Smolensk", new Rectangle(425,315,632,448)},
+            {"Rostov", new Rectangle(660,75,777,281)},
+            {"Chernigov", new Rectangle(650,375,666,586)},
+            {"Suzdal", new Rectangle(820,100,957,325)},
+            {"Pereyaslavl", new Rectangle(705,525,758,687)},
 
 
             // Yellow locations (Kiev region)
-            {"Volyn", new Rectangle(155,602,262,679)},
-            {"Kiev", new Rectangle(316,554,429,632)},
-            {"Galich", new Rectangle(240,783,343,851)},
-            {"Murom", new Rectangle(813,473,952,552)},
+            {"Volyn", new Rectangle(155,450,262,679)},
+            {"Kiev", new Rectangle(390,565,429,632)},
+            {"Galich", new Rectangle(295,675,343,851)},
+            {"Murom", new Rectangle(900,375,952,552)},
 
 
             // Brown locations (Azov region)
-            {"Brest", new Rectangle(60,424,180,504)},
-            {"Peresech", new Rectangle(304,861,465,948)},
-            {"Azov", new Rectangle(845, 708, 955, 794)}
+            {"Brest", new Rectangle(10,475,180,504)},
+            {"Peresech", new Rectangle(420,775,465,948)},
+            {"Azov", new Rectangle(700, 660, 955, 794)}
         };
 
 
@@ -215,6 +215,8 @@ namespace rurik.UI
         {
             //Globals.Log("MainGameScreen.Show(): enter, window=" + _window.Id + ", panel=" + _window.Content.Id);
             _isVisible = true;
+            if (_window == null || _panel == null)
+                return;
             if (_window != null && _window.Content != null)
             {
                 _window.Content.RemoveFromParent();
@@ -395,7 +397,8 @@ namespace rurik.UI
             //Globals.Log("MainGameScreen.updateMapPanel(): enter");
 
             // Clear existing widgets in left panel
-            _leftPanel.Widgets.Clear();
+            if (_leftPanel == null)
+                return;
 
             // Add map texture display
             if (_rurikMonoGame.Textures != null)
@@ -460,7 +463,7 @@ namespace rurik.UI
                     //Globals.Log("drawTroopOverlays(): color=" + color + "count=" + troopCount);
 
                     troopCount = 1;
-                    if (troopCount > 0 || leaderCount >0)
+                    if (troopCount > 0 || leaderCount > 0)
                     {
                         // Get location bounds
                         if (_locationBounds.TryGetValue(location.name, out Rectangle bounds))
@@ -472,7 +475,7 @@ namespace rurik.UI
                             int overlayX = (int)(textureX * scaleX);
                             int overlayY = (int)(textureY * scaleY);
 
-                            LocationItemsPanel locationItemsPanel = new LocationItemsPanel(location);
+                            LocationItemsPanel locationItemsPanel = new LocationItemsPanel(_rurikMonoGame, location);
                             locationItemsPanel.Panel.Left = overlayX;
                             locationItemsPanel.Panel.Top = overlayY;
                             try

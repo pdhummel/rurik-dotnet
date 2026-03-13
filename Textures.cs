@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -10,8 +11,16 @@ public class Textures
 
     public void LoadContent(ContentManager content)
     {
+        string contentDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Content");
+        
+        foreach (string filePath in Directory.GetFiles(contentDirectory, "*.png"))
+        {
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
+            TextureMap[fileName] = content.Load<Texture2D>(fileName);
+        }
+        
         // Add commonly used textures here
-        TextureMap["Map2"] = content.Load<Texture2D>("Map2");
+        //TextureMap["Map2"] = content.Load<Texture2D>("Map2");
         TextureMap["map"] = TextureMap["Map2"];
     }
 

@@ -3,6 +3,7 @@ using Myra.Graphics2D;
 using Myra.Graphics2D.Brushes;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace rurik.UI
 {
@@ -12,6 +13,7 @@ namespace rurik.UI
         private Grid _mainGrid;
         private Panel _leftColumnPanel;
         private Panel _rightColumnPanel;
+        private RurikMonoGame _rurikMonoGame;
         public Location Location {get;set;}
         
         // Color mapping for factions
@@ -34,8 +36,9 @@ namespace rurik.UI
         private Grid leftColumnGrid;
         private Grid rightColumnGrid;
 
-        public LocationItemsPanel(Location location)
+        public LocationItemsPanel(RurikMonoGame rurikMonoGame, Location location)
         {
+            _rurikMonoGame = rurikMonoGame;
             Location = location;
             Initialize();
         }
@@ -48,7 +51,7 @@ namespace rurik.UI
             {
                 Id = "locationItemsPanel",
                 Background = new SolidBrush(Color.Transparent),
-                Width = 150,
+                Width = 75,
                 Height = 100,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
@@ -60,7 +63,7 @@ namespace rurik.UI
             {
                 Id = "locationItemsGrid",
                 Background = new SolidBrush(Color.Transparent),
-                Padding = new Thickness(5),
+                Padding = new Thickness(1),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
@@ -172,6 +175,8 @@ namespace rurik.UI
             {
                 int troops = Location.troopsByColor[color];
                 int leader = Location.leaderByColor[color];
+                troops = 1;
+                leader = 1;
                 if (troops > 0 || leader > 0)
                 {
                     if (troops > 0)
@@ -197,14 +202,26 @@ namespace rurik.UI
 
             rightColumnGrid.Widgets.Clear();
             index = 0;
-            foreach (Building building in Location.buildings)
+            // TODO: remove test building
+            Location.buildings.Clear();
+            Building testBuilding = new Building("yellow", "stronghold");
+            Location.buildings.Add(testBuilding);
+            Location.buildings.Add(testBuilding);
+            Location.buildings.Add(testBuilding);
+            List<Building> buildingList = new List<Building>(Location.buildings);
+            foreach (Building building in buildingList)
             {
-                Panel buildingSpace = CreateBuildingSpace();
-                buildingPanels[index] = buildingSpace;
-                Grid.SetRow(buildingSpace, index);
-                Grid.SetColumn(buildingSpace, 0);
-                rightColumnGrid.Widgets.Add(buildingSpace);
-                index += 1;
+                if (building == null)
+                    return;
+                Panel buildingSpace = CreateBuildingSpace(building.color, building.name);
+                if (index < 3 && index >= 0)
+                {
+                    buildingPanels[index] = buildingSpace;
+                    Grid.SetRow(buildingSpace, index);
+                    Grid.SetColumn(buildingSpace, 0);
+                    rightColumnGrid.Widgets.Add(buildingSpace);
+                    index += 1;
+                }    
             }
 
         }
@@ -279,18 +296,31 @@ namespace rurik.UI
             };
         }
 
-        private Panel CreateBuildingSpace()
+        private Panel CreateBuildingSpace(string color, string name)
         {
-            return new Panel()
+            Texture2D texture = _rurikMonoGame.Textures.GetTexture(name + "-" + color);
+            var textureRegion = new Myra.Graphics2D.TextureAtlases.TextureRegion(texture);
+            var buildingImage = new Image()
+            {
+                Renderable = textureRegion,
+                Width = 30,
+                Height = 30,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            
+            var panel = new Panel()
             {
                 Id = "buildingSpace",
-                Background = new SolidBrush(Color.Black with { A = 128 }),
-                Width = 25,
-                Height = 25,
+                Background = new SolidBrush(Color.Transparent),
+                Width = 30,
+                Height = 30,
                 Margin = new Thickness(1),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
+            panel.Widgets.Add(buildingImage);
+            return panel;
         }
 
 
