@@ -96,7 +96,7 @@ namespace rurik.UI
             Initialize();
             
             // Initialize the AdvisorBoardPanel
-            _advisorBoardPanel = new AdvisorBoardPanel(desktop, new AuctionBoard(4));
+            _advisorBoardPanel = new AdvisorBoardPanel(desktop, new AuctionBoard(4), _rurikMonoGame.Textures);
         }
 
         public void Initialize()

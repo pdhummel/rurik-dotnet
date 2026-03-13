@@ -11,16 +11,46 @@ public class Textures
 
     public void LoadContent(ContentManager content)
     {
-        string contentDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Content");
+        // Get the executable directory
+        string executableDirectory = AppDomain.CurrentDomain.BaseDirectory;
         
-        foreach (string filePath in Directory.GetFiles(contentDirectory, "*.png"))
+        // The Content directory is typically in the same directory as the executable
+        string contentDirectory = Path.Combine(executableDirectory, "Content");
+        
+        Globals.Log("Textures.LoadContent(): contentDirectory=" + contentDirectory);
+        
+        if (!Directory.Exists(contentDirectory))
         {
-            string fileName = Path.GetFileNameWithoutExtension(filePath);
-            TextureMap[fileName] = content.Load<Texture2D>(fileName);
+            Globals.Log("Textures.LoadContent(): Content directory does not exist!");
+            return;
         }
         
+        int loadedCount = 0;
+        foreach (string filePath in Directory.GetFiles(contentDirectory, "*.xnb"))
+        {
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
+            // Only load textures that match our action pattern (muster, move, attack, tax, build, scheme)
+            if (fileName.StartsWith("muster-") || fileName.StartsWith("move-") ||
+                fileName.StartsWith("attack-") || fileName.StartsWith("tax-") ||
+                fileName.StartsWith("build-") || fileName.StartsWith("scheme-"))
+            {
+                try
+                {
+                    TextureMap[fileName] = content.Load<Texture2D>(fileName);
+                    Globals.Log("Textures.LoadContent(): Loaded " + fileName);
+                    loadedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Globals.Log("Textures.LoadContent(): Failed to load " + fileName + ": " + ex.Message);
+                }
+            }
+        }
+        
+        Globals.Log("Textures.LoadContent(): Loaded " + loadedCount + " action textures");
+        
         // Add commonly used textures here
-        //TextureMap["Map2"] = content.Load<Texture2D>("Map2");
+        TextureMap["Map2"] = content.Load<Texture2D>("Map2");
         TextureMap["map"] = TextureMap["Map2"];
     }
 

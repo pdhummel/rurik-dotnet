@@ -138,6 +138,10 @@ public class RurikMonoGame : Game
         // Initialize UI screens
         //GameLogScreen = new GameLogScreen();
         //EndGameScreen = new EndGameScreen();
+
+        // Load textures
+        Textures.LoadContent(Content);
+
         setupDesktop();
         GameListScreen = new GameListScreen(this, Desktop);
         //GameListScreen.Initialize();
@@ -153,8 +157,8 @@ public class RurikMonoGame : Game
         ChooseSecretAgendaModal = new ChooseSecretAgendaModal(this, Desktop);
         //ChooseSecretAgendaModal.Initialize();
         
-        // Load textures
-        Textures.LoadContent(Content);
+
+
     }
 
 

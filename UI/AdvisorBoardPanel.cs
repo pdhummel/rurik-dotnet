@@ -2,6 +2,7 @@ using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.Styles;
 using Myra.Graphics2D;
 using Myra.Graphics2D.Brushes;
+using Myra.Graphics2D.TextureAtlases;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -20,6 +21,7 @@ namespace rurik.UI
         private readonly AuctionBoard _auctionBoard;
         private readonly Dictionary<string, Color> _factionColors;
         private readonly Dictionary<int, string> _advisorNumToText;
+        private readonly Textures _textures;
 
         private Panel _boardPanel;
         private Grid _boardGrid;
@@ -33,13 +35,14 @@ namespace rurik.UI
             {"yellow", Color.Yellow}
         };
 
-        public AdvisorBoardPanel(Desktop desktop, AuctionBoard auctionBoard)
+        public AdvisorBoardPanel(Desktop desktop, AuctionBoard auctionBoard, Textures textures)
             : base()
         {
             _desktop = desktop;
             _auctionBoard = auctionBoard;
             _factionColors = DefaultFactionColors;
-            
+            _textures = textures;
+      
             // Map advisor numbers to text for image naming
             _advisorNumToText = new Dictionary<int, string>
             {
@@ -158,43 +161,28 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            // Set up 2 rows: advisor image/number and bid coins
+            // Set up 2 rows: action image and bid coins/quantity info
             contentGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
             contentGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
 
-            // Advisor display (image or text)
-            if (space.advisor > 0)
+            // Action image display (from Content folder)
+            var imageName = GetActionImageName(space);
+            var texture = _textures.GetTexture(imageName);
+            Globals.Log($"CreateCellPanel(): actionName={space.actionName}, quantity={space.quantity}, extraCoin={space.extraCoin}, imageName={imageName}, texture={texture != null}");
+            if (texture != null)
             {
-                var advisorText = _advisorNumToText.TryGetValue(space.advisor, out var text) ? text : space.advisor.ToString();
-                var color = space.color ?? "unknown";
-                
-                // Create advisor image placeholder
-                var advisorImage = new Image()
+                var textureRegion = new TextureRegion(texture);
+                var actionImage = new Image()
                 {
-                    Id = $"advisor_{space.actionName}_r{row + 1}",
-                    // In a real implementation, you would load the texture from assets
-                    // For now, we'll use a colored rectangle as placeholder
-                    Background = new SolidBrush(_factionColors.TryGetValue(color, out var c) ? c : Color.Gray),
-                    Width = 40,
-                    Height = 40,
+                    Id = $"action_{space.actionName}_r{row + 1}",
+                    Renderable = textureRegion,
+                    Width = 50,
+                    Height = 50,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                 };
-
-                Grid.SetRow(advisorImage, 0);
-                contentGrid.Widgets.Add(advisorImage);
-
-                // Advisor number label
-                var advisorLabel = new Label()
-                {
-                    Id = $"advisorNum_{space.actionName}_r{row + 1}",
-                    Text = advisorText,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Background = new SolidBrush(Color.Transparent),
-                };
-                Grid.SetRow(advisorLabel, 0);
-                contentGrid.Widgets.Add(advisorLabel);
+                Grid.SetRow(actionImage, 0);
+                contentGrid.Widgets.Add(actionImage);
             }
 
             // Bid coins display
@@ -221,11 +209,23 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
                 Background = new SolidBrush(Color.Transparent),
             };
-            Grid.SetRow(quantityLabel, 1);
-            contentGrid.Widgets.Add(quantityLabel);
+            //Grid.SetRow(quantityLabel, 1);
+            //contentGrid.Widgets.Add(quantityLabel);
 
             cellPanel.Widgets.Add(contentGrid);
             return cellPanel;
+        }
+
+        private string GetActionImageName(AuctionSpace space)
+        {
+            // Build image name based on action name, quantity, and extraCoin
+            // Pattern: {actionName}-{quantity}.png or {actionName}-{quantity}-coin.png
+            var imageName = $"{space.actionName}-{space.quantity}";
+            if (space.extraCoin > 0)
+            {
+                imageName += "-coin";
+            }
+            return imageName;
         }
 
         public void UpdateBoard()
@@ -273,3 +273,4 @@ namespace rurik.UI
         }
     }
 }
+
