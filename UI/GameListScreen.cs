@@ -332,7 +332,7 @@ namespace rurik.UI
             };
 
             HorizontalStackPanel gameListButtonPanel = new HorizontalStackPanel();
-            gameListButtonPanel.Widgets.Add(_refreshButton);
+            //gameListButtonPanel.Widgets.Add(_refreshButton);
             gameListButtonPanel.Widgets.Add(_openCreateGameButton);
 
             _gameListPanel.Visible = false;

@@ -34,6 +34,7 @@ namespace rurik.UI
         
         private PlaceTroopsModal? _placeTroopsModal;
         private PlaceLeaderModal? _placeLeaderModal;
+        private PlayAdvisorModal? _playAdvisorModal;
         
         private AdvisorBoardPanel? _advisorBoardPanel;
         private AuctionBoard? _auctionBoard;
@@ -93,6 +94,7 @@ namespace rurik.UI
             game.MainGameScreen = this;
             _placeTroopsModal = new PlaceTroopsModal(game, desktop);
             _placeLeaderModal = new PlaceLeaderModal(game, desktop);
+            _playAdvisorModal = new PlayAdvisorModal(game, desktop);
             Initialize();
             
             // Initialize the AdvisorBoardPanel
@@ -414,6 +416,30 @@ namespace rurik.UI
                     }
                 }
                 
+                // Check if we should show the PlayAdvisor modal
+                // Show modal when game state is strategyPhase and player is the current player
+                if (game.CurrentState == "strategyPhase" && game.ClientPlayer != null)
+                {
+                    // Check if the client player is the current player
+                    if (game.CurrentPlayerColor == game.ClientPlayer.Color)
+                    {
+                        Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlayAdvisor modal");
+                        if (!_playAdvisorModal.IsVisible)
+                        {
+                            _playAdvisorModal?.UpdateGameInfo(_game);
+                            _playAdvisorModal?.Show();
+                        }
+                    }
+                }
+                else
+                {
+                    // Hide the PlayAdvisor modal if not in strategyPhase or player is not current player
+                    if (_playAdvisorModal.IsVisible)
+                    {
+                        _playAdvisorModal?.Hide();
+                    }
+                }
+
                 // Check if we should show the AdvisorBoardPanel
                 // Show panel when game state is strategyPhase
                 if (game.CurrentState == "strategyPhase")

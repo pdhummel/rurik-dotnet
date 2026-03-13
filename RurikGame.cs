@@ -106,16 +106,21 @@ namespace rurik
 
         public void StartGame()
         {
-            if (Players.getNumberOfPlayers() < 1) // 2
+            int numberOfPlayers = Players.getNumberOfPlayers();
+            if (numberOfPlayers < 1) // 2
             {
                 ThrowError("Not enough players to start the game", "StartGame");
                 return;
             }
-            GameMap.SetLocationsForGame(Players.getNumberOfPlayers());
+            AuctionBoard = new AuctionBoard(numberOfPlayers);
+            GameMap.SetLocationsForGame(numberOfPlayers);
+            List<int> advisors = GetAdvisorsForRound(numberOfPlayers, this.CurrentRound);
             // Deal 2 Secret Agenda cards to each player
-            for (int i = 0; i < Players.getNumberOfPlayers(); i++)
-            {
+            for (int i = 0; i < numberOfPlayers; i++)
+            {                
                 Player player = Players.players[i];
+                List<string> stringListAdvisors = advisors.Select(i => i.ToString()).ToList();
+                player.setAdvisors(stringListAdvisors);
                 for (int j = 0; j < 2; j++)
                 {
                     SecretAgendaCard card = Cards.dealRandomSecretAgendaCard();

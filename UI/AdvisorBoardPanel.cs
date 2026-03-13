@@ -168,7 +168,7 @@ namespace rurik.UI
             // Action image display (from Content folder)
             var imageName = GetActionImageName(space);
             var texture = _textures.GetTexture(imageName);
-            Globals.Log($"CreateCellPanel(): actionName={space.actionName}, quantity={space.quantity}, extraCoin={space.extraCoin}, imageName={imageName}, texture={texture != null}");
+            //Globals.Log($"CreateCellPanel(): actionName={space.actionName}, quantity={space.quantity}, extraCoin={space.extraCoin}, imageName={imageName}, texture={texture != null}");
             if (texture != null)
             {
                 var textureRegion = new TextureRegion(texture);

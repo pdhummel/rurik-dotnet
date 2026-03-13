@@ -177,7 +177,7 @@ public class GameEvent
         Globals.Log("advisorPlacedHandler(): enter");
         if (Game.MainGameScreen == null)
             return;
-        Game.MainGameScreen.UpdateGameInfo(GameStatus, GameMap);
+        Game.MainGameScreen.UpdateGameInfo(GameStatus);
     }
 
     public void gameStateUpdateHandler()

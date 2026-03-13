@@ -54,11 +54,10 @@ public class PlaceAdvisorAction : PlayerAction
         // Call RurikGame PlayAdvisor
         game.PlayAdvisor(PlaceAdvisorValues.PlayerColor, PlaceAdvisorValues.ActionColumn, PlaceAdvisorValues.Advisor, PlaceAdvisorValues.BidCoins);
 
-        GameStatus gameStatus = server.Games.UpdateGameStatus(PlaceAdvisorValues.GameId);
+        GameStatus gameStatus = server.Games.UpdateGameStatus(PlaceAdvisorValues.GameId, PlaceAdvisorValues.PlayerColor);
         GameEvent gameEvent = new(EVENT_ADVISOR_PLACED)
         {
-            GameStatus = gameStatus,
-            GameMap = game.GameMap
+            GameStatus = gameStatus
         };
         server.SendGamePlayEvent(gameEvent);
         server.SendGames();
