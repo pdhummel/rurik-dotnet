@@ -33,8 +33,8 @@ public class JoinGameAction : PlayerAction
         if (JoinGameValues == null || JoinGameValues.GameId == null)
             return;
         Server server = (Server)serverObj;
-        server.PeerToPlayerName[peer] = JoinGameValues.PlayerName;
-        server.PlayerNameToPeer[JoinGameValues.PlayerName] = peer;
+        //server.PeerToPlayerName[peer] = JoinGameValues.PlayerName;
+        //server.PlayerNameToPeer[JoinGameValues.PlayerName] = peer;
         RurikGame game = server.Games.GetGameById(JoinGameValues.GameId);
         game.JoinGame(JoinGameValues.PlayerName, JoinGameValues.PlayerColor, JoinGameValues.PlayerPosition, false);
         GameStatus gameStatus = server.Games.UpdateGameStatus(JoinGameValues.GameId);

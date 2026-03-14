@@ -106,6 +106,7 @@ namespace rurik
 
         public void StartGame()
         {
+            Globals.Log("StartGame(): enter");
             int numberOfPlayers = Players.getNumberOfPlayers();
             if (numberOfPlayers < 1) // 2
             {

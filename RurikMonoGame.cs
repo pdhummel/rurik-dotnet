@@ -291,5 +291,15 @@ public class RurikMonoGame : Game
     {
     }   
 
+    public void showMessage(string message)
+    {
+        Window window = new Window
+        {
+            Title = message
+        };
+        if (Desktop != null)
+            window.ShowModal(Desktop);
+    }
+
 
 }

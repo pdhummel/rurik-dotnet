@@ -210,9 +210,12 @@ public class Server
                         {
                             string playerName = PeerToPlayerName.ContainsKey(peer) ? PeerToPlayerName[peer] : null;
                             if (playerName != null) 
-                            {
-                                Player? clientPlayer = gameEvent.GameStatus.Players?.getPlayerByName(playerName);
-                                gameEvent.GameStatus.ClientPlayer = clientPlayer;
+                            {   
+                                if (gameEvent.GameStatus.Players.playersByName.ContainsKey(playerName))
+                                {
+                                    Player? clientPlayer = gameEvent.GameStatus.Players?.getPlayerByName(playerName);
+                                    gameEvent.GameStatus.ClientPlayer = clientPlayer;
+                                }
                             }
                             else
                             {
@@ -335,7 +338,6 @@ public class Server
     private void OnPeerConnected(NetPeer peer)
     {
         Globals.Log($"OnPeerConnected(): Peer connected to Server: {peer.Address}");
-        SendGames(peer);
     }
 
     private void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)

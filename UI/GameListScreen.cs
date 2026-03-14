@@ -512,16 +512,32 @@ namespace rurik.UI
         {
             _currentPlayerName = _playerNameInput.Text;
             if (string.IsNullOrEmpty(_currentPlayerName))
+            {
+                showMessage("Name required.");
                 return;
+            }
 
             int port = validateTextBoxInteger(_portLabel.Text, _portInput, 1024, 49151);
             JoinServerValues joinServerValues = new JoinServerValues(_hostInput.Text, port, _playerNameInput.Text);
             RurikMonoGame.Client.ClientIdentifier = _currentPlayerName;
             RurikMonoGame.Client.Connect(joinServerValues, "rurik");
+        }
 
+        public void SuccessfulConnection()
+        {
+            IdentifyClientAction action = new();
+            action.ClientIdentifier = RurikMonoGame.Client.ClientIdentifier;
+            RurikMonoGame.Client.SendAction(action);
+        }
+
+        public void SuccessfulLogin()
+        {
+            RefreshGameList();
             _isLoggedIn = true;
             _loginPanel.Visible = false;
             _gameListPanel.Visible = true;
+            _currentPlayerName = GetUniquePlayerName(_currentPlayerName);
+            //showMessage("Hello " + _currentPlayerName);
             _playerNameLabel = new Label()
             {
                 Id = "playerNameLabel",
@@ -531,8 +547,8 @@ namespace rurik.UI
             };
             _gameNameInput.Text = _currentPlayerName + "'s Game";
             // Add the player name label to the grid
-            _grid.Widgets.Add(_playerNameLabel);
-            RefreshGameList();
+            //_grid.Widgets.Add(_playerNameLabel);
+
         }
 
         public void RefreshGameList()
@@ -732,8 +748,9 @@ namespace rurik.UI
 
         private void CreateGame(string gameName, string color, string position)
         {
-            if (string.IsNullOrEmpty(gameName) || RurikMonoGame.Client.ClientIdentifier == null)
+            if (gameName == null || string.IsNullOrEmpty(gameName.Trim()) || RurikMonoGame.Client.ClientIdentifier == null)
             {
+                showMessage("Game name is required.");
                 return;
             }
 
@@ -851,8 +868,8 @@ namespace rurik.UI
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
             };
-
-            _currentPlayerName = GetUniquePlayerName(_currentPlayerName); // Ensure the player name is unique across all games
+            
+            //_currentPlayerName = GetUniquePlayerName(_currentPlayerName);
             // Player Name label (read-only)
             Label playerNameLabel = new Label()
             {

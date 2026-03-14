@@ -49,7 +49,9 @@ public class Client(RurikMonoGame game)
         clientThread.Start();
 
         // TODO: tell the server we are ready.
-        //PlayerAction action = new(serverPeer, ClientIdentifier, "connect");
+        IdentifyClientAction action = new();
+        action.ClientIdentifier = ClientIdentifier;
+        SendAction(action);
     }
 
 
@@ -155,6 +157,7 @@ public class Client(RurikMonoGame game)
         if (peer != null)
             Globals.Log($"OnPeerDisconnected(): Client peer disconnected: {peer.Address}. Reason: {disconnectInfo.Reason}");
         // TODO: ReConnect
+        RurikMonoGame.showMessage("Could not connect to server.");
     }
 
 }

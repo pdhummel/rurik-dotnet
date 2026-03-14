@@ -18,6 +18,8 @@ public class GameEvent
     public static readonly string EVENT_TROOP_PLACED = "troopPlaced";
     public static readonly string EVENT_LEADER_PLACED = "leaderPlaced";
     public static readonly string EVENT_ADVISOR_PLACED = "advisorPlaced";
+    public static readonly string EVENT_LOGIN_SUCCESSFUL = "loginSuccessful";
+    public static readonly string EVENT_SERVER_SIDE_MESSAGE = "serverSideMessage";
     
     // Used to send separate message to clients for Events.
     // TODO: Also keep track of these events in a server log.
@@ -62,7 +64,9 @@ public class GameEvent
             EVENT_SECRET_AGENDA_SELECTED,
             EVENT_TROOP_PLACED,
             EVENT_LEADER_PLACED,
-            EVENT_ADVISOR_PLACED
+            EVENT_ADVISOR_PLACED,
+            EVENT_LOGIN_SUCCESSFUL,
+            EVENT_SERVER_SIDE_MESSAGE
         };
         GamePlayEvents.UnionWith(gamePlayEvents);
     }
@@ -191,4 +195,16 @@ public class GameEvent
         }
     }
 
+    public void loginSuccessfulHandler()
+    {
+        Globals.Log("loginSuccessfulHandler(): enter");
+        if (Game.GameListScreen != null)
+            Game.GameListScreen.SuccessfulLogin();
+    }
+
+    public void serverSideMessageHandler()
+    {
+        Globals.Log("serverSideMessageHandler(): enter");
+        Game.showMessage(EventString);
+    }
 }
