@@ -289,7 +289,7 @@ namespace rurik
         {
             for (int i = 0; i < auctionBoard.numberOfRows; i++)
             {
-                var auctionSpace = auctionBoard.board[action][i];
+                var auctionSpace = auctionBoard.Board[action][i];
                 var color = auctionSpace.color;
                 if (color != null)
                 {

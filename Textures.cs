@@ -30,10 +30,10 @@ public class Textures
         {
             string fileName = Path.GetFileNameWithoutExtension(filePath);
             // Only load textures that match our action pattern (muster, move, attack, tax, build, scheme)
-            if (fileName.StartsWith("muster-") || fileName.StartsWith("move-") ||
-                fileName.StartsWith("attack-") || fileName.StartsWith("tax-") ||
-                fileName.StartsWith("build-") || fileName.StartsWith("scheme-"))
-            {
+            ///if (fileName.StartsWith("muster-") || fileName.StartsWith("move-") ||
+            //   fileName.StartsWith("attack-") || fileName.StartsWith("tax-") ||
+            //    fileName.StartsWith("build-") || fileName.StartsWith("scheme-"))
+            //{
                 try
                 {
                     TextureMap[fileName] = content.Load<Texture2D>(fileName);
@@ -44,7 +44,7 @@ public class Textures
                 {
                     Globals.Log("Textures.LoadContent(): Failed to load " + fileName + ": " + ex.Message);
                 }
-            }
+            //}
         }
         
         Globals.Log("Textures.LoadContent(): Loaded " + loadedCount + " action textures");

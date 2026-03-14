@@ -277,7 +277,7 @@ namespace rurik.UI
             var columnNames = new List<string>();
             if (_game != null && _game.AuctionBoard != null)
             {
-                columnNames = _game.AuctionBoard.board.Keys.ToList();
+                columnNames = _game.AuctionBoard.Board.Keys.ToList();
             }
             else
             {

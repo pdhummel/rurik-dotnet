@@ -11,13 +11,13 @@ namespace rurik
     /// </summary>
     public class AuctionBoard
     {
-        private readonly Dictionary<string, List<AuctionSpace>> _board;
+        public Dictionary<string, List<AuctionSpace>> Board {get; set;} 
         public int numberOfRows { get; private set; }
 
         public AuctionBoard(int numberOfPlayers)
         {
             NumberOfPlayers = numberOfPlayers;
-            _board = new Dictionary<string, List<AuctionSpace>>
+            Board = new Dictionary<string, List<AuctionSpace>>
             {
                 { "muster", new List<AuctionSpace>() },
                 { "move", new List<AuctionSpace>() },
@@ -32,11 +32,12 @@ namespace rurik
 
         public int NumberOfPlayers { get; private set; }
 
-        public Dictionary<string, List<AuctionSpace>> board => _board;
+
 
         public List<AuctionSpace> GetColumn(string actionName)
         {
-            return _board.TryGetValue(actionName, out var column) ? column : new List<AuctionSpace>();
+            return Board[actionName];
+            //return Board.TryGetValue(actionName, out var column) ? column : new List<AuctionSpace>();
         }
 
         public bool IsColumnFull(string actionName)
@@ -55,7 +56,7 @@ namespace rurik
         public bool IsPlayerIn3Columns(string color)
         {
             var count = 0;
-            foreach (var column in _board.Values)
+            foreach (var column in Board.Values)
             {
                 if (column.Any(space => space.color == color))
                 {
@@ -70,7 +71,7 @@ namespace rurik
             var currentValue = 6;
             var advisors = new List<AuctionSpace>();
             
-            foreach (var column in _board.Values)
+            foreach (var column in Board.Values)
             {
                 foreach (var space in column)
                 {
@@ -96,6 +97,7 @@ namespace rurik
 
         public void AuctionBid(string actionName, string color, int advisor, int bidCoins = 0)
         {
+            Globals.Log("AuctionBid(): enter: actionName=" + actionName + ", advisor="+ advisor);
             if (IsColumnFull(actionName))
             {
                 throw new InvalidOperationException($"Cannot place advisor in {actionName} column, because it is full.");
@@ -117,13 +119,17 @@ namespace rurik
                 var currentBid = column[i].advisor + column[i].bidCoins;
                 if (totalBid > currentBid)
                 {
-                    // Move everything down
-                    for (int j = numberOfRows - 1; j > i; j--)
+                    if (currentBid > 0)
                     {
-                        var aboveSpace = column[j - 1];
-                        column[j].CopyFrom(aboveSpace);
+                        // Move everything down
+                        Globals.Log("AuctionBid(): bump down");
+                        for (int j = numberOfRows - 1; j > i; j--)
+                        {
+                            var aboveSpace = column[j - 1];
+                            column[j].CopyFrom(aboveSpace);
+                        }
                     }
-
+                    Globals.Log("AuctionBid(): set advisor for " + column[i].actionName + " at row " + i);
                     column[i].color = color;
                     column[i].advisor = advisor;
                     column[i].bidCoins = bidCoins;
@@ -134,12 +140,12 @@ namespace rurik
 
         public void Reset()
         {
-            _board["muster"].Clear();
-            _board["move"].Clear();
-            _board["attack"].Clear();
-            _board["tax"].Clear();
-            _board["build"].Clear();
-            _board["scheme"].Clear();
+            Board["muster"].Clear();
+            Board["move"].Clear();
+            Board["attack"].Clear();
+            Board["tax"].Clear();
+            Board["build"].Clear();
+            Board["scheme"].Clear();
 
             if (NumberOfPlayers <= 2)
             {
@@ -197,8 +203,8 @@ namespace rurik
 
         private void AddAuctionSpace(string action, int quantity, int extraCoin)
         {
-            var row = _board[action].Count;
-            _board[action].Add(new AuctionSpace(action, quantity, row, extraCoin));
+            var row = Board[action].Count;
+            Board[action].Add(new AuctionSpace(action, quantity, row, extraCoin));
         }
     }
 }

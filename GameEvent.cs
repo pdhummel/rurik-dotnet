@@ -28,6 +28,7 @@ public class GameEvent
     public RurikMonoGame? Game { get; set; }
     public ServerGameState? GameState {get; set; }
     public GameStatus? GameStatus {get; set;}
+    public AuctionBoard? AuctionBoard {get; set;}
     public GameMap? GameMap {get; set;}
     public Games? Games {get;set;}
     public string? EventString { get; set; }
@@ -177,6 +178,7 @@ public class GameEvent
         Globals.Log("advisorPlacedHandler(): enter");
         if (Game.MainGameScreen == null)
             return;
+        GameStatus.AuctionBoard = AuctionBoard;
         Game.MainGameScreen.UpdateGameInfo(GameStatus);
     }
 

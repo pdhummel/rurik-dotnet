@@ -64,8 +64,7 @@ public class PlaceLeaderAction : PlayerAction
         GameStatus gameStatus = server.Games.UpdateGameStatus(PlaceLeaderValues.GameId, PlaceLeaderValues.PlayerColor);
         GameEvent gameEvent = new(EVENT_LEADER_PLACED)
         {
-            GameStatus = gameStatus,
-            GameMap = game.GameMap
+            GameStatus = gameStatus
         };
         server.SendGamePlayEvent(gameEvent);
         server.SendGames();

@@ -18,7 +18,7 @@ namespace rurik.UI
     public class AdvisorBoardPanel : Panel
     {
         private readonly Desktop _desktop;
-        private readonly AuctionBoard _auctionBoard;
+        private AuctionBoard _auctionBoard;
         private readonly Dictionary<string, Color> _factionColors;
         private readonly Dictionary<int, string> _advisorNumToText;
         private readonly Textures _textures;
@@ -120,7 +120,7 @@ namespace rurik.UI
                 for (int col = 0; col < columnNames.Length; col++)
                 {
                     var actionName = columnNames[col];
-                    var auctionSpaces = _auctionBoard.board[actionName];
+                    var auctionSpaces = _auctionBoard.Board[actionName];
                     
                     if (row < auctionSpaces.Count)
                     {
@@ -161,7 +161,8 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            // Set up 2 rows: action image and bid coins/quantity info
+            // Set up rows: action image, advisor image (if placed), bid coins/quantity info
+            contentGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
             contentGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
             contentGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
 
@@ -181,8 +182,34 @@ namespace rurik.UI
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                 };
+                Grid.SetColumn(actionImage, 0);
                 Grid.SetRow(actionImage, 0);
                 contentGrid.Widgets.Add(actionImage);
+            }
+
+            // Advisor image display (if advisor is placed on this space)
+            if (!string.IsNullOrEmpty(space.color) && space.advisor > 0)
+            {
+                //Globals.Log("CreateCellPanel(): advisor=" + space.advisor);
+                var advisorImageName = GetAdvisorImageName(space);
+                var advisorTexture = _textures.GetTexture(advisorImageName);
+                if (advisorTexture != null)
+                {
+                    //Globals.Log("CreateCellPanel(): advisor=" + space.advisor);
+                    var textureRegion = new TextureRegion(advisorTexture);
+                    var advisorImage = new Image()
+                    {
+                        Id = $"advisor_{space.actionName}_r{row + 1}",
+                        Renderable = textureRegion,
+                        Width = 40,
+                        Height = 40,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                    };
+                    Grid.SetColumn(advisorImage, 0);
+                    Grid.SetRow(advisorImage, 0);
+                    contentGrid.Widgets.Add(advisorImage);
+                }
             }
 
             // Bid coins display
@@ -196,8 +223,8 @@ namespace rurik.UI
                     VerticalAlignment = VerticalAlignment.Center,
                     Background = new SolidBrush(Color.Transparent),
                 };
-                Grid.SetRow(coinLabel, 1);
-                contentGrid.Widgets.Add(coinLabel);
+                //Grid.SetRow(coinLabel, 2);
+                //contentGrid.Widgets.Add(coinLabel);
             }
 
             // Add quantity info (for reference)
@@ -209,7 +236,7 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
                 Background = new SolidBrush(Color.Transparent),
             };
-            //Grid.SetRow(quantityLabel, 1);
+            //Grid.SetRow(quantityLabel, 2);
             //contentGrid.Widgets.Add(quantityLabel);
 
             cellPanel.Widgets.Add(contentGrid);
@@ -226,6 +253,14 @@ namespace rurik.UI
                 imageName += "-coin";
             }
             return imageName;
+        }
+
+        private string GetAdvisorImageName(AuctionSpace space)
+        {
+            // Build advisor image name based on advisor number and color
+            // Pattern: {advisor}-{color}.png (e.g., one-yellow.png, five-red.png)
+            var advisorText = _advisorNumToText.GetValueOrDefault(space.advisor, space.advisor.ToString().ToLower());
+            return $"{advisorText}-{space.color}";
         }
 
         public void UpdateBoard()
@@ -253,7 +288,7 @@ namespace rurik.UI
                 for (int col = 0; col < columnNames.Length; col++)
                 {
                     var actionName = columnNames[col];
-                    var auctionSpaces = _auctionBoard.board[actionName];
+                    var auctionSpaces = _auctionBoard.Board[actionName];
                     
                     if (row < auctionSpaces.Count)
                     {
@@ -270,6 +305,11 @@ namespace rurik.UI
         public void SetFactionColor(string color, Color colorValue)
         {
             _factionColors[color] = colorValue;
+        }
+
+        public void SetAuctionBoard(AuctionBoard auctionBoard)
+        {
+            _auctionBoard = auctionBoard;
         }
     }
 }

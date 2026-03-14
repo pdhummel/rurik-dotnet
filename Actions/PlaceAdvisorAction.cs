@@ -57,7 +57,8 @@ public class PlaceAdvisorAction : PlayerAction
         GameStatus gameStatus = server.Games.UpdateGameStatus(PlaceAdvisorValues.GameId, PlaceAdvisorValues.PlayerColor);
         GameEvent gameEvent = new(EVENT_ADVISOR_PLACED)
         {
-            GameStatus = gameStatus
+            GameStatus = gameStatus,
+            AuctionBoard = game.AuctionBoard
         };
         server.SendGamePlayEvent(gameEvent);
         server.SendGames();

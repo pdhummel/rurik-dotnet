@@ -319,6 +319,7 @@ namespace rurik
 
         public void PlayAdvisor(string color, string columnName, string advisor, int bidCoins = 0)
         {
+            Globals.Log("PlayAdvisor(): enter");
             Player player = ValidateCurrentPlayer(color, "PlayAdvisor");
             if (player == null)
                 return;
@@ -347,11 +348,10 @@ namespace rurik
             }
 
             // Place the bid on the advisor
-            // AuctionBoard.PlaceBid(columnName, color, advisor, bidCoins); // This method doesn't exist
+            AuctionBoard.AuctionBid(columnName, color, int.Parse(advisor), bidCoins); // This method doesn't exist
             // Since Coins is read-only, we need to modify the boat's money directly
             player.boat.money -= bidCoins;
             player.UseAdvisor(advisor);
-            
             Log.AddLogEntry(color + " placed advisor " + advisor + " at " + columnName + " with " + bidCoins + " coins.");
             
             // Check if all players have played their advisors

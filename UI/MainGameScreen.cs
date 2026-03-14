@@ -240,6 +240,7 @@ namespace rurik.UI
             {
                 if (_advisorBoardPanel != null && _auctionBoard != null)
                 {
+                    _advisorBoardPanel.SetAuctionBoard(_auctionBoard);
                     _advisorBoardPanel.UpdateBoard();
                     _rightTopPanel.Widgets.Clear();
                     _rightTopPanel.Widgets.Add(_advisorBoardPanel);
@@ -452,6 +453,8 @@ namespace rurik.UI
                         {
                             _auctionBoard = game.AuctionBoard;
                             // Update the advisor board panel with the current auction board
+                            Globals.Log("UpdateGameInfo(): update auction board");
+                            _advisorBoardPanel.SetAuctionBoard(game.AuctionBoard);
                             _advisorBoardPanel.UpdateBoard();
                         }
                         // Add the advisor board panel to the right top panel
