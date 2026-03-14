@@ -236,14 +236,23 @@ namespace rurik.UI
             updateMapPanel();
             
             // Show AdvisorBoardPanel if game state is strategyPhase
-            if (_game != null && _game.CurrentState == "strategyPhase")
+            if (_game != null && 
+                (_game.CurrentState == "strategyPhase" || _game.CurrentState.Equals("retrieveAdvisor")))
             {
                 if (_advisorBoardPanel != null && _auctionBoard != null)
                 {
                     _advisorBoardPanel.SetAuctionBoard(_auctionBoard);
                     _advisorBoardPanel.UpdateBoard();
                     _rightTopPanel.Widgets.Clear();
-                    _rightTopPanel.Widgets.Add(_advisorBoardPanel);
+                    try
+                    {
+                        _rightTopPanel.Widgets.Add(_advisorBoardPanel);    
+                    }
+                    catch(Exception ex)
+                    {
+                        _rightTopPanel.Widgets.Add(_advisorBoardPanel);
+                    }
+                    
                 }
             }
             
@@ -443,7 +452,7 @@ namespace rurik.UI
 
                 // Check if we should show the AdvisorBoardPanel
                 // Show panel when game state is strategyPhase
-                if (game.CurrentState == "strategyPhase")
+                if ((game.CurrentState == "strategyPhase" || game.CurrentState.Equals("retrieveAdvisor")))
                 {
                     Globals.Log("MainGameScreen.UpdateGameInfo(): Showing AdvisorBoardPanel");
                     if (_advisorBoardPanel != null)

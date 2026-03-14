@@ -146,8 +146,8 @@ namespace rurik.UI
             {
                 Id = $"cell_{space.actionName}_r{row + 1}",
                 Background = new SolidBrush(new Color(60, 60, 60)),
-                Width = 100,
-                Height = 60,
+                Width = 60,
+                Height = 50,
                 Padding = new Thickness(5),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
@@ -162,9 +162,9 @@ namespace rurik.UI
             };
 
             // Set up rows: action image, advisor image (if placed), bid coins/quantity info
-            contentGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
-            contentGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
-            contentGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
+            //contentGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
+            //contentGrid.ColumnsProportions.Add(new Proportion(ProportionType.Pixels, 50));
+            //contentGrid.ColumnsProportions.Add(new Proportion(ProportionType.Pixels, 20));
 
             // Action image display (from Content folder)
             var imageName = GetActionImageName(space);
@@ -179,6 +179,7 @@ namespace rurik.UI
                     Renderable = textureRegion,
                     Width = 50,
                     Height = 50,
+                    //Padding = new Thickness(1),
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                 };
@@ -203,6 +204,7 @@ namespace rurik.UI
                         Renderable = textureRegion,
                         Width = 40,
                         Height = 40,
+                        //Padding = new Thickness(1),
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center,
                     };
@@ -210,22 +212,44 @@ namespace rurik.UI
                     Grid.SetRow(advisorImage, 0);
                     contentGrid.Widgets.Add(advisorImage);
                 }
+
+                // Bid coins display
+                if (space.bidCoins > 0)
+                {
+                    var coinTexture = _textures.GetTexture("coin");
+                    if (coinTexture != null)
+                    {
+                        var textureRegion = new TextureRegion(coinTexture);
+                        var coinImage = new Image()
+                        {
+                            Id = $"advisor_coin_{space.actionName}_r{row + 1}",
+                            Renderable = textureRegion,
+                            Width = 20,
+                            Height = 20,
+                            Padding = new Thickness(1),
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center,
+                        };
+                        Grid.SetColumn(coinImage, 1);
+                        Grid.SetRow(coinImage, 0);
+                        contentGrid.Widgets.Add(coinImage);
+                    }
+
+                    var coinLabel = new Label()
+                    {
+                        Id = $"coin_{space.actionName}_r{row + 1}",
+                        Text = space.bidCoins.ToString(),
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Background = new SolidBrush(Color.Transparent),
+                    };
+                    Grid.SetColumn(coinLabel, 1);
+                    Grid.SetRow(coinLabel, 0);
+                    contentGrid.Widgets.Add(coinLabel);
+                }
+
             }
 
-            // Bid coins display
-            if (space.bidCoins > 0)
-            {
-                var coinLabel = new Label()
-                {
-                    Id = $"coin_{space.actionName}_r{row + 1}",
-                    Text = space.bidCoins.ToString(),
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Background = new SolidBrush(Color.Transparent),
-                };
-                //Grid.SetRow(coinLabel, 2);
-                //contentGrid.Widgets.Add(coinLabel);
-            }
 
             // Add quantity info (for reference)
             var quantityLabel = new Label()

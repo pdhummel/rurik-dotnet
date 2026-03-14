@@ -355,18 +355,17 @@ namespace rurik
             Log.AddLogEntry(color + " placed advisor " + advisor + " at " + columnName + " with " + bidCoins + " coins.");
             
             // Check if all players have played their advisors
-            Player nextPlayer = Players.GetNextPlayer(player);
-            if (nextPlayer.Advisors.Count > 0)
+            Players.advanceToNextPlayer();
+            if (Players.currentPlayer.Advisors.Count > 0)
             {
-                Players.setCurrentPlayerByColor(nextPlayer.Color);
+                GameStates.ChangeState("strategyPhase");
             }
             else
             {
                 // All advisors played, move to next state
-                Players.setCurrentPlayerByColor(Players.getFirstPlayer().Color);
-                List<int> advisors = GetAdvisorsForRound(Players.getNumberOfPlayers(), CurrentRound - 1);
-                Players.SetAdvisors(advisors);
-                Players.MapAdvisorsToAuctionSpaces(AuctionBoard);
+                //List<int> advisors = GetAdvisorsForRound(Players.getNumberOfPlayers(), CurrentRound - 1);
+                //Players.SetAdvisors(advisors);
+                //Players.MapAdvisorsToAuctionSpaces(AuctionBoard);
                 GameStates.ChangeState("retrieveAdvisor");
                 
                 // Reset for next round if needed

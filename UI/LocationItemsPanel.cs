@@ -177,7 +177,6 @@ namespace rurik.UI
                 int leader = Location.leaderByColor[color];
                 // remove this
                 //troops = 1;
-                //leader = 1;
                 if (troops > 0 || leader > 0)
                 {
                     if (troops > 0)
