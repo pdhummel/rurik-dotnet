@@ -38,6 +38,7 @@ namespace rurik.UI
         
         private AdvisorBoardPanel? _advisorBoardPanel;
         private AuctionBoard? _auctionBoard;
+        private BoatPanel? _boatPanel;
 
         // Color mapping for factions
         private static readonly Dictionary<string, Color> FactionColors = new Dictionary<string, Color>
@@ -96,9 +97,10 @@ namespace rurik.UI
             _placeLeaderModal = new PlaceLeaderModal(game, desktop);
             _playAdvisorModal = new PlayAdvisorModal(game, desktop);
             Initialize();
-            
+      
             // Initialize the AdvisorBoardPanel
             _advisorBoardPanel = new AdvisorBoardPanel(desktop, new AuctionBoard(4), _rurikMonoGame.Textures);
+            
         }
 
         public void Initialize()
@@ -172,7 +174,7 @@ namespace rurik.UI
                 Background = new SolidBrush(Color.Gray),
                 Padding = new Thickness(5),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Top,
             };
 
             // Create right bottom panel (for future use - action buttons, chat, etc.)
@@ -182,7 +184,7 @@ namespace rurik.UI
                 Background = new SolidBrush(Color.LightGray),
                 Padding = new Thickness(5),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Bottom,
             };
 
             // Add left panel to main grid
@@ -255,6 +257,7 @@ namespace rurik.UI
                     
                 }
             }
+            
             
             //Globals.Log("MainGameScreen.Show(): exit, window=" + _window.Id + ", panel=" + _window.Content.Id);
         }
@@ -476,7 +479,24 @@ namespace rurik.UI
                     // Clear the right top panel if not in strategyPhase
                     _rightTopPanel.Widgets.Clear();
                 }
+
+                if (_boatPanel == null && game.ClientPlayer != null)
+                {
+                    // Initialize the BoatPanel
+                    var player = game.ClientPlayer;
+                    _boatPanel = new BoatPanel(_desktop, player, _rurikMonoGame.Textures);
+                }
+
+                // Update BoatPanel with the client player's data
+                if (_boatPanel != null && game.ClientPlayer != null)
+                {
+                    _boatPanel.SetPlayer(game.ClientPlayer);
+                    _rightBottomPanel.Widgets.Clear();
+                    _rightBottomPanel.Widgets.Add(_boatPanel);
+                }
             }
+
+
         }
 
         private void updateMapPanel()
