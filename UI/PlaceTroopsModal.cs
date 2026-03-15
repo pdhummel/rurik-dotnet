@@ -195,8 +195,8 @@ namespace rurik.UI
             // Add widgets to panel
             //_contentPanel.Widgets.Add(_titleLabel);
             //_contentPanel.Widgets.Add(_instructionsLabel);
-            _contentPanel.Widgets.Add(_troopCountLabel);
-            _contentPanel.Widgets.Add(_troopCountInput);
+            //_contentPanel.Widgets.Add(_troopCountLabel);
+            //_contentPanel.Widgets.Add(_troopCountInput);
             _contentPanel.Widgets.Add(_locationLabel);
             _contentPanel.Widgets.Add(_locationSelect);
             _contentPanel.Widgets.Add(_placeButton);

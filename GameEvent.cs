@@ -119,7 +119,7 @@ public class GameEvent
             Game.GameSetup.UpdateGameInfo(GameStatus);
         if (Game.MainGameScreen != null && Game.MainGameScreen.IsVisible)
             Game.MainGameScreen.UpdateGameInfo(GameStatus);
-        if (EventString != null)
+        if (EventString != null && GameStatus.CurrentPlayerName.Equals(Game.Client.ClientIdentifier))
         {
             Game.showMessage(EventString);
         }
