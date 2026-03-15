@@ -26,7 +26,7 @@ namespace rurik.UI
         private Button _selectButton;
         private Button _closeButton;
         
-        private bool _isVisible = false;
+        public bool IsVisible = false;
         private GameStatus _game;
         private readonly Desktop _desktop;
         private readonly RurikMonoGame _rurikMonoGame;
@@ -215,13 +215,13 @@ namespace rurik.UI
 
         public void Show()
         {
-            _isVisible = true;
+            IsVisible = true;
             _window.ShowModal(_desktop);
         }
 
         public void Hide()
         {
-            _isVisible = false;
+            IsVisible = false;
             _window.Close();
         }
 
@@ -240,10 +240,7 @@ namespace rurik.UI
             _game = game;
 
             // Clear existing items in combo view
-            for (int i = _leaderComboView.Widgets.Count - 1; i >= 0; i--)
-            {
-                _leaderComboView.Widgets.RemoveAt(i);
-            }
+            _leaderComboView.Widgets.Clear();
             _availableLeaderNames.Clear();
 
             // Get available leaders from the game status
@@ -272,7 +269,16 @@ namespace rurik.UI
             }
 
             // Add leader options to the combo view
-            foreach (var leaderName in _availableLeaderNames)
+            List<string> leaderNames = new List<string>();
+            try
+            {
+                leaderNames = new List<string>(_availableLeaderNames);    
+            }
+            catch(Exception ex)
+            {
+                leaderNames = new List<string>(_availableLeaderNames);
+            }
+            foreach (var leaderName in leaderNames)
             {
                 _leaderComboView.Widgets.Add(new Label() { Text = leaderName });
             }
@@ -311,6 +317,7 @@ namespace rurik.UI
             _rurikMonoGame.Client.SendAction(action);
 
             Hide();
+            
         }
     }
 }

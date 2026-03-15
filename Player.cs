@@ -102,7 +102,7 @@ namespace rurik
 
             // 12 - 3 to deploy.
             this.supplyTroops = 9;
-            this.supplyLeader = 0;
+            this.supplyLeader = 1;
             this.buildings = new Dictionary<string, int>();
             this.buildings["church"] = 3;
             this.buildings["stronghold"] = 3;

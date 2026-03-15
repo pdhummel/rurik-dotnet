@@ -199,7 +199,10 @@ public class GameEvent
     {
         Globals.Log("loginSuccessfulHandler(): enter");
         if (Game.GameListScreen != null)
+        {
+            Game.Client.Games = Games;
             Game.GameListScreen.SuccessfulLogin();
+        }
     }
 
     public void serverSideMessageHandler()

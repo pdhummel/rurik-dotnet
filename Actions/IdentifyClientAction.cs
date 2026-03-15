@@ -42,7 +42,11 @@ public class IdentifyClientAction : PlayerAction
 
         server.PeerToPlayerName[peer] = ClientIdentifier;
         server.PlayerNameToPeer[ClientIdentifier] = peer;
-        server.SendGamePlayEvent(peer, new GameEvent(EVENT_LOGIN_SUCCESSFUL));
+        GameEvent loginGameEvent = new(EVENT_LOGIN_SUCCESSFUL)
+        {
+            Games = server.Games
+        };
+        server.SendGamePlayEvent(peer, loginGameEvent);
 
     }
 }

@@ -61,7 +61,7 @@ public class PlaceLeaderAction : PlayerAction
         // Call RurikGame PlaceLeader
         game.PlaceLeader(PlaceLeaderValues.PlayerColor, PlaceLeaderValues.TargetLocation);
 
-        GameStatus gameStatus = server.Games.UpdateGameStatus(PlaceLeaderValues.GameId, PlaceLeaderValues.PlayerColor);
+        GameStatus gameStatus = server.Games.UpdateGameStatus(PlaceLeaderValues.GameId);
         GameEvent gameEvent = new(EVENT_LEADER_PLACED)
         {
             GameStatus = gameStatus,

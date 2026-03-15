@@ -379,7 +379,7 @@ namespace rurik.UI
 
         public void UpdateGameInfo(GameStatus game, GameMap map)
         {
-            Globals.Log("MainGameScreen.UpdateGameInfo(): enter");
+            Globals.Log("MainGameScreen.UpdateGameInfo(): enter, game state=" + game.CurrentState + ", currentPlayer=" + game.CurrentPlayerColor);
             _game = game;
 
             if (map != null)

@@ -378,7 +378,7 @@ namespace rurik.UI
                 game.CurrentPlayerName.Equals(_rurikMonoGame.Client.ClientIdentifier))
             {
                 // Show the choose leader modal
-                if (_rurikMonoGame.ChooseLeaderModal != null)
+                if (_rurikMonoGame.ChooseLeaderModal != null && !_rurikMonoGame.ChooseLeaderModal.IsVisible )
                 {
                     _rurikMonoGame.ChooseLeaderModal.UpdateGameInfo(game);
                     _rurikMonoGame.ChooseLeaderModal.Show();

@@ -523,16 +523,15 @@ namespace rurik.UI
             RurikMonoGame.Client.Connect(joinServerValues, "rurik");
         }
 
-        public void SuccessfulConnection()
-        {
-            IdentifyClientAction action = new();
-            action.ClientIdentifier = RurikMonoGame.Client.ClientIdentifier;
-            RurikMonoGame.Client.SendAction(action);
-        }
+        //public void SuccessfulConnection()
+        //{
+        //    IdentifyClientAction action = new();
+        //    action.ClientIdentifier = RurikMonoGame.Client.ClientIdentifier;
+        //    RurikMonoGame.Client.SendAction(action);
+        //}
 
         public void SuccessfulLogin()
         {
-            RefreshGameList();
             _isLoggedIn = true;
             _loginPanel.Visible = false;
             _gameListPanel.Visible = true;
@@ -548,7 +547,7 @@ namespace rurik.UI
             _gameNameInput.Text = _currentPlayerName + "'s Game";
             // Add the player name label to the grid
             //_grid.Widgets.Add(_playerNameLabel);
-
+            RefreshGameList();
         }
 
         public void RefreshGameList()

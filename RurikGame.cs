@@ -248,6 +248,7 @@ namespace rurik
 
         public void PlaceInitialTroop(string color, string locationName)
         {
+            Globals.Log("PlaceInitialTroop(): enter");
             Player player = ValidateCurrentPlayer(color, "PlaceInitialTroop");
             if (player == null)
                 return;
@@ -279,12 +280,14 @@ namespace rurik
                 // All players have placed their troops, move to next state
                 GameStates.ChangeState("waitingForLeaderPlacement");
                 //Players.setTroopsToDeploy(1); // Reset troops to deploy for leader placement
+                Globals.Log("PlaceInitialTroop(): move to waitingForLeaderPlacement");
             }
             AiEvaluateGame();
         }
 
         public void PlaceLeader(string color, string locationName)
         {
+            Globals.Log("PlaceLeader(): enter");
             Player player = ValidateCurrentPlayer(color, "PlaceLeader");
             if (player == null)
                 return;
@@ -295,6 +298,7 @@ namespace rurik
                 Location location = GameMap.LocationByName[locationName];
                 location.leaderByColor[color] = 1;
                 player.TroopsToDeploy = 0;
+                player.supplyLeader = 0;
                 Log.AddLogEntry(color + " placed leader at " + locationName);
             }
             catch (Exception)
@@ -306,7 +310,7 @@ namespace rurik
             
             // Check if all players have placed their leaders
             Players.advanceToNextPlayer();
-            if (Players.getCurrentPlayer().TroopsToDeploy > 0)
+            if (Players.getCurrentPlayer().TroopsToDeploy > 0 || Players.getCurrentPlayer().supplyLeader > 0)
             {
                 GameStates.ChangeState("waitingForLeaderPlacement");
             }
@@ -314,6 +318,7 @@ namespace rurik
             {
                 // Move to next game phase
                 GameStates.ChangeState("strategyPhase");
+                Globals.Log("PlaceLeader(): move to strategyPhase");
                 AiEvaluateGame();
             }
         }
