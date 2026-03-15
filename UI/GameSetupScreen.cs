@@ -37,7 +37,7 @@ namespace rurik.UI
         private VerticalStackPanel _playersPanel;
         private Button _closeButton;
         
-        private bool _isVisible = false;
+        public bool IsVisible = false;
         private GameStatus _game;
         private GameMap _gameMap;
         
@@ -303,7 +303,7 @@ namespace rurik.UI
         public void Show()
         {
             //Globals.Log("Show(): enter, window=" + _window.Id + ", panel=" + _window.Content.Id);
-            _isVisible = true;
+            IsVisible = true;
             _window.Content.RemoveFromParent();
             _window.Content = null;
             _window.Content = Panel;
@@ -314,7 +314,7 @@ namespace rurik.UI
 
         public void Hide()
         {
-            _isVisible = false;
+            IsVisible = false;
             //_window.Close();
         }
 

@@ -51,16 +51,29 @@ public class PlaceAdvisorAction : PlayerAction
         if (player == null)
             return;
 
-        // Call RurikGame PlayAdvisor
-        game.PlayAdvisor(PlaceAdvisorValues.PlayerColor, PlaceAdvisorValues.ActionColumn, PlaceAdvisorValues.Advisor, PlaceAdvisorValues.BidCoins);
-
-        GameStatus gameStatus = server.Games.UpdateGameStatus(PlaceAdvisorValues.GameId, PlaceAdvisorValues.PlayerColor);
-        GameEvent gameEvent = new(EVENT_ADVISOR_PLACED)
+        try
         {
-            GameStatus = gameStatus,
-            AuctionBoard = game.AuctionBoard
-        };
-        server.SendGamePlayEvent(gameEvent);
-        server.SendGames();
+            // Call RurikGame PlayAdvisor
+            game.PlayAdvisor(PlaceAdvisorValues.PlayerColor, PlaceAdvisorValues.ActionColumn, PlaceAdvisorValues.Advisor, PlaceAdvisorValues.BidCoins);
+
+            GameStatus gameStatus = server.Games.UpdateGameStatus(PlaceAdvisorValues.GameId);
+            GameEvent gameEvent = new(EVENT_ADVISOR_PLACED)
+            {
+                GameStatus = gameStatus,
+                AuctionBoard = game.AuctionBoard
+            };
+            server.SendGamePlayEvent(gameEvent);
+            server.SendGames();
+        }
+        catch(Exception ex)
+        {
+            GameEvent gameEvent = new(EVENT_GAME_STATE_UPDATE)
+            {
+                GameStatus = server.Games.UpdateGameStatus(PlaceAdvisorValues.GameId),
+                EventString = ex.Message
+            };
+            server.SendGamePlayEvent(gameEvent);
+            //server.SendMessage(peer, ex.Message);
+        }
     }
 }

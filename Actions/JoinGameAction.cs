@@ -36,14 +36,22 @@ public class JoinGameAction : PlayerAction
         //server.PeerToPlayerName[peer] = JoinGameValues.PlayerName;
         //server.PlayerNameToPeer[JoinGameValues.PlayerName] = peer;
         RurikGame game = server.Games.GetGameById(JoinGameValues.GameId);
-        game.JoinGame(JoinGameValues.PlayerName, JoinGameValues.PlayerColor, JoinGameValues.PlayerPosition, false);
-        GameStatus gameStatus = server.Games.UpdateGameStatus(JoinGameValues.GameId);
-        GameEvent gameEvent = new(EVENT_PLAYER_JOINED_GAME)
+        try
         {
-            GameStatus = gameStatus,
-            PlayerName = JoinGameValues.PlayerName,
-        };
-        server.SendGamePlayEvent(gameEvent);
-        server.SendGames();
+            game.JoinGame(JoinGameValues.PlayerName, JoinGameValues.PlayerColor, JoinGameValues.PlayerPosition, false);
+            GameStatus gameStatus = server.Games.UpdateGameStatus(JoinGameValues.GameId);
+            GameEvent gameEvent = new(EVENT_PLAYER_JOINED_GAME)
+            {
+                GameStatus = gameStatus,
+                PlayerName = JoinGameValues.PlayerName,
+            };
+            server.SendGamePlayEvent(gameEvent);
+            server.SendGames();
+        }
+        catch(Exception ex)
+        {
+            server.SendMessage(peer, ex.Message);
+        }
+
     }
 }

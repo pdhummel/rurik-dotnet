@@ -106,6 +106,25 @@ public class GameEvent
         Game.GameListScreen.RefreshGameList();
     }
 
+    public void gameStateUpdateHandler()
+    {
+        Globals.Log("gameStateUpdateHandler(): enter");    
+        //if (Game.ChooseFirstPlayerModal != null)
+        //{
+        //    Game.ChooseFirstPlayerModal.UpdateGameInfo(GameStatus);
+        //}
+        //if (Game.GameListScreen != null)
+        //    Game.GameListScreen.UpdateGameInfo(GameStatus);
+        if (Game.GameSetup != null && Game.GameSetup.IsVisible)
+            Game.GameSetup.UpdateGameInfo(GameStatus);
+        if (Game.MainGameScreen != null && Game.MainGameScreen.IsVisible)
+            Game.MainGameScreen.UpdateGameInfo(GameStatus);
+        if (EventString != null)
+        {
+            Game.showMessage(EventString);
+        }
+    }
+
     public void gameCreatedHandler()
     {
         Globals.Log("gameCreatedHandler(): enter");
@@ -186,14 +205,6 @@ public class GameEvent
         Game.MainGameScreen.UpdateGameInfo(GameStatus);
     }
 
-    public void gameStateUpdateHandler()
-    {
-        Globals.Log("gameStateUpdateHandler(): enter");    
-        if (Game.ChooseFirstPlayerModal != null)
-        {
-            Game.ChooseFirstPlayerModal.UpdateGameInfo(GameStatus);
-        }
-    }
 
     public void loginSuccessfulHandler()
     {

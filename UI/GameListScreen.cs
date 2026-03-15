@@ -32,7 +32,7 @@ namespace rurik.UI
         private VerticalStackPanel _createGamePanel;
         private bool _isLoggedIn = false;
         private string _currentPlayerName;
-        private bool _isVisible = false;
+        public bool IsVisible = false;
         private Window _createGameWindow;
         private Label _portLabel;
         private TextBox _portInput;
@@ -481,7 +481,7 @@ namespace rurik.UI
         public void Show()
         {
             //Globals.Log("GameListScreen.Show(): enter");
-            _isVisible = true;
+            IsVisible = true;
             _window.Title = "Rurik: Dawn of Kyiv";
             _window.Content = _panel;
             // Add to desktop or parent container
@@ -491,7 +491,7 @@ namespace rurik.UI
 
         public void Hide()
         {
-            _isVisible = false;
+            IsVisible = false;
             
             // Remove from desktop or parent container
             //_window.RemoveFromParent();

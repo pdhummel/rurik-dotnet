@@ -25,7 +25,7 @@ namespace rurik.UI
         private Panel _rightTopPanel;
         private Panel _rightBottomPanel;
         
-        private bool _isVisible = false;
+        public bool IsVisible = false;
         private GameStatus _game;
         private GameMap _gameMap;
         
@@ -222,7 +222,7 @@ namespace rurik.UI
         public void Show()
         {
             //Globals.Log("MainGameScreen.Show(): enter, window=" + _window.Id + ", panel=" + _window.Content.Id);
-            _isVisible = true;
+            IsVisible = true;
             if (_window == null || _panel == null)
                 return;
             if (_window != null && _window.Content != null)
@@ -261,7 +261,7 @@ namespace rurik.UI
 
         public void Hide()
         {
-            _isVisible = false;
+            IsVisible = false;
             _window.Close();
         }
 

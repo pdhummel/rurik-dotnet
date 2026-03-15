@@ -257,6 +257,17 @@ public class Server
         SendJsonString(peer, jsonString);
     }
 
+    public void SendMessage(NetPeer peer, string message)
+    {
+        //Globals.Log("sendGamePlayEvent(): peer=" + peer.Id);
+        GameEvent gameEvent = new(EVENT_SERVER_SIDE_MESSAGE)
+        {
+            EventString = message
+        };
+        string jsonString = JsonSerializer.Serialize(gameEvent);
+        SendJsonString(peer, jsonString);
+    }
+
     public void SendJsonString(NetPeer peer, String jsonString)
     {
         //Globals.Log("sendJsonString(): peer=" + peer.Id + ", json=" + jsonString);
