@@ -189,9 +189,10 @@ namespace rurik.UI
             _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // honey column
             _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // fish column
 
-            // Set up boat grid rows: placeholders (row 0), count/coin label (row 1)
+            // Set up boat grid rows: placeholders (row 0), count/coin label (row 1), trade boom (row 2)
             _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // placeholders row
             _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // count/coin label row
+            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // trade boom row
 
             // Add boat resources
             AddBoatResources();
@@ -309,9 +310,11 @@ namespace rurik.UI
         private void AddBoatResources()
         {
             int col = 0;
-            
+        
             // Get coin texture for coin indicators
             var coinTexture = _textures.GetTexture("coin");
+            // Get trade boom texture
+            var tradeBoomTexture = _textures.GetTexture("tradeboom");
 
             foreach (var resource in ResourceOrder)
             {
@@ -411,10 +414,26 @@ namespace rurik.UI
                     _boatGrid.Widgets.Add(coinCountLabel);
                 }
 
+                // Add trade boom image below coins if tradeBoon[resource] > 0
+                if (tradeBoomTexture != null && _player.boat.tradeBoon.ContainsKey(resource) && _player.boat.tradeBoon[resource] > 0)
+                {
+                    var textureRegion = new TextureRegion(tradeBoomTexture);
+                    var tradeBoomImage = new Image()
+                    {
+                        Id = $"boat_{resource}_tradeBoomImage",
+                        Renderable = textureRegion,
+                        Width = 30,
+                        Height = 30,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                    };
+                    Grid.SetColumn(tradeBoomImage, col);
+                    Grid.SetRow(tradeBoomImage, totalPlaceholders + 1); // Below coins (row 2)
+                    _boatGrid.Widgets.Add(tradeBoomImage);
+                }
+
                 col++;
             }
-
-            // Wild card (tradeBoom) is not shown on boat grid
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -508,10 +527,50 @@ namespace rurik.UI
                     coinCountLabel.Text = coinValue;
                 }
 
+                // Update trade boom image visibility based on tradeBoon[resource] > 0
+                string tradeBoomImageId = $"boat_{resource}_tradeBoomImage";
+                var existingTradeBoomImage = _boatGrid.Widgets.FirstOrDefault(w => w.Id == tradeBoomImageId) as Image;
+                
+                // Check if trade boom should be shown (wood, fish, honey only)
+                bool shouldShowTradeBoom = (resource == "wood" || resource == "fish" || resource == "honey") 
+                    && _player.boat.tradeBoon.ContainsKey(resource) 
+                    && _player.boat.tradeBoon[resource] > 0;
+
+                if (shouldShowTradeBoom)
+                {
+                    // Create trade boom image if it doesn't exist
+                    if (existingTradeBoomImage == null)
+                    {
+                        var tradeBoomTexture = _textures.GetTexture("tradeboom");
+                        if (tradeBoomTexture != null)
+                        {
+                            var textureRegion = new TextureRegion(tradeBoomTexture);
+                            var tradeBoomImage = new Image()
+                            {
+                                Id = tradeBoomImageId,
+                                Renderable = textureRegion,
+                                Width = 30,
+                                Height = 30,
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Center,
+                            };
+                            Grid.SetColumn(tradeBoomImage, col);
+                            Grid.SetRow(tradeBoomImage, totalPlaceholders + 1); // Below coins (row 2)
+                            _boatGrid.Widgets.Add(tradeBoomImage);
+                        }
+                    }
+                }
+                else
+                {
+                    // Remove trade boom image if it exists and shouldn't be shown
+                    if (existingTradeBoomImage != null)
+                    {
+                        _boatGrid.Widgets.Remove(existingTradeBoomImage);
+                    }
+                }
+
                 col++;
             }
-
-            // Wild card (tradeBoom) is not shown on boat grid
         }
 
         public void SetPlayer(Player player)
