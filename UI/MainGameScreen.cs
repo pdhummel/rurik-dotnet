@@ -162,7 +162,7 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
-            // Set up right grid rows: top takes 60%, bottom takes 40%
+            // Set up right grid rows: top takes 50%, bottom takes 50%
             rightGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
             rightGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
 
@@ -499,33 +499,7 @@ namespace rurik.UI
                     _rightBottomPanel.Widgets.Add(_boatPanel);
                 }
 
-
-                    // _rightTopPanel.Widgets.Clear();
-                    // Panel tmpRightTopPanel = new Panel();
-                    // Label tmpRightTopLabel = new Label()
-                    // {
-                    //     Text = "rightTopPanel",
-                    //     Background = new SolidBrush(Color.Red)
-                    // };
-                    // tmpRightTopPanel.Widgets.Add(tmpRightTopLabel);
-                    // //_rightBottomPanel.Widgets.Add(_boatPanel);
-                    // _rightTopPanel.Widgets.Add(tmpRightTopPanel);
-
-
-                    // _rightBottomPanel.Widgets.Clear();
-                    // Panel tmpRightBottomPanel = new Panel();
-                    // Label tmpRightBottomLabel = new Label()
-                    // {
-                    //     Text = "rightBottomPanel",
-                    //     Background = new SolidBrush(Color.Blue)
-                    // };
-                    // tmpRightBottomPanel.Widgets.Add(tmpRightBottomLabel);
-                    // //_rightBottomPanel.Widgets.Add(_boatPanel);
-                    // _rightBottomPanel.Widgets.Add(tmpRightBottomPanel);
-
             }
-
-
         }
 
         private void updateMapPanel()
