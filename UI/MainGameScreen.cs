@@ -37,7 +37,7 @@ namespace rurik.UI
         
         private AdvisorBoardPanel? _advisorBoardPanel;
         private AuctionBoard? _auctionBoard;
-        private BoatPanel? _boatPanel;
+        private PlayerPanel? _playerPanel;
 
         // Color mapping for factions
         private static readonly Dictionary<string, Color> FactionColors = new Dictionary<string, Color>
@@ -484,19 +484,19 @@ namespace rurik.UI
                     _rightTopPanel.Widgets.Clear();
                 }
 
-                if (_boatPanel == null && game.ClientPlayer != null)
+                if (_playerPanel == null && game.ClientPlayer != null)
                 {
-                    // Initialize the BoatPanel
+                    // Initialize the PlayerPanel
                     var player = game.ClientPlayer;
-                    _boatPanel = new BoatPanel(_desktop, player, _rurikMonoGame.Textures);
+                    _playerPanel = new PlayerPanel(_desktop, player, _rurikMonoGame.Textures);
                 }
 
-                // Update BoatPanel with the client player's data
-                if (_boatPanel != null && game.ClientPlayer != null)
+                // Update PlayerPanel with the client player's data
+                if (_playerPanel != null && game.ClientPlayer != null)
                 {
-                    _boatPanel.SetPlayer(game.ClientPlayer);
+                    _playerPanel.SetPlayer(game.ClientPlayer);
                     _rightBottomPanel.Widgets.Clear();
-                    _rightBottomPanel.Widgets.Add(_boatPanel);
+                    _rightBottomPanel.Widgets.Add(_playerPanel);
                 }
 
             }

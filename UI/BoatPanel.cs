@@ -105,6 +105,7 @@ namespace rurik.UI
                 Id = "dockPanel",
                 Background = new SolidBrush(new Color(60, 60, 60)),
                 Padding = new Thickness(10),
+                Height = 100,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -190,12 +191,12 @@ namespace rurik.UI
             _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // fish column
 
             // Set up boat grid rows: placeholders (row 0), count label (row 1), coin images (row 4), trade boom (row 5)
-            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // placeholders row
-            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // count label row
-            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // empty row 2
-            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // empty row 3
-            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // coin images row
-            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // trade boom row
+            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // placeholders row0
+            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // placeholders row1
+            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // placeholders row2
+            //_boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // empty row 
+            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // coin images row3
+            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // trade boom row4
 
             // Add boat resources
             AddBoatResources();
@@ -381,11 +382,11 @@ namespace rurik.UI
                     VerticalAlignment = VerticalAlignment.Center,
                     Background = new SolidBrush(Color.Transparent),
                 };
-                Grid.SetColumn(countLabel, col);
-                Grid.SetRow(countLabel, 1); // Row 1
-                _boatGrid.Widgets.Add(countLabel);
+                //Grid.SetColumn(countLabel, col);
+                //Grid.SetRow(countLabel, 1); // Row 1
+                //_boatGrid.Widgets.Add(countLabel);
 
-                // Add coin images in row 4
+                // Add coin images in row 3
                 if (coinTexture != null)
                 {
                     var coinValue = (count == totalPlaceholders) ? "+1" : "0";
@@ -400,7 +401,7 @@ namespace rurik.UI
                         VerticalAlignment = VerticalAlignment.Center,
                     };
                     Grid.SetColumn(coinImage, col);
-                    Grid.SetRow(coinImage, 4); // Row 4 - coin images
+                    Grid.SetRow(coinImage, 3); // Row 3 - coin images
                     _boatGrid.Widgets.Add(coinImage);
 
                     // Add coin count label inside the coin image
@@ -413,11 +414,11 @@ namespace rurik.UI
                         Background = new SolidBrush(Color.Transparent),
                     };
                     Grid.SetColumn(coinCountLabel, col);
-                    Grid.SetRow(coinCountLabel, 4); // Row 4 - coin images
+                    Grid.SetRow(coinCountLabel, 3); // Row 3 - coin images
                     _boatGrid.Widgets.Add(coinCountLabel);
                 }
 
-                // Add trade boom images in row 5 if tradeBoon[resource] > 0
+                // Add trade boom images in row 4 if tradeBoon[resource] > 0
                 if (tradeBoomTexture != null && _player.boat.tradeBoon.ContainsKey(resource) && _player.boat.tradeBoon[resource] > 0)
                 {
                     var textureRegion = new TextureRegion(tradeBoomTexture);
@@ -431,7 +432,7 @@ namespace rurik.UI
                         VerticalAlignment = VerticalAlignment.Center,
                     };
                     Grid.SetColumn(tradeBoomImage, col);
-                    Grid.SetRow(tradeBoomImage, 5); // Row 5 - trade boom images
+                    Grid.SetRow(tradeBoomImage, 4); // Row 4 - trade boom images
                     _boatGrid.Widgets.Add(tradeBoomImage);
                 }
 

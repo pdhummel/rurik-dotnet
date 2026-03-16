@@ -24,12 +24,18 @@ namespace rurik.UI
     /// </summary>
     public class PlayerPanel : Panel
     {
+
         private readonly Desktop _desktop;
         private Player _player;
         private readonly Textures _textures;
 
         private Panel _mainPanel;
         private Grid _mainGrid;
+
+        private Panel _playerPanel;
+        private Grid _playerGrid;
+
+        private BoatPanel _boatPanel;
 
         // Color mapping for factions
         private static readonly Dictionary<string, Color> DefaultFactionColors = new Dictionary<string, Color>
@@ -73,7 +79,7 @@ namespace rurik.UI
             this.VerticalAlignment = VerticalAlignment.Center;
 
             // Create main container grid
-            _mainPanel = new Panel()
+            _playerPanel = new Panel()
             {
                 Id = "playerPanelMain",
                 Background = new SolidBrush(new Color(80, 80, 80)),
@@ -83,7 +89,7 @@ namespace rurik.UI
             };
 
             // Create main grid with columns for different sections
-            _mainGrid = new Grid()
+            _playerGrid = new Grid()
             {
                 Id = "playerPanelMainGrid",
                 Background = new SolidBrush(new Color(60, 60, 60)),
@@ -94,18 +100,18 @@ namespace rurik.UI
 
             // Set up grid columns: troops/leader (left), first player token (center-left), 
             // buildings (center), cards (right)
-            _mainGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // troops/leader
-            _mainGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // first player token
-            _mainGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // buildings
-            _mainGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // cards
+            _playerGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // troops/leader
+            _playerGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // first player token
+            _playerGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // buildings
+            _playerGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // cards
 
             // Set up grid rows
-            _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // troops row
-            _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // leader row
-            _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // rebels row
-            _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // empty row
-            _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // buildings row
-            _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // cards row
+            _playerGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // troops row
+            _playerGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // leader row
+            _playerGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // rebels row
+            _playerGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // empty row
+            _playerGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // buildings row
+            _playerGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // cards row
 
             // Add troops section
             AddTroopsSection();
@@ -126,9 +132,15 @@ namespace rurik.UI
             AddCardsSection();
 
             // Add main grid to panel
-            _mainPanel.Widgets.Add(_mainGrid);
+            _playerPanel.Widgets.Add(_playerGrid);
 
             // Add panel to this container
+
+            _mainPanel = new Panel();
+            _mainGrid = new Grid();
+            _mainPanel.Widgets.Add(_mainGrid);
+            _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // player panel
+            _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // boat panel
             this.Widgets.Add(_mainPanel);
         }
 
@@ -145,7 +157,7 @@ namespace rurik.UI
             };
             Grid.SetColumn(troopsHeader, 0);
             Grid.SetRow(troopsHeader, 0);
-            _mainGrid.Widgets.Add(troopsHeader);
+            _playerGrid.Widgets.Add(troopsHeader);
 
             // Troops count
             var troopsTexture = _textures.GetTexture("rebel");
@@ -163,7 +175,7 @@ namespace rurik.UI
                 };
                 Grid.SetColumn(troopsImage, 0);
                 Grid.SetRow(troopsImage, 1);
-                _mainGrid.Widgets.Add(troopsImage);
+                _playerGrid.Widgets.Add(troopsImage);
             }
 
             var troopsCountLabel = new Label()
@@ -176,7 +188,7 @@ namespace rurik.UI
             };
             Grid.SetColumn(troopsCountLabel, 0);
             Grid.SetRow(troopsCountLabel, 1);
-            _mainGrid.Widgets.Add(troopsCountLabel);
+            _playerGrid.Widgets.Add(troopsCountLabel);
         }
 
         private void AddLeaderSection()
@@ -192,7 +204,7 @@ namespace rurik.UI
             };
             Grid.SetColumn(leaderHeader, 0);
             Grid.SetRow(leaderHeader, 2);
-            _mainGrid.Widgets.Add(leaderHeader);
+            _playerGrid.Widgets.Add(leaderHeader);
 
             // Leader status (in supply or deployed)
             var leaderStatusLabel = new Label()
@@ -205,7 +217,7 @@ namespace rurik.UI
             };
             Grid.SetColumn(leaderStatusLabel, 0);
             Grid.SetRow(leaderStatusLabel, 3);
-            _mainGrid.Widgets.Add(leaderStatusLabel);
+            _playerGrid.Widgets.Add(leaderStatusLabel);
         }
 
         private void AddFirstPlayerTokenSection()
@@ -221,7 +233,7 @@ namespace rurik.UI
             };
             Grid.SetColumn(firstPlayerHeader, 1);
             Grid.SetRow(firstPlayerHeader, 0);
-            _mainGrid.Widgets.Add(firstPlayerHeader);
+            _playerGrid.Widgets.Add(firstPlayerHeader);
 
             // First player token (bear.png)
             var bearTexture = _textures.GetTexture("bear");
@@ -239,7 +251,7 @@ namespace rurik.UI
                 };
                 Grid.SetColumn(bearImage, 1);
                 Grid.SetRow(bearImage, 1);
-                _mainGrid.Widgets.Add(bearImage);
+                _playerGrid.Widgets.Add(bearImage);
             }
 
             // First player status label
@@ -253,7 +265,7 @@ namespace rurik.UI
             };
             Grid.SetColumn(firstPlayerStatusLabel, 1);
             Grid.SetRow(firstPlayerStatusLabel, 2);
-            _mainGrid.Widgets.Add(firstPlayerStatusLabel);
+            _playerGrid.Widgets.Add(firstPlayerStatusLabel);
         }
 
         private void AddCapturedRebelsSection()
@@ -269,7 +281,7 @@ namespace rurik.UI
             };
             Grid.SetColumn(rebelsHeader, 1);
             Grid.SetRow(rebelsHeader, 3);
-            _mainGrid.Widgets.Add(rebelsHeader);
+            _playerGrid.Widgets.Add(rebelsHeader);
 
             // Captured rebels count
             var rebelTexture = _textures.GetTexture("rebel");
@@ -287,7 +299,7 @@ namespace rurik.UI
                 };
                 Grid.SetColumn(rebelImage, 1);
                 Grid.SetRow(rebelImage, 4);
-                _mainGrid.Widgets.Add(rebelImage);
+                _playerGrid.Widgets.Add(rebelImage);
             }
 
             // Note: capturedRebels property is commented out in Player.cs
@@ -302,7 +314,7 @@ namespace rurik.UI
             };
             Grid.SetColumn(capturedRebelsCountLabel, 1);
             Grid.SetRow(capturedRebelsCountLabel, 5);
-            _mainGrid.Widgets.Add(capturedRebelsCountLabel);
+            _playerGrid.Widgets.Add(capturedRebelsCountLabel);
         }
 
         private void AddBuildingsSection()
@@ -318,7 +330,7 @@ namespace rurik.UI
             };
             Grid.SetColumn(buildingsHeader, 2);
             Grid.SetRow(buildingsHeader, 0);
-            _mainGrid.Widgets.Add(buildingsHeader);
+            _playerGrid.Widgets.Add(buildingsHeader);
 
             // Add buildings in a grid layout
             int buildingCol = 0;
@@ -356,7 +368,7 @@ namespace rurik.UI
                     };
                     Grid.SetColumn(buildingImage, 2);
                     Grid.SetRow(buildingImage, 4);
-                    _mainGrid.Widgets.Add(buildingImage);
+                    _playerGrid.Widgets.Add(buildingImage);
 
                     // Add count label
                     var countLabel = new Label()
@@ -369,7 +381,7 @@ namespace rurik.UI
                     };
                     Grid.SetColumn(countLabel, 2);
                     Grid.SetRow(countLabel, 5);
-                    _mainGrid.Widgets.Add(countLabel);
+                    _playerGrid.Widgets.Add(countLabel);
                 }
 
                 buildingCol++;
@@ -389,7 +401,7 @@ namespace rurik.UI
             };
             Grid.SetColumn(cardsHeader, 3);
             Grid.SetRow(cardsHeader, 0);
-            _mainGrid.Widgets.Add(cardsHeader);
+            _playerGrid.Widgets.Add(cardsHeader);
 
             // Deed cards
             AddCardType("DEED", "scheme-deedCard", _player.deedCards.Count, 1);
@@ -414,7 +426,7 @@ namespace rurik.UI
             };
             Grid.SetColumn(cardTypeLabel, 3);
             Grid.SetRow(cardTypeLabel, row);
-            _mainGrid.Widgets.Add(cardTypeLabel);
+            _playerGrid.Widgets.Add(cardTypeLabel);
 
             // Card count
             var cardCountLabel = new Label()
@@ -427,7 +439,7 @@ namespace rurik.UI
             };
             Grid.SetColumn(cardCountLabel, 3);
             Grid.SetRow(cardCountLabel, row + 1);
-            _mainGrid.Widgets.Add(cardCountLabel);
+            _playerGrid.Widgets.Add(cardCountLabel);
 
             // Card image (if available)
             var texture = _textures.GetTexture(imageName);
@@ -445,7 +457,7 @@ namespace rurik.UI
                 };
                 Grid.SetColumn(cardImage, 3);
                 Grid.SetRow(cardImage, row);
-                _mainGrid.Widgets.Add(cardImage);
+                _playerGrid.Widgets.Add(cardImage);
             }
         }
 
@@ -453,28 +465,28 @@ namespace rurik.UI
         public void UpdatePanel()
         {
             // Update troops count
-            var troopsCountLabel = _mainGrid.Widgets.FirstOrDefault(w => w.Id == "supplyTroopsCount") as Label;
+            var troopsCountLabel = _playerGrid.Widgets.FirstOrDefault(w => w.Id == "supplyTroopsCount") as Label;
             if (troopsCountLabel != null)
             {
                 troopsCountLabel.Text = _player.supplyTroops.ToString();
             }
 
             // Update leader status
-            var leaderStatusLabel = _mainGrid.Widgets.FirstOrDefault(w => w.Id == "leaderStatus") as Label;
+            var leaderStatusLabel = _playerGrid.Widgets.FirstOrDefault(w => w.Id == "leaderStatus") as Label;
             if (leaderStatusLabel != null)
             {
                 leaderStatusLabel.Text = _player.supplyLeader > 0 ? "In Supply" : "Deployed";
             }
 
             // Update first player status
-            var firstPlayerStatusLabel = _mainGrid.Widgets.FirstOrDefault(w => w.Id == "firstPlayerStatus") as Label;
+            var firstPlayerStatusLabel = _playerGrid.Widgets.FirstOrDefault(w => w.Id == "firstPlayerStatus") as Label;
             if (firstPlayerStatusLabel != null)
             {
                 firstPlayerStatusLabel.Text = _player.isFirstPlayer ? "YES" : "NO";
             }
 
             // Update captured rebels count
-            var capturedRebelsCountLabel = _mainGrid.Widgets.FirstOrDefault(w => w.Id == "capturedRebelsCount") as Label;
+            var capturedRebelsCountLabel = _playerGrid.Widgets.FirstOrDefault(w => w.Id == "capturedRebelsCount") as Label;
             if (capturedRebelsCountLabel != null)
             {
                 // Note: capturedRebels property is commented out in Player.cs
@@ -486,7 +498,7 @@ namespace rurik.UI
             foreach (var building in BuildingOrder)
             {
                 int count = _player.buildings.ContainsKey(building) ? _player.buildings[building] : 0;
-                var countLabel = _mainGrid.Widgets.FirstOrDefault(w => w.Id == $"building_{building}_count") as Label;
+                var countLabel = _playerGrid.Widgets.FirstOrDefault(w => w.Id == $"building_{building}_count") as Label;
                 if (countLabel != null)
                 {
                     countLabel.Text = count.ToString();
@@ -494,23 +506,32 @@ namespace rurik.UI
             }
 
             // Update card counts
-            var deedCardCountLabel = _mainGrid.Widgets.FirstOrDefault(w => w.Id == "cardCount_deed") as Label;
+            var deedCardCountLabel = _playerGrid.Widgets.FirstOrDefault(w => w.Id == "cardCount_deed") as Label;
             if (deedCardCountLabel != null)
             {
                 deedCardCountLabel.Text = _player.deedCards.Count.ToString();
             }
 
-            var schemeCardCountLabel = _mainGrid.Widgets.FirstOrDefault(w => w.Id == "cardCount_scheme") as Label;
+            var schemeCardCountLabel = _playerGrid.Widgets.FirstOrDefault(w => w.Id == "cardCount_scheme") as Label;
             if (schemeCardCountLabel != null)
             {
                 schemeCardCountLabel.Text = _player.schemeCards.Count.ToString();
             }
 
-            var secretAgendaCardCountLabel = _mainGrid.Widgets.FirstOrDefault(w => w.Id == "cardCount_secret") as Label;
+            var secretAgendaCardCountLabel = _playerGrid.Widgets.FirstOrDefault(w => w.Id == "cardCount_secret") as Label;
             if (secretAgendaCardCountLabel != null)
             {
                 secretAgendaCardCountLabel.Text = _player.secretAgenda.Count.ToString();
             }
+
+            _mainGrid.Widgets.Clear();
+            _boatPanel = new BoatPanel(_desktop, _player, _textures);
+            _boatPanel.UpdatePanel();
+            Grid.SetRow(_playerPanel, 0);
+            _mainGrid.Widgets.Add(_playerPanel);
+            Grid.SetRow(_boatPanel, 1);
+            _mainGrid.Widgets.Add(_boatPanel);
+
         }
 
         public void SetPlayer(Player player)
