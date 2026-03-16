@@ -171,22 +171,19 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            // Set up boat grid columns (resource images and placeholders)
-            _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // resource image column
-            _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // placeholder 1
-            _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // placeholder 2
-            _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // placeholder 3
-            _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // placeholder 4
-            _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // placeholder 5
-
-            // Set up boat grid rows - one row per resource type
+            // Set up boat grid columns - one column per resource type
             // wood, stone, fur, honey, fish, then wild card tokens
-            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // wood row
-            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // stone row
-            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // fur row
-            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // honey row
-            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // fish row
-            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // wild card row
+            _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // wood column
+            _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // stone column
+            _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // fur column
+            _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // honey column
+            _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // fish column
+            _boatGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // wild card column
+
+            // Set up boat grid rows: placeholders (row 0), count label (row 1), coin label (row 2)
+            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // placeholders row
+            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // count label row
+            _boatGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // coin label row
 
             // Add boat resources
             AddBoatResources();
@@ -336,7 +333,11 @@ namespace rurik.UI
 
         private void AddBoatResources()
         {
-            int row = 0;
+            int col = 0;
+            
+            // Get coin texture for coin indicators
+            var coinTexture = _textures.GetTexture("coin");
+
             foreach (var resource in ResourceOrder)
             {
                 // Skip coin - coins are only shown on the dock
@@ -345,29 +346,12 @@ namespace rurik.UI
                     continue;
                 }
 
-                // Get resource image
+                // Add placeholders for this resource (no heading image, just placeholders with resource images inside)
+                int totalPlaceholders = BoatResourceCounts[resource];
+
+                // Get resource image for the placeholders
                 var imageName = ResourceImageNames[resource];
                 var texture = _textures.GetTexture(imageName);
-                Image resourceImage = null;
-                if (texture != null)
-                {
-                    var textureRegion = new TextureRegion(texture);
-                    resourceImage = new Image()
-                    {
-                        Id = $"boat_{resource}Image",
-                        Renderable = textureRegion,
-                        Width = 30,
-                        Height = 30,
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center,
-                    };
-                    Grid.SetColumn(resourceImage, 0);
-                    Grid.SetRow(resourceImage, row);
-                    _boatGrid.Widgets.Add(resourceImage);
-                }
-
-                // Add placeholders for this resource
-                int totalPlaceholders = BoatResourceCounts[resource];
 
                 // Create circular placeholder cells with resource image inside
                 for (int i = 0; i < totalPlaceholders; i++)
@@ -396,22 +380,67 @@ namespace rurik.UI
                             HorizontalAlignment = HorizontalAlignment.Center,
                             VerticalAlignment = VerticalAlignment.Center,
                         };
-                        Grid.SetColumn(img, i + 1);
-                        Grid.SetRow(img, row);
+                        Grid.SetColumn(img, col);
+                        Grid.SetRow(img, i); // Same row as the placeholder
                         _boatGrid.Widgets.Add(img);
                     }
 
-                    Grid.SetColumn(placeholderPanel, i + 1);
-                    Grid.SetRow(placeholderPanel, row);
+                    Grid.SetColumn(placeholderPanel, col);
+                    Grid.SetRow(placeholderPanel, i); // Placeholders in rows within the column
                     _boatGrid.Widgets.Add(placeholderPanel);
                 }
 
-                row++;
+                // Add count label below placeholders
+                int count = _player.boat.goodsOnBoat.ContainsKey(resource) ? _player.boat.goodsOnBoat[resource] : 0;
+                var countLabel = new Label()
+                {
+                    Id = $"boat_{resource}_count",
+                    Text = count.ToString(),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Background = new SolidBrush(Color.Transparent),
+                };
+                Grid.SetColumn(countLabel, col);
+                Grid.SetRow(countLabel, totalPlaceholders); // Below all placeholders
+                _boatGrid.Widgets.Add(countLabel);
+
+                // Add coin indicator (1 if column is full, 0 otherwise)
+                if (coinTexture != null)
+                {
+                    var coinValue = (count == totalPlaceholders) ? "+1" : "0";
+                    var textureRegion = new TextureRegion(coinTexture);
+                    var coinImage = new Image()
+                    {
+                        Id = $"boat_{resource}_coinImage",
+                        Renderable = textureRegion,
+                        Width = 30,
+                        Height = 30,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                    };
+                    Grid.SetColumn(coinImage, col);
+                    Grid.SetRow(coinImage, totalPlaceholders + 1); // Below count label
+                    _boatGrid.Widgets.Add(coinImage);
+
+                    // Add coin count label inside the coin image
+                    var coinCountLabel = new Label()
+                    {
+                        Id = $"boat_{resource}_coinCount",
+                        Text = coinValue.ToString(),
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Background = new SolidBrush(Color.Transparent),
+                    };
+                    Grid.SetColumn(coinCountLabel, col);
+                    Grid.SetRow(coinCountLabel, totalPlaceholders + 1); // Same row as coin image
+                    _boatGrid.Widgets.Add(coinCountLabel);
+                }
+
+                col++;
             }
 
-            // Add wild card boon/boom tokens below wood, fish, and honey
-            // Wild card tokens are placed in a separate row below the resource rows
-            int wildCardRow = row;
+            // Add wild card boon/boom tokens
+            int wildCardCol = col;
             var wildCardTexture = _textures.GetTexture("tradeboom");
             if (wildCardTexture != null)
             {
@@ -425,8 +454,8 @@ namespace rurik.UI
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                 };
-                Grid.SetColumn(wildCardImage, 0);
-                Grid.SetRow(wildCardImage, wildCardRow);
+                Grid.SetColumn(wildCardImage, wildCardCol);
+                Grid.SetRow(wildCardImage, 0); // Top of the column
                 _boatGrid.Widgets.Add(wildCardImage);
             }
 
@@ -440,9 +469,42 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
                 Background = new SolidBrush(Color.Transparent),
             };
-            Grid.SetColumn(wildCardCountLabel, 1);
-            Grid.SetRow(wildCardCountLabel, wildCardRow);
+            Grid.SetColumn(wildCardCountLabel, wildCardCol);
+            Grid.SetRow(wildCardCountLabel, 1); // Below the image
             _boatGrid.Widgets.Add(wildCardCountLabel);
+
+            // Add wild card coin indicator (+1 if column is full, 0 otherwise)
+            // Wild card has 2 placeholders
+            string wildCardCoinValue = (wildCardCount == 2) ? "+1" : "0";
+            if (coinTexture != null)
+            {
+                var textureRegion = new TextureRegion(coinTexture);
+                var wildCardCoinImage = new Image()
+                {
+                    Id = "boat_wildCardCoinImage",
+                    Renderable = textureRegion,
+                    Width = 30,
+                    Height = 30,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                Grid.SetColumn(wildCardCoinImage, wildCardCol);
+                Grid.SetRow(wildCardCoinImage, 2); // Below the count label
+                _boatGrid.Widgets.Add(wildCardCoinImage);
+
+                // Add wild card coin count label inside the coin image
+                var wildCardCoinCountLabel = new Label()
+                {
+                    Id = "boat_wildCardCoinCount",
+                    Text = wildCardCoinValue,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Background = new SolidBrush(Color.Transparent),
+                };
+                Grid.SetColumn(wildCardCoinCountLabel, wildCardCol);
+                Grid.SetRow(wildCardCoinCountLabel, 2); // Same row as coin image
+                _boatGrid.Widgets.Add(wildCardCoinCountLabel);
+            }
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -479,13 +541,13 @@ namespace rurik.UI
             }
 
             // Update boat resources - cover placeholders based on count
-            int row = 0;
+            int col = 0;
             foreach (var resource in ResourceOrder)
             {
                 // Skip coin - coins are only shown on the dock
                 if (resource == "coin")
                 {
-                    row++;
+                    col++;
                     continue;
                 }
 
@@ -497,10 +559,8 @@ namespace rurik.UI
                 {
                     // Find the placeholder panel (the circular background)
                     var placeholderPanel = _boatGrid.Widgets.FirstOrDefault(w => w.Id == $"boat_{resource}_placeholder_{i}") as Panel;
-                    // Find the resource image inside the placeholder
-                    var resourceImg = _boatGrid.Widgets.FirstOrDefault(w => w.Id == $"boat_{resource}_img_{i}") as Image;
 
-                    if (placeholderPanel != null && resourceImg != null)
+                    if (placeholderPanel != null)
                     {
                         // Cover placeholder if count > i (i.e., this slot is occupied)
                         if (i < count)
@@ -515,8 +575,8 @@ namespace rurik.UI
                                 VerticalAlignment = VerticalAlignment.Center,
                                 Background = new SolidBrush(new Color(128, 128, 128, 128)), // Semi-transparent gray
                             };
-                            Grid.SetColumn(coveredPlaceholder, i + 1);
-                            Grid.SetRow(coveredPlaceholder, row);
+                            Grid.SetColumn(coveredPlaceholder, col);
+                            Grid.SetRow(coveredPlaceholder, i); // Same row as the placeholder
                             _boatGrid.Widgets.Add(coveredPlaceholder);
                         }
                         else
@@ -530,7 +590,23 @@ namespace rurik.UI
                         }
                     }
                 }
-                row++;
+
+                // Update count label
+                var countLabel = _boatGrid.Widgets.FirstOrDefault(w => w.Id == $"boat_{resource}_count") as Label;
+                if (countLabel != null)
+                {
+                    countLabel.Text = count.ToString();
+                }
+
+                // Update coin count label (+1 if column is full, 0 otherwise)
+                string coinValue = (count == totalPlaceholders) ? "+1" : "0";
+                var coinCountLabel = _boatGrid.Widgets.FirstOrDefault(w => w.Id == $"boat_{resource}_coinCount") as Label;
+                if (coinCountLabel != null)
+                {
+                    coinCountLabel.Text = coinValue;
+                }
+
+                col++;
             }
 
             // Update wild card count
@@ -539,6 +615,14 @@ namespace rurik.UI
             if (wildCardCountLabel != null)
             {
                 wildCardCountLabel.Text = wildCardCount.ToString();
+            }
+
+            // Update wild card coin label (+1 if column is full, 0 otherwise)
+            string wildCardCoinValue = (wildCardCount == 2) ? "+1" : "0";
+            var wildCardCoinLabel = _boatGrid.Widgets.FirstOrDefault(w => w.Id == "boat_wildCardCoinCount") as Label;
+            if (wildCardCoinLabel != null)
+            {
+                wildCardCoinLabel.Text = wildCardCoinValue;
             }
         }
 
