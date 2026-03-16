@@ -339,6 +339,12 @@ namespace rurik.UI
             int row = 0;
             foreach (var resource in ResourceOrder)
             {
+                // Skip coin - coins are only shown on the dock
+                if (resource == "coin")
+                {
+                    continue;
+                }
+
                 // Get resource image
                 var imageName = ResourceImageNames[resource];
                 var texture = _textures.GetTexture(imageName);
@@ -361,7 +367,6 @@ namespace rurik.UI
                 }
 
                 // Add placeholders for this resource
-                BoatResourceCounts["coin"] = _player.boat.money;
                 int totalPlaceholders = BoatResourceCounts[resource];
 
                 // Create circular placeholder cells with resource image inside
@@ -477,6 +482,13 @@ namespace rurik.UI
             int row = 0;
             foreach (var resource in ResourceOrder)
             {
+                // Skip coin - coins are only shown on the dock
+                if (resource == "coin")
+                {
+                    row++;
+                    continue;
+                }
+
                 int count = _player.boat.goodsOnBoat.ContainsKey(resource) ? _player.boat.goodsOnBoat[resource] : 0;
                 int totalPlaceholders = BoatResourceCounts[resource];
 
