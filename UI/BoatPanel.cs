@@ -25,14 +25,13 @@ namespace rurik.UI
 
         private Panel _dockPanel;
         public Panel MainBoatPanel;
-        private Panel _moneyPanel;
         private Grid _dockGrid;
         private Grid _boatGrid;
 
         // Resource configuration
         private static readonly List<string> ResourceOrder = new List<string>
         {
-            "wood", "stone", "fur", "honey", "fish"
+            "wood", "stone", "fur", "honey", "fish", "coin"
         };
 
         private static readonly Dictionary<string, string> ResourceImageNames = new Dictionary<string, string>
@@ -41,7 +40,8 @@ namespace rurik.UI
             {"stone", "stone"},
             {"fur", "beaver"},
             {"honey", "honey"},
-            {"fish", "fish"}
+            {"fish", "fish"},
+            {"coin", "coin"}
         };
 
         // Resource counts on boat (number of placeholders)
@@ -194,70 +194,6 @@ namespace rurik.UI
             // Add boat widgets to boat panel
             MainBoatPanel.Widgets.Add(_boatGrid);
 
-            // Create money panel
-            _moneyPanel = new Panel()
-            {
-                Id = "moneyPanel",
-                Background = new SolidBrush(new Color(60, 60, 60)),
-                Padding = new Thickness(10),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-
-            // Create money display
-            var moneyLabel = new Label()
-            {
-                Id = "moneyLabel",
-                Text = "MONEY",
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Background = new SolidBrush(Color.DarkGray),
-            };
-
-            var coinTexture = _textures.GetTexture("coin");
-            Image coinImage = null;
-            if (coinTexture != null)
-            {
-                var textureRegion = new TextureRegion(coinTexture);
-                coinImage = new Image()
-                {
-                    Id = "coinImage",
-                    Renderable = textureRegion,
-                    Width = 40,
-                    Height = 40,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-            }
-
-            var playerMoneyLabel = new Label()
-            {
-                Id = "playerMoneyLabel",
-                Text = _player.boat.money.ToString(),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Background = new SolidBrush(Color.Transparent),
-            };
-
-            // Add money widgets to money panel
-            if (coinImage != null)
-            {
-                var moneyGrid = new Grid();
-                moneyGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
-                moneyGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));
-                Grid.SetColumn(coinImage, 0);
-                Grid.SetRow(coinImage, 0);
-                moneyGrid.Widgets.Add(coinImage);
-                Grid.SetColumn(playerMoneyLabel, 1);
-                Grid.SetRow(playerMoneyLabel, 0);
-                moneyGrid.Widgets.Add(playerMoneyLabel);
-                _moneyPanel.Widgets.Add(moneyGrid);
-            }
-            else
-            {
-                _moneyPanel.Widgets.Add(playerMoneyLabel);
-            }
-
             // Add all panels to main grid
             Grid.SetColumn(_dockPanel, 0);
             Grid.SetRow(_dockPanel, 0);
@@ -266,10 +202,6 @@ namespace rurik.UI
             Grid.SetColumn(MainBoatPanel, 0);
             Grid.SetRow(MainBoatPanel, 1);
             mainGrid.Widgets.Add(MainBoatPanel);
-
-            Grid.SetColumn(_moneyPanel, 0);
-            Grid.SetRow(_moneyPanel, 2);
-            mainGrid.Widgets.Add(_moneyPanel);
 
             // Add main grid to this container
             this.Widgets.Add(mainGrid);
@@ -344,7 +276,15 @@ namespace rurik.UI
                 }
 
                 // Get resource count
-                int count = _player.boat.goodsOnDock.ContainsKey(resource) ? _player.boat.goodsOnDock[resource] : 0;
+                int count;
+                if (resource == "coin")
+                {
+                    count = _player.boat.money;
+                }
+                else
+                {
+                    count = _player.boat.goodsOnDock.ContainsKey(resource) ? _player.boat.goodsOnDock[resource] : 0;
+                }
                 var countLabel = new Label()
                 {
                     Id = $"dock_{resource}Count",
@@ -421,6 +361,7 @@ namespace rurik.UI
                 }
 
                 // Add placeholders for this resource
+                BoatResourceCounts["coin"] = _player.boat.money;
                 int totalPlaceholders = BoatResourceCounts[resource];
 
                 // Create circular placeholder cells with resource image inside
@@ -507,7 +448,15 @@ namespace rurik.UI
             int dockCol = 0;
             foreach (var resource in ResourceOrder)
             {
-                int count = _player.boat.goodsOnDock.ContainsKey(resource) ? _player.boat.goodsOnDock[resource] : 0;
+                int count;
+                if (resource == "coin")
+                {
+                    count = _player.boat.money;
+                }
+                else
+                {
+                    count = _player.boat.goodsOnDock.ContainsKey(resource) ? _player.boat.goodsOnDock[resource] : 0;
+                }
                 var countLabel = _dockGrid.Widgets.FirstOrDefault(w => w.Id == $"dock_{resource}Count") as Label;
                 if (countLabel != null)
                 {
@@ -578,13 +527,6 @@ namespace rurik.UI
             if (wildCardCountLabel != null)
             {
                 wildCardCountLabel.Text = wildCardCount.ToString();
-            }
-
-            // Update money
-            var playerMoneyLabel = _moneyPanel.Widgets.FirstOrDefault(w => w.Id == "playerMoneyLabel") as Label;
-            if (playerMoneyLabel != null)
-            {
-                playerMoneyLabel.Text = _player.boat.money.ToString();
             }
         }
 
