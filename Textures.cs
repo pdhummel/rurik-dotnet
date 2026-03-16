@@ -52,6 +52,7 @@ public class Textures
         // Add commonly used textures here
         TextureMap["Map2"] = content.Load<Texture2D>("Map2");
         TextureMap["map"] = TextureMap["Map2"];
+        TextureMap["tradeBoom"] = TextureMap["tradeboom"];
     }
 
     public Texture2D? GetTexture(string name)
