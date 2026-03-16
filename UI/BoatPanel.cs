@@ -24,7 +24,7 @@ namespace rurik.UI
         private readonly Textures _textures;
 
         private Panel _dockPanel;
-        private Panel _boatPanel;
+        public Panel MainBoatPanel;
         private Panel _moneyPanel;
         private Grid _dockGrid;
         private Grid _boatGrid;
@@ -128,7 +128,7 @@ namespace rurik.UI
             _dockPanel.Widgets.Add(_dockGrid);
 
             // Create boat panel
-            _boatPanel = new Panel()
+            MainBoatPanel = new Panel()
             {
                 Id = "boatPanelContent",
                 Background = new SolidBrush(new Color(60, 60, 60)),
@@ -136,6 +136,7 @@ namespace rurik.UI
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
+            
 
             // Create boat header
             var boatHeader = new Label()
@@ -170,7 +171,7 @@ namespace rurik.UI
             AddBoatResources();
 
             // Add boat widgets to boat panel
-            _boatPanel.Widgets.Add(_boatGrid);
+            MainBoatPanel.Widgets.Add(_boatGrid);
 
             // Create money panel
             _moneyPanel = new Panel()
@@ -241,9 +242,9 @@ namespace rurik.UI
             Grid.SetRow(_dockPanel, 0);
             mainGrid.Widgets.Add(_dockPanel);
 
-            Grid.SetColumn(_boatPanel, 1);
-            Grid.SetRow(_boatPanel, 0);
-            mainGrid.Widgets.Add(_boatPanel);
+            Grid.SetColumn(MainBoatPanel, 1);
+            Grid.SetRow(MainBoatPanel, 0);
+            mainGrid.Widgets.Add(MainBoatPanel);
 
             Grid.SetColumn(_moneyPanel, 2);
             Grid.SetRow(_moneyPanel, 0);

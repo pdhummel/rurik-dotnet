@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using rurik;
-//using SharpDX.Direct3D11;
 
 namespace rurik.UI
 {
@@ -181,7 +180,7 @@ namespace rurik.UI
             _rightBottomPanel = new Panel()
             {
                 Id = "rightBottomPanel",
-                Background = new SolidBrush(Color.LightGray),
+                Background = new SolidBrush(Color.Gray),
                 Padding = new Thickness(5),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Bottom,
@@ -192,14 +191,19 @@ namespace rurik.UI
             Grid.SetRow(_leftPanel, 0);
             _mainGrid.Widgets.Add(_leftPanel);
 
-            // Add top and bottom panels to right grid
-            Grid.SetColumn(_rightTopPanel, 1);
-            Grid.SetRow(_rightTopPanel, 0);
-            _mainGrid.Widgets.Add(_rightTopPanel);
+            Grid.SetColumn(_rightPanel, 1);
+            Grid.SetRow(_rightPanel, 0);
+            _mainGrid.Widgets.Add(_rightPanel);
 
-            Grid.SetColumn(_rightBottomPanel, 1);
+
+            // Add top and bottom panels to right grid
+            Grid.SetColumn(_rightTopPanel, 0);
+            Grid.SetRow(_rightTopPanel, 0);
+            _rightPanel.Widgets.Add(_rightTopPanel);
+
+            Grid.SetColumn(_rightBottomPanel, 0);
             Grid.SetRow(_rightBottomPanel, 1);
-            _mainGrid.Widgets.Add(_rightBottomPanel);
+            _rightPanel.Widgets.Add(_rightBottomPanel);
 
             // Add right panel to main grid
             //Grid.SetColumn(_rightPanel, 1);
@@ -494,6 +498,31 @@ namespace rurik.UI
                     _rightBottomPanel.Widgets.Clear();
                     _rightBottomPanel.Widgets.Add(_boatPanel);
                 }
+
+
+                    // _rightTopPanel.Widgets.Clear();
+                    // Panel tmpRightTopPanel = new Panel();
+                    // Label tmpRightTopLabel = new Label()
+                    // {
+                    //     Text = "rightTopPanel",
+                    //     Background = new SolidBrush(Color.Red)
+                    // };
+                    // tmpRightTopPanel.Widgets.Add(tmpRightTopLabel);
+                    // //_rightBottomPanel.Widgets.Add(_boatPanel);
+                    // _rightTopPanel.Widgets.Add(tmpRightTopPanel);
+
+
+                    // _rightBottomPanel.Widgets.Clear();
+                    // Panel tmpRightBottomPanel = new Panel();
+                    // Label tmpRightBottomLabel = new Label()
+                    // {
+                    //     Text = "rightBottomPanel",
+                    //     Background = new SolidBrush(Color.Blue)
+                    // };
+                    // tmpRightBottomPanel.Widgets.Add(tmpRightBottomLabel);
+                    // //_rightBottomPanel.Widgets.Add(_boatPanel);
+                    // _rightBottomPanel.Widgets.Add(tmpRightBottomPanel);
+
             }
 
 
