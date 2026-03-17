@@ -53,6 +53,7 @@ public class Textures
         TextureMap["Map2"] = content.Load<Texture2D>("Map2");
         TextureMap["map"] = TextureMap["Map2"];
         TextureMap["tradeBoom"] = TextureMap["tradeboom"];
+        TextureMap["fur"] = TextureMap["beaver"];
     }
 
     public Texture2D? GetTexture(string name)

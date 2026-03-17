@@ -58,7 +58,7 @@ namespace rurik.UI
         private static readonly float ScaleFromReferenceToTextureX = TextureWidth / ReferenceWidth;
         private static readonly float ScaleFromReferenceToTextureY = TextureHeight / ReferenceHeight;
 
-        private Dictionary<string, Rectangle> _locationBounds = new Dictionary<string, Rectangle>
+        private Dictionary<string, Rectangle> _locationItemsCoordinates = new Dictionary<string, Rectangle>
         {
             // Locations have been scaled to 0-1000.
             // Green locations (Novgorod region)
@@ -71,19 +71,43 @@ namespace rurik.UI
             {"Suzdal", new Rectangle(820,100,957,325)},
             {"Pereyaslavl", new Rectangle(705,525,758,687)},
 
-
             // Yellow locations (Kiev region)
             {"Volyn", new Rectangle(155,450,262,679)},
             {"Kiev", new Rectangle(390,565,429,632)},
             {"Galich", new Rectangle(295,675,343,851)},
             {"Murom", new Rectangle(900,375,952,552)},
 
-
             // Brown locations (Azov region)
             {"Brest", new Rectangle(10,475,180,504)},
             {"Peresech", new Rectangle(420,775,465,948)},
             {"Azov", new Rectangle(700, 660, 955, 794)}
         };
+
+        private Dictionary<string, Vector2> _locationResourceCoordinates = new Dictionary<string, Vector2>
+        {
+            // Locations have been scaled to 0-1000.
+            // Green locations (Novgorod region)
+            {"Novgorod", new Vector2(410, 215)},
+            {"Pskov", new Vector2(200, 195)},
+            {"Polotsk", new Vector2(280, 365)},
+            {"Smolensk", new Vector2(540, 375)},
+            {"Rostov", new Vector2(685, 230)},
+            {"Chernigov", new Vector2(560, 500)},
+            {"Suzdal", new Vector2(860, 265)},
+            {"Pereyaslavl", new Vector2(640,590)},
+
+            // Yellow locations (Kiev region)
+            {"Volyn", new Vector2(185,585)},
+            {"Kiev", new Vector2(345, 540)},
+            {"Galich", new Vector2(235, 750)},
+            {"Murom", new Vector2(840, 475)},
+
+            // Brown locations (Azov region)
+            {"Brest", new Vector2(85, 425)},
+            {"Peresech", new Vector2(360,840)},
+            {"Azov", new Vector2(855, 690)}
+        };
+
 
 
         public MainGameScreen(RurikMonoGame game, Desktop desktop)
@@ -331,7 +355,7 @@ namespace rurik.UI
             //Globals.Log($"handleLeftClick(): texture=({textureWidth}x{textureHeight}), panel=({panelWidth}x{panelHeight}), scaleFromReference=({scaleXFromReference:F4},{scaleYFromReference:F4}), scaleToPanel=({scaleX:F4},{scaleY:F4})");
 
             // Check which location was clicked
-            foreach (var kvp in _locationBounds)
+            foreach (var kvp in _locationItemsCoordinates)
             {
                 var locationName = kvp.Key;
                 var bounds = kvp.Value;
@@ -540,6 +564,71 @@ namespace rurik.UI
                     Globals.Log("MainGameScreen.updateMapPanel(): map texture not found");
                 }
             }
+
+            // Draw resource overlays for locations with resources
+            drawLocationResources();
+        }
+
+        private void drawLocationResources()
+        {
+            //Globals.Log("drawLocationResources(): enter");
+            if (_gameMap == null || _mapTexture == null)
+                return;
+
+            //Globals.Log("drawLocationResources(): leftPanel=" + _leftPanel);
+            // Get panel dimensions
+            int panelWidth = _leftPanel.Width ?? 0;
+            int panelHeight = _leftPanel.Height ?? 0;
+
+            // Calculate scaling factors from reference (0-1000) to panel
+            float scaleXFromReference = (float)_mapTexture.Width / ReferenceWidth;
+            float scaleYFromReference = (float)_mapTexture.Height / ReferenceHeight;
+            float scaleX = (float)panelWidth / (float)_mapTexture.Width;
+            float scaleY = (float)panelHeight / (float)_mapTexture.Height;
+
+            // Draw resource overlays for each location that has resources
+            foreach (var location in _gameMap.LocationsForGame)
+            {
+                //Globals.Log("drawLocationResources(): location=" + location.name + ", resourceCount=" + location.resourceCount);
+                if (location.resourceCount > 0 && !string.IsNullOrEmpty(location.defaultResource))
+                {
+                    // Get resource coordinates
+                    if (_locationResourceCoordinates.TryGetValue(location.name, out Vector2 coords))
+                    {
+                        // Scale coordinates to panel coordinates
+                        float textureX = coords.X * scaleXFromReference;
+                        float textureY = coords.Y * scaleYFromReference;
+
+                        int resourceX = (int)(textureX * scaleX);
+                        int resourceY = (int)(textureY * scaleY);
+
+                        // Get the resource texture from TextureMap
+                        if (_rurikMonoGame.Textures.TextureMap.TryGetValue(location.defaultResource, out Texture2D? resourceTexture))
+                        {
+                            //Globals.Log($"drawLocationResources(): drawing {location.defaultResource} at ({resourceX},{resourceY})");
+
+                            // Create an Image widget to display the resource texture
+                            var textureRegion = new Myra.Graphics2D.TextureAtlases.TextureRegion(resourceTexture);
+                            var resourceImage = new Image();
+                            resourceImage.Renderable = textureRegion;
+                            resourceImage.Width = 30;  // Set a reasonable size for resource icons
+                            resourceImage.Height = 30;
+
+                            resourceImage.Left = resourceX;
+                            resourceImage.Top = resourceY;
+
+                            try
+                            {
+                                _leftPanel.Widgets.Add(resourceImage);
+                            }
+                            catch (Exception ex)
+                            {
+                                // Ignore if already added
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void drawLocationOverlays()
@@ -576,7 +665,7 @@ namespace rurik.UI
                     if (troopCount > 0 || leaderCount > 0)
                     {
                         // Get location bounds
-                        if (_locationBounds.TryGetValue(location.name, out Rectangle bounds))
+                        if (_locationItemsCoordinates.TryGetValue(location.name, out Rectangle bounds))
                         {
                             // Scale bounds to panel coordinates
                             float textureX = bounds.X * scaleXFromReference;
