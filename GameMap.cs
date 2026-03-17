@@ -50,7 +50,8 @@ namespace rurik
         public void SetLocationsForGame(int numberOfPlayers)
         {
             // remove this
-            //numberOfPlayers = 4; 
+            //numberOfPlayers = 4;
+
             List<Location> locations;
             // green
             if (numberOfPlayers <= 2)

@@ -63,7 +63,7 @@ namespace rurik.UI
             {
                 Id = "locationItemsGrid",
                 Background = new SolidBrush(Color.Transparent),
-                Padding = new Thickness(1),
+                Padding = new Thickness(0),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
@@ -175,8 +175,11 @@ namespace rurik.UI
             {
                 int troops = Location.troopsByColor[color];
                 int leader = Location.leaderByColor[color];
+
                 // remove this
                 //troops = 1;
+                //leader = 1;
+
                 if (troops > 0 || leader > 0)
                 {
                     if (troops > 0)
@@ -203,7 +206,7 @@ namespace rurik.UI
             rightColumnGrid.Widgets.Clear();
             index = 0;
 
-            // remove these
+            // remove this
             //Location.buildings.Clear();
             //Building testBuilding = new Building("yellow", "stronghold");
             //Location.buildings.Add(testBuilding);
@@ -236,7 +239,7 @@ namespace rurik.UI
                 Background = new SolidBrush(color with { A = 128 }),
                 Width = 20,
                 Height = 20,
-                Margin = new Thickness(1),
+                Margin = new Thickness(0),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -266,7 +269,7 @@ namespace rurik.UI
                 Background = new SolidBrush(color with { A = 128 }),
                 Width = 20,
                 Height = 20,
-                Margin = new Thickness(1),
+                Margin = new Thickness(0),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -292,7 +295,7 @@ namespace rurik.UI
                 Background = new SolidBrush(Color.Transparent),
                 Width = 20,
                 Height = 20,
-                Margin = new Thickness(1),
+                Margin = new Thickness(0),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -307,8 +310,8 @@ namespace rurik.UI
                 Renderable = textureRegion,
                 Width = 30,
                 Height = 30,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
             };
             
             var panel = new Panel()
@@ -317,9 +320,9 @@ namespace rurik.UI
                 Background = new SolidBrush(Color.Transparent),
                 Width = 30,
                 Height = 30,
-                Margin = new Thickness(1),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
             };
             panel.Widgets.Add(buildingImage);
             return panel;

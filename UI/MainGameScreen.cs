@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using rurik;
+using System.Runtime.CompilerServices;
 
 namespace rurik.UI
 {
@@ -58,29 +59,29 @@ namespace rurik.UI
         private static readonly float ScaleFromReferenceToTextureX = TextureWidth / ReferenceWidth;
         private static readonly float ScaleFromReferenceToTextureY = TextureHeight / ReferenceHeight;
 
-        private Dictionary<string, Rectangle> _locationItemsCoordinates = new Dictionary<string, Rectangle>
+        private Dictionary<string, Vector2> _locationItemsCoordinates = new Dictionary<string, Vector2>
         {
             // Locations have been scaled to 0-1000.
             // Green locations (Novgorod region)
-            {"Novgorod", new Rectangle(275,100,522,271)},
-            {"Pskov", new Rectangle(80,175,287,248)},
-            {"Polotsk", new Rectangle(285,385,370,437)},
-            {"Smolensk", new Rectangle(460,250,632,448)},
-            {"Rostov", new Rectangle(660,75,777,281)},
-            {"Chernigov", new Rectangle(650,375,666,586)},
-            {"Suzdal", new Rectangle(820,100,957,325)},
-            {"Pereyaslavl", new Rectangle(705,525,758,687)},
+            {"Novgorod", new Vector2(280,100)},
+            {"Pskov", new Vector2(80,175)},
+            {"Polotsk", new Vector2(310,395)},
+            {"Smolensk", new Vector2(460,250)},
+            {"Rostov", new Vector2(660,75)},
+            {"Chernigov", new Vector2(650,375)},
+            {"Suzdal", new Vector2(820,100)},
+            {"Pereyaslavl", new Vector2(705,525)},
 
             // Yellow locations (Kiev region)
-            {"Volyn", new Rectangle(155,450,262,679)},
-            {"Kiev", new Rectangle(390,565,429,632)},
-            {"Galich", new Rectangle(295,675,343,851)},
-            {"Murom", new Rectangle(900,375,952,552)},
+            {"Volyn", new Vector2(155,450)},
+            {"Kiev", new Vector2(390,565)},
+            {"Galich", new Vector2(295,675)},
+            {"Murom", new Vector2(850,340)},
 
             // Brown locations (Azov region)
-            {"Brest", new Rectangle(10,475,180,504)},
-            {"Peresech", new Rectangle(420,775,465,948)},
-            {"Azov", new Rectangle(700, 660, 955, 794)}
+            {"Brest", new Vector2(10,475)},
+            {"Peresech", new Vector2(420,775)},
+            {"Azov", new Vector2(700, 660)}
         };
 
         private Dictionary<string, Vector2> _locationResourceCoordinates = new Dictionary<string, Vector2>
@@ -106,6 +107,31 @@ namespace rurik.UI
             {"Brest", new Vector2(85, 425)},
             {"Peresech", new Vector2(360,840)},
             {"Azov", new Vector2(855, 690)}
+        };
+
+        private Dictionary<string, Vector2> _rebelCoordinates = new Dictionary<string, Vector2>
+        {
+            // Locations have been scaled to 0-1000.
+            // Green locations (Novgorod region)
+            {"Novgorod", new Vector2(380, 215)},
+            {"Pskov", new Vector2(200, 230)},
+            {"Polotsk", new Vector2(250, 365)},
+            {"Smolensk", new Vector2(505, 375)},
+            {"Rostov", new Vector2(665, 230)},
+            {"Chernigov", new Vector2(525, 500)},
+            {"Suzdal", new Vector2(830, 265)},
+            {"Pereyaslavl", new Vector2(610,590)},
+
+            // Yellow locations (Kiev region)
+            {"Volyn", new Vector2(235,585)},
+            {"Kiev", new Vector2(310, 540)},
+            {"Galich", new Vector2(200, 710)},
+            {"Murom", new Vector2(840, 505)},
+
+            // Brown locations (Azov region)
+            {"Brest", new Vector2(50, 425)},
+            {"Peresech", new Vector2(330,840)},
+            {"Azov", new Vector2(825, 690)}
         };
 
 
@@ -249,6 +275,7 @@ namespace rurik.UI
             // Draw logic if needed
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Show()
         {
             //Globals.Log("MainGameScreen.Show(): enter, window=" + _window.Id + ", panel=" + _window.Content.Id);
@@ -257,11 +284,18 @@ namespace rurik.UI
                 return;
             if (_window != null && _window.Content != null)
             {
-                _window.Content.RemoveFromParent();
+                try
+                {
+                    _window.Content.RemoveFromParent();
+                }
+                catch(Exception ex)
+                {
+                    Globals.Log(ex.Message);
+                }
             }
             _window.Content = null;
             _window.Content = _panel;
-            _window.Title = "Rurik: Game";
+            _window.Title = "Rurik: Dawn of Kyiv";
             _rurikMonoGame.CurrentMyraScreen = "MainGameScreen";
             updateMapPanel();
             
@@ -364,8 +398,9 @@ namespace rurik.UI
                 float textureX = bounds.X * scaleXFromReference;
                 float textureY = bounds.Y * scaleYFromReference;
                 // bounds.Width and bounds.Height are actual coordinates.
-                int boundsWidth = bounds.Width - bounds.X;
-                int boundsHeight = bounds.Height - bounds.Y;
+
+                int boundsWidth = 75; //bounds.Width - bounds.X;
+                int boundsHeight = 100; //bounds.Height - bounds.Y;
                 float textureWidthScaled = boundsWidth * scaleXFromReference;
                 float textureHeightScaled = boundsHeight * scaleYFromReference;
 
@@ -408,6 +443,7 @@ namespace rurik.UI
             UpdateGameInfo(game, null);
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void UpdateGameInfo(GameStatus game, GameMap map)
         {
             Globals.Log("MainGameScreen.UpdateGameInfo(): enter, game state=" + game.CurrentState + ", currentPlayer=" + game.CurrentPlayerColor);
@@ -526,6 +562,7 @@ namespace rurik.UI
             }
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         private void updateMapPanel()
         {
             //Globals.Log("MainGameScreen.updateMapPanel(): enter");
@@ -567,6 +604,9 @@ namespace rurik.UI
 
             // Draw resource overlays for locations with resources
             drawLocationResources();
+
+            // Draw rebel reward indicators for locations with rebels
+            drawRebelRewards();
         }
 
         private void drawLocationResources()
@@ -660,16 +700,19 @@ namespace rurik.UI
                     int troopCount = kvp.Value;
                     int leaderCount = location.leaderByColor[color];
                     //Globals.Log("drawTroopOverlays(): color=" + color + "count=" + troopCount);
+
                     // remove this
+                    //leaderCount = 1;
                     //troopCount = 1;
+
                     if (troopCount > 0 || leaderCount > 0)
                     {
                         // Get location bounds
-                        if (_locationItemsCoordinates.TryGetValue(location.name, out Rectangle bounds))
+                        if (_locationItemsCoordinates.TryGetValue(location.name, out Vector2 coordinates))
                         {
                             // Scale bounds to panel coordinates
-                            float textureX = bounds.X * scaleXFromReference;
-                            float textureY = bounds.Y * scaleYFromReference;
+                            float textureX = coordinates.X * scaleXFromReference;
+                            float textureY = coordinates.Y * scaleYFromReference;
 
                             int overlayX = (int)(textureX * scaleX);
                             int overlayY = (int)(textureY * scaleY);
@@ -686,6 +729,77 @@ namespace rurik.UI
                         }
                     }
 
+                }
+            }
+        }
+
+        private void drawRebelRewards()
+        {
+            //Globals.Log("drawRebelRewards(): enter");
+            if (_gameMap == null || _mapTexture == null)
+                return;
+
+            //Globals.Log("drawRebelRewards(): leftPanel=" + _leftPanel);
+            // Get panel dimensions
+            int panelWidth = _leftPanel.Width ?? 0;
+            int panelHeight = _leftPanel.Height ?? 0;
+
+            // Calculate scaling factors from reference (0-1000) to panel
+            float scaleXFromReference = (float)_mapTexture.Width / ReferenceWidth;
+            float scaleYFromReference = (float)_mapTexture.Height / ReferenceHeight;
+            float scaleX = (float)panelWidth / (float)_mapTexture.Width;
+            float scaleY = (float)panelHeight / (float)_mapTexture.Height;
+
+            // Draw rebel reward indicators for each location that has rebels
+            foreach (var location in _gameMap.LocationsForGame)
+            {
+                //Globals.Log("drawRebelRewards(): location=" + location.name + ", rebelRewards.Count=" + location.rebelRewards.Count);
+                if (location.rebelRewards.Count > 0)
+                {
+                    // Get rebel coordinates
+                    if (_rebelCoordinates.TryGetValue(location.name, out Vector2 coords))
+                    {
+                        // Scale coordinates to panel coordinates
+                        float textureX = coords.X * scaleXFromReference;
+                        float textureY = coords.Y * scaleYFromReference;
+
+                        int rebelX = (int)(textureX * scaleX);
+                        int rebelY = (int)(textureY * scaleY);
+
+                        // Draw a black square with white count text
+                        int squareSize = 20;
+
+                        // Create a panel for the black square background
+                        var rebelPanel = new Panel()
+                        {
+                            Width = squareSize,
+                            Height = squareSize,
+                            Left = rebelX,
+                            Top = rebelY,
+                            Background = new SolidBrush(Color.Black),
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            VerticalAlignment = VerticalAlignment.Top
+                        };
+
+                        // Add count label inside the panel
+                        var countLabel = new Label()
+                        {
+                            Text = location.rebelRewards.Count.ToString(),
+                            TextColor = Color.White,
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center,
+                        };
+                        rebelPanel.Widgets.Add(countLabel);
+
+                        try
+                        {
+                            _leftPanel.Widgets.Add(rebelPanel);
+                        }
+                        catch (Exception ex)
+                        {
+                            // Ignore if already added
+                        }
+                    }
                 }
             }
         }
