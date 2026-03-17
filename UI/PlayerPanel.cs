@@ -37,10 +37,7 @@ namespace rurik.UI
 
         private BoatPanel _boatPanel;
 
-        VerticalStackPanel verticalPanel = new VerticalStackPanel();
-        HorizontalStackPanel horizontalPanel1 = new HorizontalStackPanel();
-        HorizontalStackPanel horizontalPanel2 = new HorizontalStackPanel();
-        //HorizontalStackPanel horizontalPanel3 = new HorizontalStackPanel();
+        Grid playerPanelGrid = new Grid();
 
 
         // Color mapping for factions
@@ -94,12 +91,10 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
-            verticalPanel.Widgets.Add(horizontalPanel1);
-            verticalPanel.Widgets.Add(horizontalPanel2);
-            //verticalPanel.Widgets.Add(horizontalPanel3);
 
             // Add main grid to panel
-            _playerPanel.Widgets.Add(verticalPanel);
+            //_playerPanel.Widgets.Add(verticalPanel);
+            _playerPanel.Widgets.Add(playerPanelGrid);
 
             // Add panel to this container
 
@@ -111,28 +106,31 @@ namespace rurik.UI
             this.Widgets.Add(_mainPanel);
         }
 
-        private void AddTroopsSection()
+        private void AddFirstPlayerTokenSection()
         {
-
-            // Troops count
-            var troopsTexture = _textures.GetTexture("troop-" + _player.Color);
-            if (troopsTexture != null)
+            var bearTexture = _textures.GetTexture("bear");
+            if (bearTexture != null)
             {
-                var textureRegion = new TextureRegion(troopsTexture);
-                var troopsImage = new Image()
+                var textureRegion = new TextureRegion(bearTexture);
+                var bearImage = new Image()
                 {
-                    Id = "supplyTroopsImage",
+                    Id = "firstPlayerToken",
                     Renderable = textureRegion,
-                    Width = 30,
-                    Height = 40,
+                    Width = 50,
+                    Height = 30,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                 };
-                horizontalPanel1.Widgets.Add(troopsImage);
+                if (_player.isFirstPlayer)
+                {
+                    Grid.SetColumn(bearImage, 0);
+                    Grid.SetRow(bearImage, 0);
+                    playerPanelGrid.Widgets.Add(bearImage);
+                }
+
             }
 
         }
-
 
         private void AddLeaderSection()
         {
@@ -149,32 +147,59 @@ namespace rurik.UI
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                 };
-                horizontalPanel1.Widgets.Add(leaderImage);
+                if (_player.supplyLeader > 0)
+                {
+                    Grid.SetColumn(leaderImage, 1);
+                    Grid.SetRow(leaderImage, 0);
+                    playerPanelGrid.Widgets.Add(leaderImage);
+                    Label label = new Label()
+                    { 
+                        Text="" + _player.supplyLeader,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                    };
+                    Grid.SetColumn(label, 1);
+                    Grid.SetRow(label, 0);
+                    playerPanelGrid.Widgets.Add(label);
+                }
             }
-
         }
 
-        private void AddFirstPlayerTokenSection()
+        private void AddTroopsSection()
         {
-
-            // First player token (bear.png)
-            var bearTexture = _textures.GetTexture("bear");
-            if (bearTexture != null)
+            Panel troopPanel = new Panel();
+            // Troops count
+            var troopsTexture = _textures.GetTexture("troop-" + _player.Color);
+            if (troopsTexture != null)
             {
-                var textureRegion = new TextureRegion(bearTexture);
-                var bearImage = new Image()
+                var textureRegion = new TextureRegion(troopsTexture);
+                var troopsImage = new Image()
                 {
-                    Id = "firstPlayerToken",
+                    Id = "supplyTroopsImage",
                     Renderable = textureRegion,
-                    Width = 50,
-                    Height = 30,
+                    Width = 30,
+                    Height = 40,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                 };
-                horizontalPanel1.Widgets.Add(bearImage);
+                if (_player.supplyTroops > 0)
+                {
+                    Grid.SetColumn(troopsImage, 2);
+                    Grid.SetRow(troopsImage, 0);
+                    playerPanelGrid.Widgets.Add(troopsImage);
+                    Label label = new Label()
+                    { 
+                        Text="" + _player.supplyTroops,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                    };
+                    Grid.SetColumn(label, 2);
+                    Grid.SetRow(label, 0);
+                    playerPanelGrid.Widgets.Add(label);
+                }
             }
-
         }
+
 
         private void AddCapturedRebelsSection()
         {
@@ -193,9 +218,22 @@ namespace rurik.UI
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                 };
-                horizontalPanel1.Widgets.Add(rebelImage);
+                if (_player.boat.capturedRebels >= 0)
+                {
+                    Grid.SetColumn(rebelImage, 3);
+                    Grid.SetRow(rebelImage, 0);
+                    playerPanelGrid.Widgets.Add(rebelImage);
+                    Label label = new Label()
+                    { 
+                        Text="" + _player.boat.capturedRebels,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                    };
+                    Grid.SetColumn(label, 3);
+                    Grid.SetRow(label, 0);
+                    playerPanelGrid.Widgets.Add(label);
+                }
             }
-
        }
 
         private void AddBuildingsSection()
@@ -235,10 +273,22 @@ namespace rurik.UI
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center,
                     };
-                    horizontalPanel2.Widgets.Add(buildingImage);
-
+                    if (_player.buildings[building] > 0)
+                    {
+                        Grid.SetColumn(buildingImage, buildingCol);
+                        Grid.SetRow(buildingImage, 1);
+                        playerPanelGrid.Widgets.Add(buildingImage);
+                        Label label = new Label()
+                        { 
+                            Text="" + _player.buildings[building],
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center,
+                        };
+                        Grid.SetColumn(label, buildingCol);
+                        Grid.SetRow(label, 1);
+                        playerPanelGrid.Widgets.Add(label);
+                    }
                 }
-
                 buildingCol++;
             }
         }
@@ -292,15 +342,16 @@ namespace rurik.UI
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void UpdatePanel()
+        public void UpdatePanel(Player player)
         {
-
-            horizontalPanel1.Widgets.Clear();
+            Globals.Log("UpdatePanel(): enter");
+            if (player != null)
+                _player = player;
+            playerPanelGrid.Widgets.Clear();
             AddFirstPlayerTokenSection();
             AddLeaderSection();
             AddTroopsSection();
             AddCapturedRebelsSection();
-            horizontalPanel2.Widgets.Clear();
             AddBuildingsSection();
 
             _mainGrid.Widgets.Clear();
@@ -315,8 +366,9 @@ namespace rurik.UI
 
         public void SetPlayer(Player player)
         {
+            Globals.Log("SetPlayer(): enter");
             _player = player;
-            UpdatePanel();
+            UpdatePanel(player);
         }
     }
 }

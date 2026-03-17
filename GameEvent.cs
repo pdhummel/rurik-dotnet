@@ -193,6 +193,7 @@ public class GameEvent
         Globals.Log("leaderPlacedHandler(): enter");
         if (Game.MainGameScreen == null)
             return;
+        Globals.Log("leaderPlacedHandler: leader in supply=" + GameStatus.ClientPlayer.supplyLeader);                        
         Game.MainGameScreen.UpdateGameInfo(GameStatus, GameMap);
     }
 

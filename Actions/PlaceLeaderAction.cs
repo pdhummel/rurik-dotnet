@@ -67,6 +67,7 @@ public class PlaceLeaderAction : PlayerAction
             GameStatus = gameStatus,
             GameMap = game.GameMap
         };
+        Globals.Log("PlaceLeaderAction.Execute(): leader in supply=" + gameStatus.Players.playersByColor[PlaceLeaderValues.PlayerColor].supplyLeader);
         server.SendGamePlayEvent(gameEvent);
         server.SendGames();
     }

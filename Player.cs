@@ -101,7 +101,7 @@ namespace rurik
             this.isNextFirstPlayer = false;
 
             // 12 - 3 to deploy.
-            this.supplyTroops = 9;
+            this.supplyTroops = 12;
             this.supplyLeader = 1;
             this.buildings = new Dictionary<string, int>();
             this.buildings["church"] = 3;

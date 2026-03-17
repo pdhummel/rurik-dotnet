@@ -146,6 +146,7 @@ namespace rurik
 
             Players.setCurrentPlayerByColor(color);
             Players.sortPlayers();
+            Players.currentPlayer.isFirstPlayer = true;
             GameStates.ChangeState("waitingForLeaderSelection");
             Log.AddLogEntry("First player selected: " + color);
         }
@@ -163,6 +164,7 @@ namespace rurik
             string randomPlayer = Players.players[randomIndex].Color;
             Players.setCurrentPlayerByColor(randomPlayer);
             Players.sortPlayers();
+            Players.currentPlayer.isFirstPlayer = true;
             GameStates.ChangeState("waitingForLeaderSelection");
             Log.AddLogEntry("Random first player selected: " + randomPlayer);
         }
@@ -259,6 +261,7 @@ namespace rurik
                 Location location = GameMap.LocationByName[locationName];
                 location.troopsByColor[color]++;
                 player.TroopsToDeploy--;
+                player.supplyTroops--;
                 Log.AddLogEntry(color + " placed initial troop at " + locationName);
             }
             catch (Exception)
