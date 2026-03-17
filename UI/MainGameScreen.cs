@@ -279,48 +279,31 @@ namespace rurik.UI
         public void Show()
         {
             //Globals.Log("MainGameScreen.Show(): enter, window=" + _window.Id + ", panel=" + _window.Content.Id);
-            IsVisible = true;
+            _rurikMonoGame.CurrentMyraScreen = "MainGameScreen";
+
             if (_window == null || _panel == null)
                 return;
-            if (_window != null && _window.Content != null)
+
+            if (!IsVisible)
             {
-                try
+                IsVisible = true;
+                if (_window != null && _window.Content != null)
                 {
-                    _window.Content.RemoveFromParent();
-                }
-                catch(Exception ex)
-                {
-                    Globals.Log(ex.Message);
-                }
-            }
-            _window.Content = null;
-            _window.Content = _panel;
-            _window.Title = "Rurik: Dawn of Kyiv";
-            _rurikMonoGame.CurrentMyraScreen = "MainGameScreen";
-            updateMapPanel();
-            
-            // Show AdvisorBoardPanel if game state is strategyPhase
-            if (_game != null && 
-                (_game.CurrentState == "strategyPhase" || _game.CurrentState.Equals("retrieveAdvisor")))
-            {
-                if (_advisorBoardPanel != null && _auctionBoard != null)
-                {
-                    _advisorBoardPanel.SetAuctionBoard(_auctionBoard);
-                    _advisorBoardPanel.UpdateBoard();
-                    _rightTopPanel.Widgets.Clear();
                     try
                     {
-                        _rightTopPanel.Widgets.Add(_advisorBoardPanel);    
+                        _window.Content.RemoveFromParent();
                     }
                     catch(Exception ex)
                     {
-                        _rightTopPanel.Widgets.Add(_advisorBoardPanel);
+                        Globals.Log(ex.Message);
                     }
-                    
                 }
+                _window.Content = null;
+                _window.Content = _panel;
+                _window.Title = "Rurik: Dawn of Kyiv";
+                _rurikMonoGame.CurrentMyraScreen = "MainGameScreen";
+                updateMapPanel();
             }
-            
-            
             //Globals.Log("MainGameScreen.Show(): exit, window=" + _window.Id + ", panel=" + _window.Content.Id);
         }
 
@@ -517,6 +500,29 @@ namespace rurik.UI
                     }
                 }
 
+/*
+
+            // Show AdvisorBoardPanel if game state is strategyPhase
+            if (_game != null && 
+                (_game.CurrentState == "strategyPhase" || _game.CurrentState.Equals("retrieveAdvisor")))
+            {
+                if (_advisorBoardPanel != null && _auctionBoard != null)
+                {
+                    _advisorBoardPanel.SetAuctionBoard(_auctionBoard);
+                    _advisorBoardPanel.UpdateBoard();
+                    _rightTopPanel.Widgets.Clear();
+                    try
+                    {
+                        _rightTopPanel.Widgets.Add(_advisorBoardPanel);    
+                    }
+                    catch(Exception ex)
+                    {
+                        _rightTopPanel.Widgets.Add(_advisorBoardPanel);
+                    }
+                    
+                }
+            }
+*/            
                 // Check if we should show the AdvisorBoardPanel
                 // Show panel when game state is strategyPhase
                 if ((game.CurrentState == "strategyPhase" || game.CurrentState.Equals("retrieveAdvisor")))
