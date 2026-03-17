@@ -265,6 +265,18 @@
 /processorParam:TextureFormat=Color
 /build:crown.png
 
+#begin deed-card.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:deed-card.png
+
 #begin dock.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -420,6 +432,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:honey.png
+
+#begin Map2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Map2.png
 
 #begin market-blue.png
 /importer:TextureImporter
@@ -733,6 +757,18 @@
 /processorParam:TextureFormat=Color
 /build:scheme-card-back.png
 
+#begin scheme-card.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:scheme-card.png
+
 #begin scheme-coin.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -816,6 +852,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:scheme-warTrack.png
+
+#begin secret-agenda.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:secret-agenda.png
 
 #begin shield.png
 /importer:TextureImporter
@@ -1321,14 +1369,3 @@
 /processorParam:TextureFormat=Color
 /build:wood.png
 
-#begin Map2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Map2.png

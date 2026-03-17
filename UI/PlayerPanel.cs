@@ -234,7 +234,142 @@ namespace rurik.UI
                     playerPanelGrid.Widgets.Add(label);
                 }
             }
-       }
+
+            // Card counts on the first row next to captured rebels
+            int cardCol = 4;
+
+            // Scheme cards
+            var schemeTexture = _textures.GetTexture("scheme-card");
+            if (schemeTexture != null)
+            {
+                var schemePanel = new Panel()
+                {
+                    Id = "schemeCardPanel",
+                    Width = 35,
+                    Height = 50,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Background = new SolidBrush(Color.Transparent),
+                };
+
+                var textureRegion = new TextureRegion(schemeTexture);
+                var schemeImage = new Image()
+                {
+                    Id = "schemeCardImage",
+                    Renderable = textureRegion,
+                    Width = 25,
+                    Height = 35,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                Grid.SetColumn(schemeImage, 0);
+                Grid.SetRow(schemeImage, 1);
+                schemePanel.Widgets.Add(schemeImage);
+
+                Label schemeLabel = new Label()
+                {
+                    Text = _player.schemeCards.Count.ToString(),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                Grid.SetColumn(schemeLabel, 0);
+                Grid.SetRow(schemeLabel, 0);
+                schemePanel.Widgets.Add(schemeLabel);
+
+                Grid.SetColumn(schemePanel, cardCol);
+                Grid.SetRow(schemePanel, 0);
+                playerPanelGrid.Widgets.Add(schemePanel);
+                cardCol += 1;
+            }
+
+            // Secret agenda cards
+            var secretAgendaTexture = _textures.GetTexture("secret-agenda");
+            if (secretAgendaTexture != null)
+            {
+                var secretAgendaPanel = new Panel()
+                {
+                    Id = "secretAgendaCardPanel",
+                    Width = 35,
+                    Height = 50,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Background = new SolidBrush(Color.Transparent),
+                };
+
+                var textureRegion = new TextureRegion(secretAgendaTexture);
+                var secretAgendaImage = new Image()
+                {
+                    Id = "secretAgendaCardImage",
+                    Renderable = textureRegion,
+                    Width = 25,
+                    Height = 35,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                Grid.SetColumn(secretAgendaImage, 0);
+                Grid.SetRow(secretAgendaImage, 1);
+                secretAgendaPanel.Widgets.Add(secretAgendaImage);
+
+                Label secretAgendaLabel = new Label()
+                {
+                    Text = _player.secretAgenda.Count.ToString(),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                Grid.SetColumn(secretAgendaLabel, 0);
+                Grid.SetRow(secretAgendaLabel, 0);
+                secretAgendaPanel.Widgets.Add(secretAgendaLabel);
+
+                Grid.SetColumn(secretAgendaPanel, cardCol);
+                Grid.SetRow(secretAgendaPanel, 0);
+                playerPanelGrid.Widgets.Add(secretAgendaPanel);
+                cardCol += 1;
+            }
+
+            // Deed cards
+            var deedTexture = _textures.GetTexture("deed-card");
+            if (deedTexture != null)
+            {
+                var deedPanel = new Panel()
+                {
+                    Id = "deedCardPanel",
+                    Width = 35,
+                    Height = 50,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Background = new SolidBrush(Color.Transparent),
+                };
+
+                var textureRegion = new TextureRegion(deedTexture);
+                var deedImage = new Image()
+                {
+                    Id = "deedCardImage",
+                    Renderable = textureRegion,
+                    Width = 25,
+                    Height = 35,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                Grid.SetColumn(deedImage, 0);
+                Grid.SetRow(deedImage, 1);
+                deedPanel.Widgets.Add(deedImage);
+
+                Label deedLabel = new Label()
+                {
+                    Text = _player.deedCards.Count.ToString(),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                Grid.SetColumn(deedLabel, 0);
+                Grid.SetRow(deedLabel, 0);
+                deedPanel.Widgets.Add(deedLabel);
+
+                Grid.SetColumn(deedPanel, cardCol);
+                Grid.SetRow(deedPanel, 0);
+                playerPanelGrid.Widgets.Add(deedPanel);
+                cardCol += 1;
+            }
+        }
 
         private void AddBuildingsSection()
         {
