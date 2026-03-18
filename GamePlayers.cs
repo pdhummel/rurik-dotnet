@@ -97,8 +97,8 @@ namespace rurik
             this.playersByName[name] = player;
             this.playersByPosition[position] = player;
             // Note the player much choose between these 2 cards 
-            player.addSecretAgenda(cards.dealRandomSecretAgendaCard());
-            player.addSecretAgenda(cards.dealRandomSecretAgendaCard());
+            //player.addSecretAgenda(cards.dealRandomSecretAgendaCard());
+            //player.addSecretAgenda(cards.dealRandomSecretAgendaCard());
             return player;
         }
 

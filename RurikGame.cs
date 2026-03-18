@@ -122,6 +122,7 @@ namespace rurik
                 Player player = Players.players[i];
                 List<string> stringListAdvisors = advisors.Select(i => i.ToString()).ToList();
                 player.setAdvisors(stringListAdvisors);
+                // TODO: why aren't secret Agenda cards are dealt when the player is created.
                 for (int j = 0; j < 2; j++)
                 {
                     SecretAgendaCard card = Cards.dealRandomSecretAgendaCard();

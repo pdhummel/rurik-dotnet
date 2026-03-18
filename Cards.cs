@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace rurik
 {
@@ -170,13 +171,18 @@ namespace rurik
             return this.allSecretAgendaCards.ContainsKey(name) ? this.allSecretAgendaCards[name] : null;
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public SecretAgendaCard dealRandomSecretAgendaCard()
         {
+            Globals.Log("dealRandomSecretAgendaCard(): count=" + secretAgendaCards.Count);
             int r = new Random().Next(this.secretAgendaCards.Count);
+            Globals.Log("dealRandomSecretAgendaCard(): randomIndex=" + r);
             // TODO: fix bug
             SecretAgendaCard card = this.secretAgendaCards[r];
             this.secretAgendaCards[r] = this.secretAgendaCards[this.secretAgendaCards.Count - 1];
-            this.secretAgendaCards.RemoveAt(this.secretAgendaCards.Count - 1);
+            List<SecretAgendaCard> tmpList = secretAgendaCards.Slice(0, secretAgendaCards.Count - 1);
+            //this.secretAgendaCards.RemoveAt(this.secretAgendaCards.Count - 1);
+            secretAgendaCards = tmpList;
             this.availableSecretAgendaCards.Remove(card.name);
             return card;
         }
