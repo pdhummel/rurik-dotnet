@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using rurik;
 using rurik.Actions;
+using System.Runtime.CompilerServices;
 
 namespace rurik.UI
 {
@@ -235,6 +236,7 @@ namespace rurik.UI
             }
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void UpdateGameInfo(GameStatus game)
         {
             _game = game;

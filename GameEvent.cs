@@ -103,17 +103,14 @@ public class GameEvent
     {
         Globals.Log("gamesUpdateHandler(): enter");
         Game.Client.Games = Games;
-        Game.GameListScreen.RefreshGameList();
+        if (Game.GameListScreen != null && Game.GameListScreen.IsVisible)
+            Game.GameListScreen.RefreshGameList();
     }
 
     public void gameStateUpdateHandler()
     {
         Globals.Log("gameStateUpdateHandler(): enter");    
-        //if (Game.ChooseFirstPlayerModal != null)
-        //{
-        //    Game.ChooseFirstPlayerModal.UpdateGameInfo(GameStatus);
-        //}
-        //if (Game.GameListScreen != null)
+        //if (Game.GameListScreen != null && Game.GameListScreen.IsVisible)
         //    Game.GameListScreen.UpdateGameInfo(GameStatus);
         if (Game.GameSetup != null && Game.GameSetup.IsVisible)
             Game.GameSetup.UpdateGameInfo(GameStatus);
@@ -144,7 +141,7 @@ public class GameEvent
     public void playerJoinedGameHandler()
     {
         Globals.Log("playerJoinedGameHandler(): enter");
-        if (Game.GameListScreen != null)
+        if (Game.GameListScreen != null && Game.GameListScreen.IsVisible)
             Game.GameListScreen.RefreshGameList();
         if (Game.GameSetup != null)
             Game.GameSetup.UpdateGameInfo(GameStatus);

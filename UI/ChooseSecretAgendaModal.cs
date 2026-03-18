@@ -26,7 +26,7 @@ namespace rurik.UI
         private Button _card2Button;
         private Button _closeButton;
         
-        private bool _isVisible = false;
+        public bool IsVisible = false;
         private GameStatus _game;
         private readonly Desktop _desktop;
         private readonly RurikMonoGame _rurikMonoGame;
@@ -179,13 +179,13 @@ namespace rurik.UI
 
         public void Show()
         {
-            _isVisible = true;
+            IsVisible = true;
             _window.ShowModal(_desktop);
         }
 
         public void Hide()
         {
-            _isVisible = false;
+            IsVisible = false;
             _window.Close();
         }
 

@@ -39,14 +39,17 @@ public class Client(RurikMonoGame game)
         netmanagerclient.Start();
         string host = joinServerValues.HostIp;
         int port = joinServerValues.Port;
-        serverPeer = netmanagerclient.Connect(host, port, key); // Use the same key as the server
-        Globals.Log($"Connect(): Client attempting to connect to {host}:{port}");
-        // Create and start the new thread for the client's polling loop
-        clientThread = new Thread(new ThreadStart(ClientLoop))
+        if (serverPeer == null)
         {
-            IsBackground = true // Ensures thread closes with the main app
-        };
-        clientThread.Start();
+            serverPeer = netmanagerclient.Connect(host, port, key); // Use the same key as the server
+            Globals.Log($"Connect(): Client attempting to connect to {host}:{port}");
+            // Create and start the new thread for the client's polling loop
+            clientThread = new Thread(new ThreadStart(ClientLoop))
+            {
+                IsBackground = true // Ensures thread closes with the main app
+            };
+            clientThread.Start();
+        }
 
         // TODO: tell the server we are ready.
         IdentifyClientAction action = new();

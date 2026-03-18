@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using rurik;
+using System.Runtime.CompilerServices;
 
 namespace rurik.UI
 {
@@ -370,6 +371,7 @@ namespace rurik.UI
                         _rurikMonoGame.ChooseFirstPlayerModal.Show();
                     }
                 }
+                return;
             }
 
             // Check if game state is waitingForLeaderSelection and show modal
@@ -383,6 +385,7 @@ namespace rurik.UI
                     _rurikMonoGame.ChooseLeaderModal.UpdateGameInfo(game);
                     _rurikMonoGame.ChooseLeaderModal.Show();
                 }
+                return;
             }
 
             // Check if game state is waitingForSecretAgendaSelection and show modal
@@ -391,11 +394,12 @@ namespace rurik.UI
                 game.CurrentPlayerName.Equals(_rurikMonoGame.Client.ClientIdentifier))
             {
                 // Show the choose secret agenda modal
-                if (_rurikMonoGame.ChooseSecretAgendaModal != null)
+                if (_rurikMonoGame.ChooseSecretAgendaModal != null && !_rurikMonoGame.ChooseSecretAgendaModal.IsVisible)
                 {
                     _rurikMonoGame.ChooseSecretAgendaModal.UpdateGameInfo(game);
                     _rurikMonoGame.ChooseSecretAgendaModal.Show();
                 }
+                return;
             }
 
             // Check if game state is waitingForTroopPlacement and show MainGameScreen
@@ -410,9 +414,12 @@ namespace rurik.UI
             }
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
         private void updatePlayersList()
         {
             // Clear existing player widgets (keep only _playersLabel)
+            //_playersPanel.Widgets.Clear();
+            //_playersPanel.Widgets.Add(_playersLabel);
             for (int i = _playersPanel.Widgets.Count - 1; i >= 0; i--)
             {
                 if (_playersPanel.Widgets[i] != _playersLabel)

@@ -484,6 +484,7 @@ namespace rurik.UI
             IsVisible = true;
             _window.Title = "Rurik: Dawn of Kyiv";
             _window.Content = _panel;
+            //RurikMonoGame.CurrentMyraScreen = "GameListScreen";
             // Add to desktop or parent container
             //Desktop.Root = _window;
             //desktop.Widgets.Add(_panel);

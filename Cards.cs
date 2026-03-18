@@ -173,6 +173,7 @@ namespace rurik
         public SecretAgendaCard dealRandomSecretAgendaCard()
         {
             int r = new Random().Next(this.secretAgendaCards.Count);
+            // TODO: fix bug
             SecretAgendaCard card = this.secretAgendaCards[r];
             this.secretAgendaCards[r] = this.secretAgendaCards[this.secretAgendaCards.Count - 1];
             this.secretAgendaCards.RemoveAt(this.secretAgendaCards.Count - 1);
