@@ -39,6 +39,9 @@ namespace rurik.UI
         private AdvisorBoardPanel? _advisorBoardPanel;
         private AuctionBoard? _auctionBoard;
         private PlayerPanel? _playerPanel;
+        private WindowPanel _mapWindowPanel;
+        private WindowPanel _playerWindowPanel;
+        private WindowPanel _advisorWindowPanel;
 
         // Color mapping for factions
         private static readonly Dictionary<string, Color> FactionColors = new Dictionary<string, Color>
@@ -142,9 +145,6 @@ namespace rurik.UI
             _desktop = desktop;
             _window = _desktop.Root as Window;
             game.MainGameScreen = this;
-            _placeTroopsModal = new PlaceTroopsModal(game, desktop);
-            _placeLeaderModal = new PlaceLeaderModal(game, desktop);
-            _playAdvisorModal = new PlayAdvisorModal(game, desktop);
             Initialize();
       
             // Initialize the AdvisorBoardPanel
@@ -237,9 +237,9 @@ namespace rurik.UI
             };
 
             // Add left panel to main grid
-            Grid.SetColumn(_leftPanel, 0);
-            Grid.SetRow(_leftPanel, 0);
-            _mainGrid.Widgets.Add(_leftPanel);
+            //Grid.SetColumn(_leftPanel, 0);
+            //Grid.SetRow(_leftPanel, 0);
+            //_mainGrid.Widgets.Add(_leftPanel);
 
             Grid.SetColumn(_rightPanel, 1);
             Grid.SetRow(_rightPanel, 0);
@@ -258,7 +258,6 @@ namespace rurik.UI
             // Add right panel to main grid
             //Grid.SetColumn(_rightPanel, 1);
             //_mainGrid.Widgets.Add(_rightPanel);
-
 
             // Add main grid to panel
             _panel.Widgets.Add(_mainGrid);
@@ -303,6 +302,12 @@ namespace rurik.UI
                 _window.Title = "Rurik: Dawn of Kyiv";
                 _rurikMonoGame.CurrentMyraScreen = "MainGameScreen";
                 updateMapPanel();
+                if (_mapWindowPanel == null)
+                {
+                    _mapWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _leftPanel, "Map", 0, 0, 0, 0);
+                    _mapWindowPanel.Show();
+                }
+
             }
             //Globals.Log("MainGameScreen.Show(): exit, window=" + _window.Id + ", panel=" + _window.Content.Id);
         }
@@ -452,6 +457,7 @@ namespace rurik.UI
                     if (game.CurrentPlayerColor == game.ClientPlayer.Color)
                     {
                         Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlaceTroops modal");
+                        _placeTroopsModal = new PlaceTroopsModal(_rurikMonoGame, _desktop);
                         if (!_placeTroopsModal.IsVisible)
                         {
                             _placeTroopsModal?.UpdateGameInfo(_game, _gameMap);
@@ -468,6 +474,7 @@ namespace rurik.UI
                     if (game.CurrentPlayerColor == game.ClientPlayer.Color)
                     {
                         Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlaceLeader modal");
+                        _placeLeaderModal = new PlaceLeaderModal(_rurikMonoGame, _desktop);
                         if (!_placeLeaderModal.IsVisible)
                         {
                             _placeLeaderModal?.UpdateGameInfo(_game, _gameMap);
@@ -484,6 +491,7 @@ namespace rurik.UI
                     if (game.CurrentPlayerColor == game.ClientPlayer.Color)
                     {
                         Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlayAdvisor modal");
+                        _playAdvisorModal = new PlayAdvisorModal(_rurikMonoGame, _desktop);
                         if (!_playAdvisorModal.IsVisible)
                         {
                             _playAdvisorModal?.UpdateGameInfo(_game);
@@ -494,35 +502,13 @@ namespace rurik.UI
                 else
                 {
                     // Hide the PlayAdvisor modal if not in strategyPhase or player is not current player
-                    if (_playAdvisorModal.IsVisible)
+                    if (_playAdvisorModal != null && _playAdvisorModal.IsVisible)
                     {
                         _playAdvisorModal?.Hide();
                     }
                 }
 
-/*
-
-            // Show AdvisorBoardPanel if game state is strategyPhase
-            if (_game != null && 
-                (_game.CurrentState == "strategyPhase" || _game.CurrentState.Equals("retrieveAdvisor")))
-            {
-                if (_advisorBoardPanel != null && _auctionBoard != null)
-                {
-                    _advisorBoardPanel.SetAuctionBoard(_auctionBoard);
-                    _advisorBoardPanel.UpdateBoard();
-                    _rightTopPanel.Widgets.Clear();
-                    try
-                    {
-                        _rightTopPanel.Widgets.Add(_advisorBoardPanel);    
-                    }
-                    catch(Exception ex)
-                    {
-                        _rightTopPanel.Widgets.Add(_advisorBoardPanel);
-                    }
-                    
-                }
-            }
-*/            
+        
                 // Check if we should show the AdvisorBoardPanel
                 // Show panel when game state is strategyPhase
                 if ((game.CurrentState == "strategyPhase" || game.CurrentState.Equals("retrieveAdvisor")))
@@ -540,8 +526,14 @@ namespace rurik.UI
                             _advisorBoardPanel.UpdateBoard();
                         }
                         // Add the advisor board panel to the right top panel
-                        _rightTopPanel.Widgets.Clear();
-                        _rightTopPanel.Widgets.Add(_advisorBoardPanel);
+                        //_rightTopPanel.Widgets.Clear();
+                        //_rightTopPanel.Widgets.Add(_advisorBoardPanel);
+
+                        if (_advisorWindowPanel == null)
+                        {
+                            _advisorWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _advisorBoardPanel, "Advisor Board", 0, 0, 600, 0);
+                            _advisorWindowPanel.Show();
+                        }
                     }
                 }
                 else
@@ -561,8 +553,13 @@ namespace rurik.UI
                 if (_playerPanel != null && game.ClientPlayer != null)
                 {
                     _playerPanel.SetPlayer(game.ClientPlayer);
-                    _rightBottomPanel.Widgets.Clear();
-                    _rightBottomPanel.Widgets.Add(_playerPanel);
+                    if (_playerWindowPanel == null)
+                    {
+                        _playerWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _playerPanel, "Player Supply and Boat", 0, 0, 600, 300);
+                        _playerWindowPanel.Show();
+                    }
+                    //_rightBottomPanel.Widgets.Clear();
+                    //_rightBottomPanel.Widgets.Add(_playerPanel);
                 }
 
             }

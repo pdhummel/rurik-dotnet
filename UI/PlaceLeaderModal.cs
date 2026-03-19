@@ -15,6 +15,7 @@ namespace rurik.UI
     public class PlaceLeaderModal : IGameScreen
     {
         private Window _window = new Window();
+        private WindowPanel _windowPanel;
         private Panel _panel;
         private Grid _grid;
         private VerticalStackPanel _contentPanel;
@@ -165,8 +166,8 @@ namespace rurik.UI
             _closeButton.Click += (s, a) => Hide();
 
             // Add widgets to panel
-            _contentPanel.Widgets.Add(_titleLabel);
-            _contentPanel.Widgets.Add(_instructionsLabel);
+            //_contentPanel.Widgets.Add(_titleLabel);
+            //_contentPanel.Widgets.Add(_instructionsLabel);
             _contentPanel.Widgets.Add(_locationLabel);
             _contentPanel.Widgets.Add(_locationSelect);
             _contentPanel.Widgets.Add(_placeButton);
@@ -188,7 +189,10 @@ namespace rurik.UI
             IsVisible = true;
             // Populate location list when showing the modal
             PopulateLocationList();
-            _window.ShowModal(_desktop);
+            //_window.ShowModal(_desktop);
+            _windowPanel = new WindowPanel(_rurikMonoGame, _desktop, _panel, "Place Leader", 175, 0, 600, 0);
+            _windowPanel.Show();
+
         }
         
         private void PopulateLocationList()
@@ -283,7 +287,8 @@ namespace rurik.UI
             action.PlaceLeaderValues = values;
             _rurikMonoGame.Client.SendAction(action);
 
-            Hide();
+            //Hide();
+            _windowPanel.Close();
         }
     }
 }

@@ -316,7 +316,9 @@ namespace rurik.UI
         public void Hide()
         {
             IsVisible = false;
-            //_window.Close();
+            _window.Content = null;
+            //_desktop.Root = null;
+            _window.Close();
         }
 
         public void HandleEvent(string eventName, object data)

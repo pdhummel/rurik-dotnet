@@ -1,6 +1,7 @@
 using Myra.Events;
 using Myra.Graphics2D.UI;
 using System;
+using Microsoft.Xna.Framework;
 
 namespace rurik.UI
 {
@@ -21,17 +22,23 @@ namespace rurik.UI
             private set => _isVisible = value;
         }
 
-        public WindowPanel(RurikMonoGame rurikMonoGame, Desktop desktop, Panel panel, string title, int height, int width)
-        {
-            initialize(rurikMonoGame, desktop, panel, title, height, width);
-        }
-
         public WindowPanel(RurikMonoGame rurikMonoGame, Desktop desktop, Panel panel, string title)
         {
-            initialize(rurikMonoGame, desktop, panel, title, 0, 0);
+            initialize(rurikMonoGame, desktop, panel, title, 0, 0, -1, -1);
         }
 
-        private void initialize(RurikMonoGame rurikMonoGame, Desktop desktop, Panel panel, string title, int height, int width)
+        public WindowPanel(RurikMonoGame rurikMonoGame, Desktop desktop, Panel panel, string title, int height, int width)
+        {
+            initialize(rurikMonoGame, desktop, panel, title, height, width, -1, -1);
+        }
+
+        public WindowPanel(RurikMonoGame rurikMonoGame, Desktop desktop, Panel panel, string title, int height, int width, int x, int y)
+        {
+            initialize(rurikMonoGame, desktop, panel, title, height, width, x, y);
+        }
+
+
+        private void initialize(RurikMonoGame rurikMonoGame, Desktop desktop, Panel panel, string title, int height, int width, int x, int y)
         {
             Globals.Log("WindowPanel(): " + title);
             _rurikMonoGame = rurikMonoGame;
@@ -52,16 +59,27 @@ namespace rurik.UI
             {
                 _window.Width = width;
             }
-            _window.Closing += (s, a) =>
+            if (x > -1)
             {
-                Globals.Log("Closing(): enter");
-                CancellableEventArgs args = (CancellableEventArgs)a;
-                if (this._isMinimized)
-                    Restore();
-                else
-                    Minimize();
-                args.Cancel = true;
-            };
+                _window.Left = x;
+            }
+            if (y > -1)
+            {
+                _window.Top = y;
+            }
+
+            _window.Closing += (s, a) => OnClosingEvent(s, a);
+        }
+
+        private void OnClosingEvent(object? s,  CancellableEventArgs a)
+        {
+            Globals.Log("Closing(): enter");
+            CancellableEventArgs args = (CancellableEventArgs)a;
+            if (this._isMinimized)
+                Restore();
+            else
+                Minimize();
+            args.Cancel = true;            
         }
 
         public void Show()
@@ -81,7 +99,8 @@ namespace rurik.UI
 
             // Set the window content and show it
             _window.Content = _panel;
-            _window.Show(_desktop);
+            Point pointPosition = new Point(_window.Left, _window.Top);
+            _window.Show(_desktop, pointPosition);
         }
 
         public void Hide()
@@ -95,6 +114,9 @@ namespace rurik.UI
         {
             Globals.Log("Close(): enter");
             _isVisible = false;
+             _window.Closing -=  OnClosingEvent;
+             _window.Content = null;
+             _window.RemoveFromDesktop();
             _window.Close();
         }
 
@@ -111,7 +133,8 @@ namespace rurik.UI
                 _height = (int)_window.MaxHeight;
             else if (_window.Content != null && _window.Content.Height != null)
                 _height = (int)_window.Content.Height;
-            //_window.Height = 30;
+            if (_height > 0)
+                _window.Height = 30;
             //((Panel)_window.Content).Height = 0;
             _window.Content = null;
             _isMinimized = true;

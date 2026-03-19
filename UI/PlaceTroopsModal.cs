@@ -15,6 +15,7 @@ namespace rurik.UI
     public class PlaceTroopsModal : IGameScreen
     {
         private Window _window = new Window();
+        private WindowPanel _windowPanel;
         private Panel _panel;
         private Grid _grid;
         private VerticalStackPanel _contentPanel;
@@ -219,7 +220,10 @@ namespace rurik.UI
             {
                 IsVisible = true;
                 // Populate location list when showing the modal
-                _window.ShowModal(_desktop);
+                //_window.ShowModal(_desktop);
+                //_window.Show(_desktop);
+                _windowPanel = new WindowPanel(_rurikMonoGame, _desktop, _panel, "Place Troops", 175, 0, 600, 0);
+                _windowPanel.Show();
             }
             
         }
@@ -333,7 +337,8 @@ namespace rurik.UI
             action.PlaceTroopsValues = values;
             _rurikMonoGame.Client.SendAction(action);
 
-            Hide();
+            //Hide();
+            _windowPanel.Close();
         }
     }
 }

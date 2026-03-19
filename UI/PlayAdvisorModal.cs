@@ -15,6 +15,7 @@ namespace rurik.UI
     public class PlayAdvisorModal : IGameScreen
     {
         private Window _window = new Window();
+        private WindowPanel _windowPanel;
         private Panel _panel;
         private Grid _grid;
         private VerticalStackPanel _contentPanel;
@@ -214,8 +215,8 @@ namespace rurik.UI
             _closeButton.Click += (s, a) => Hide();
 
             // Add widgets to panel
-            _contentPanel.Widgets.Add(_titleLabel);
-            _contentPanel.Widgets.Add(_instructionsLabel);
+            //_contentPanel.Widgets.Add(_titleLabel);
+            //_contentPanel.Widgets.Add(_instructionsLabel);
             _contentPanel.Widgets.Add(_advisorLabel);
             _contentPanel.Widgets.Add(_advisorSelect);
             _contentPanel.Widgets.Add(_columnLabel);
@@ -242,7 +243,10 @@ namespace rurik.UI
             // Populate advisor and column lists when showing the modal
             PopulateAdvisorList();
             PopulateColumnList();
-            _window.ShowModal(_desktop);
+            //_window.ShowModal(_desktop);
+            _windowPanel = new WindowPanel(_rurikMonoGame, _desktop, _panel, "Play Advisor", 300, 0, 600, 300);
+            _windowPanel.Show();
+
         }
 
         private void PopulateAdvisorList()
@@ -382,7 +386,8 @@ namespace rurik.UI
             action.PlaceAdvisorValues = values;
             _rurikMonoGame.Client.SendAction(action);
 
-            Hide();
+            //Hide();
+            _windowPanel.Close();
         }
     }
 }

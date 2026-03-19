@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using rurik;
 using rurik.Actions;
+using Myra.Events;
 
 namespace rurik.UI
 {
@@ -56,8 +57,14 @@ namespace rurik.UI
             RurikMonoGame = game;
             Desktop = desktop;
             _window = desktop.Root as Window;
+            //_window.Closing += (s, a) =>
+            //{
+            //    CancellableEventArgs args = (CancellableEventArgs)a;
+            //    args.Cancel = true;
+            //};
             Initialize();
         }
+
 
         public void Initialize()
         {
