@@ -43,6 +43,8 @@ namespace rurik.UI
         private WindowPanel _playerWindowPanel;
         private WindowPanel _advisorWindowPanel;
 
+        private WindowPanel _gameStatusWindowPanel;
+
         // Color mapping for factions
         private static readonly Dictionary<string, Color> FactionColors = new Dictionary<string, Color>
         {
@@ -448,6 +450,18 @@ namespace rurik.UI
             {
                 // Update left panel with map texture and location items
                 updateMapPanel();
+
+                GameStatusPanel gameStatusPanel = null;
+                if (_gameStatusWindowPanel == null)
+                {
+                    gameStatusPanel = new GameStatusPanel(_desktop, _game, _rurikMonoGame.Textures, _game.ClientPlayer, _game.Players);
+                    _gameStatusWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, gameStatusPanel, "Status", 0, 0, 700, 0);
+                    _gameStatusWindowPanel.Show();
+                }
+                gameStatusPanel = (GameStatusPanel)_gameStatusWindowPanel.Panel;
+                gameStatusPanel.UpdatePanel(_game, _game.ClientPlayer, _game.Players);
+                
+
 
                 // Check if we should show the PlaceTroops modal
                 // Show modal when game state is waitingForTroopPlacement and player is the current player

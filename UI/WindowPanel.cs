@@ -10,7 +10,7 @@ namespace rurik.UI
         private Window _window;
         private RurikMonoGame _rurikMonoGame;
         private Desktop _desktop;
-        private Panel _panel;
+        public Panel Panel {get; set;}
         private bool _isVisible;
         private bool _isMinimized = false;
         private int _width;
@@ -43,7 +43,7 @@ namespace rurik.UI
             Globals.Log("WindowPanel(): " + title);
             _rurikMonoGame = rurikMonoGame;
             _desktop = desktop;
-            _panel = panel;
+            Panel = panel;
             
             // Create a new window with the specified title
             _window = new Window
@@ -98,7 +98,7 @@ namespace rurik.UI
             }
 
             // Set the window content and show it
-            _window.Content = _panel;
+            _window.Content = Panel;
             Point pointPosition = new Point(_window.Left, _window.Top);
             _window.Show(_desktop, pointPosition);
         }
@@ -145,7 +145,7 @@ namespace rurik.UI
         {
             Globals.Log("Restore(): enter");
             // Restore the window to its full size
-            _window.Content = _panel;
+            _window.Content = Panel;
             //((Panel)_window.Content).Widgets[0].Height;
             if (_height > 0)
                 _window.Height = _height;
