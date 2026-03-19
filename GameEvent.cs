@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
+using Myra.Graphics2D.UI;
 using rurik.UI;
 
 namespace rurik;
@@ -218,5 +219,17 @@ public class GameEvent
     {
         Globals.Log("serverSideMessageHandler(): enter");
         Game.showMessage(EventString);
+    }
+
+    private void testWindowPanel()
+    {
+        Panel panel = new Panel();
+        Label label = new Label()
+        {
+            Text = "test"
+        };
+        panel.Widgets.Add(label);
+        WindowPanel windowPanel = new WindowPanel(Game, Game.Desktop, panel, "Test Title");
+        windowPanel.Show();
     }
 }
