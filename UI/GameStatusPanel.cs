@@ -14,11 +14,10 @@ namespace rurik.UI
 {
     /// <summary>
     /// UI Panel for displaying game status including:
-    /// - Compass showing player positions (N, E, S, W)
-    /// - Current player indicator
-    /// - Client player position
-    /// - Game name and status
+    /// - Client player's name, color, and leader name
     /// - Round number
+    /// - Game state
+    /// - Current player (color + name)
     /// </summary>
     public class GameStatusPanel : Panel
     {
@@ -38,19 +37,6 @@ namespace rurik.UI
             {"blue", Color.Blue},
             {"white", Color.White},
             {"yellow", Color.Yellow}
-        };
-
-        // Position to grid coordinates mapping for compass
-        // Compass layout:
-        //      N
-        //  W       E
-        //      S
-        private static readonly Dictionary<string, Tuple<int, int>> PositionCoordinates = new Dictionary<string, Tuple<int, int>>
-        {
-            {"N", Tuple.Create(1, 0)},  // Top center
-            {"E", Tuple.Create(2, 1)},  // Right middle
-            {"S", Tuple.Create(3, 2)},  // Bottom center
-            {"W", Tuple.Create(0, 1)}   // Left middle
         };
 
         public GameStatusPanel(Desktop desktop, GameStatus gameStatus, Textures textures, Player clientPlayer, GamePlayers players)
@@ -86,145 +72,46 @@ namespace rurik.UI
             _mainPanel.Widgets.Add(_mainGrid);
 
             // Grid layout:
-            // Row 0: Compass (left) and Info (right)
-            _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
-            _mainGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));  // Compass
-            _mainGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto));  // Info
+            // Row 0: Client player info (name, color, leader)
+            // Row 1: Game info (round, state)
+            // Row 2: Current player info
+            _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));  // Client info
+            _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));  // Game info
+            _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));  // Current player
 
-            // Add compass
-            AddCompassSection();
+            // Add client player info section
+            AddClientInfoSection();
 
-            // Add info section
-            AddInfoSection();
+            // Add game info section
+            AddGameInfoSection();
+
+            // Add current player info section
+            AddCurrentPlayerSection();
 
             this.Widgets.Add(_mainPanel);
         }
 
-        private void AddCompassSection()
+        private void AddClientInfoSection()
         {
-            var compassPanel = new Panel()
+            var clientPanel = new Panel()
             {
-                Id = "compassPanel",
-                Width = 120,
-                Height = 120,
+                Id = "clientInfoPanel",
                 Background = new SolidBrush(Color.Transparent),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            var compassGrid = new Grid();
-            compassGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));  // N
-            compassGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));  // Middle row
-            compassGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));  // S
-            compassGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // W
-            compassGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Middle column
-            compassGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // E
+            var clientGrid = new Grid();
+            clientPanel.Widgets.Add(clientGrid);
 
-            compassPanel.Widgets.Add(compassGrid);
-
-            // Add compass background image
-            var compassTexture = _textures.GetTexture("compass");
-            if (compassTexture != null)
-            {
-                var textureRegion = new TextureRegion(compassTexture);
-                var compassImage = new Image()
-                {
-                    Id = "compassImage",
-                    Renderable = textureRegion,
-                    Width = 100,
-                    Height = 100,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-                Grid.SetRow(compassImage, 1);
-                Grid.SetColumn(compassImage, 1);
-                compassGrid.Widgets.Add(compassImage);
-            }
-
-            // Add position labels (N, E, S, W)
-            foreach (var kvp in PositionCoordinates)
-            {
-                var position = kvp.Key;
-                var row = kvp.Value.Item1;
-                var col = kvp.Value.Item2;
-
-                var positionLabel = new Label()
-                {
-                    Id = $"{position}_position",
-                    Text = position,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-
-                Grid.SetRow(positionLabel, row);
-                Grid.SetColumn(positionLabel, col);
-                compassGrid.Widgets.Add(positionLabel);
-
-                // Update the label style based on game status
-                UpdatePositionLabel(positionLabel, position);
-            }
-
-            Grid.SetColumn(compassPanel, 0);
-            Grid.SetRow(compassPanel, 0);
-            _mainGrid.Widgets.Add(compassPanel);
-        }
-
-        private void AddInfoSection()
-        {
-            var infoPanel = new Panel()
-            {
-                Id = "infoPanel",
-                Padding = new Thickness(10),
-                Background = new SolidBrush(Color.Transparent),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-
-            var infoGrid = new Grid();
-            infoPanel.Widgets.Add(infoGrid);
-
-            infoGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // My color and name
-            infoGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // Leader info
-            infoGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // Game info
-            infoGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // Status info
-
-            // My color and name
-            AddMyInfoSection(infoGrid);
-
-            // Leader info
-            AddLeaderInfoSection(infoGrid);
-
-            // Game info
-            //AddGameInfoSection(infoGrid);
-
-            // Status info
-            AddStatusInfoSection(infoGrid);
-
-            Grid.SetColumn(infoPanel, 1);
-            Grid.SetRow(infoPanel, 0);
-            _mainGrid.Widgets.Add(infoPanel);
-        }
-
-        private void AddMyInfoSection(Grid grid)
-        {
-            var myInfoPanel = new Panel()
-            {
-                Id = "myInfoPanel",
-                Background = new SolidBrush(Color.Transparent),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-
-            var myInfoGrid = new Grid();
-            myInfoPanel.Widgets.Add(myInfoGrid);
-
-            myInfoGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Color dot
-            myInfoGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Name
+            clientGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Color dot
+            clientGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Name
+            clientGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Leader
 
             // Color indicator
             var colorDot = new Panel()
             {
-                Id = "myColorIcon",
+                Id = "clientColorIcon",
                 Width = 16,
                 Height = 16,
                 Background = new SolidBrush(GetFactionColor(_clientPlayer?.Color ?? "white")),
@@ -234,12 +121,12 @@ namespace rurik.UI
 
             Grid.SetColumn(colorDot, 0);
             Grid.SetRow(colorDot, 0);
-            myInfoGrid.Widgets.Add(colorDot);
+            clientGrid.Widgets.Add(colorDot);
 
             // Player name
             var playerNameLabel = new Label()
             {
-                Id = "myName",
+                Id = "clientName",
                 Text = _clientPlayer?.name ?? "Unknown",
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
@@ -247,37 +134,26 @@ namespace rurik.UI
 
             Grid.SetColumn(playerNameLabel, 1);
             Grid.SetRow(playerNameLabel, 0);
-            myInfoGrid.Widgets.Add(playerNameLabel);
+            clientGrid.Widgets.Add(playerNameLabel);
 
-            Grid.SetRow(myInfoPanel, 0);
-            grid.Widgets.Add(myInfoPanel);
-        }
-
-        private void AddLeaderInfoSection(Grid grid)
-        {
-            var leaderPanel = new Panel()
-            {
-                Id = "leaderPanel",
-                Background = new SolidBrush(Color.Transparent),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-
+            // Leader name
             var leaderLabel = new Label()
             {
-                Id = "myLeaderDescription",
+                Id = "clientLeader",
                 Text = _clientPlayer?.leader?.name ?? "",
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            leaderPanel.Widgets.Add(leaderLabel);
+            Grid.SetColumn(leaderLabel, 2);
+            Grid.SetRow(leaderLabel, 0);
+            clientGrid.Widgets.Add(leaderLabel);
 
-            Grid.SetRow(leaderPanel, 1);
-            grid.Widgets.Add(leaderPanel);
+            Grid.SetRow(clientPanel, 0);
+            _mainGrid.Widgets.Add(clientPanel);
         }
 
-        private void AddGameInfoSection(Grid grid)
+        private void AddGameInfoSection()
         {
             var gameInfoPanel = new Panel()
             {
@@ -290,20 +166,8 @@ namespace rurik.UI
             var gameInfoGrid = new Grid();
             gameInfoPanel.Widgets.Add(gameInfoGrid);
 
-            gameInfoGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // Game name
-            gameInfoGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // Round info
-
-            // Game name
-            var gameNameLabel = new Label()
-            {
-                Id = "gameStatusName",
-                Text = _gameStatus?.GameName ?? "",
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-
-            Grid.SetRow(gameNameLabel, 0);
-            gameInfoGrid.Widgets.Add(gameNameLabel);
+            gameInfoGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Round
+            gameInfoGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // State
 
             // Round info
             var roundLabel = new Label()
@@ -314,43 +178,29 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            Grid.SetRow(roundLabel, 1);
+            Grid.SetColumn(roundLabel, 0);
+            Grid.SetRow(roundLabel, 0);
             gameInfoGrid.Widgets.Add(roundLabel);
 
-            Grid.SetRow(gameInfoPanel, 2);
-            grid.Widgets.Add(gameInfoPanel);
+            // Game state
+            var stateLabel = new Label()
+            {
+                Id = "gameState",
+                Text = $"State: {_gameStatus?.CurrentState ?? "N/A"}",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            Grid.SetColumn(stateLabel, 1);
+            Grid.SetRow(stateLabel, 0);
+            gameInfoGrid.Widgets.Add(stateLabel);
+
+            Grid.SetRow(gameInfoPanel, 1);
+            _mainGrid.Widgets.Add(gameInfoPanel);
         }
 
-        private void AddStatusInfoSection(Grid grid)
+        private void AddCurrentPlayerSection()
         {
-            var statusPanel = new Panel()
-            {
-                Id = "statusPanel",
-                Background = new SolidBrush(Color.Transparent),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-
-            var statusGrid = new Grid();
-            statusPanel.Widgets.Add(statusGrid);
-
-            statusGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Status label
-            statusGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Status value
-
-            // Status label
-            var statusLabel = new Label()
-            {
-                Id = "statusLabel",
-                Text = "Status: ",
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-            };
-
-            Grid.SetColumn(statusLabel, 0);
-            Grid.SetRow(statusLabel, 0);
-            statusGrid.Widgets.Add(statusLabel);
-
-            // Current player indicator
             var currentPlayerPanel = new Panel()
             {
                 Id = "currentPlayerPanel",
@@ -363,7 +213,7 @@ namespace rurik.UI
             currentPlayerPanel.Widgets.Add(currentPlayerGrid);
 
             currentPlayerGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Color dot
-            currentPlayerGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Position
+            currentPlayerGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Name
 
             // Current player color dot
             var currentPlayerColorDot = new Panel()
@@ -380,25 +230,21 @@ namespace rurik.UI
             Grid.SetRow(currentPlayerColorDot, 0);
             currentPlayerGrid.Widgets.Add(currentPlayerColorDot);
 
-            // Current player position
-            var currentPlayerPositionLabel = new Label()
+            // Current player name
+            var currentPlayerNameLabel = new Label()
             {
-                Id = "currentPlayerPosition",
-                Text = "",
+                Id = "currentPlayerName",
+                Text = _gameStatus?.CurrentPlayerName ?? "N/A",
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            Grid.SetColumn(currentPlayerPositionLabel, 1);
-            Grid.SetRow(currentPlayerPositionLabel, 0);
-            currentPlayerGrid.Widgets.Add(currentPlayerPositionLabel);
+            Grid.SetColumn(currentPlayerNameLabel, 1);
+            Grid.SetRow(currentPlayerNameLabel, 0);
+            currentPlayerGrid.Widgets.Add(currentPlayerNameLabel);
 
-            Grid.SetColumn(currentPlayerPanel, 1);
-            Grid.SetRow(currentPlayerPanel, 0);
-            statusGrid.Widgets.Add(currentPlayerPanel);
-
-            Grid.SetRow(statusPanel, 3);
-            grid.Widgets.Add(statusPanel);
+            Grid.SetRow(currentPlayerPanel, 2);
+            _mainGrid.Widgets.Add(currentPlayerPanel);
         }
 
         private Color GetFactionColor(string color)
@@ -410,78 +256,42 @@ namespace rurik.UI
             return Color.Gray;
         }
 
-        private void UpdatePositionLabel(Label label, string position)
-        {
-            // Get player at this position
-            var playerAtPosition = _players?.playersByPosition?.GetValueOrDefault(position);
-
-            if (playerAtPosition != null)
-            {
-                var playerColor = playerAtPosition.Color;
-                var isCurrentPlayer = _gameStatus?.CurrentPlayerColor == playerColor;
-
-                // Set background color based on player's faction
-                label.Background = new SolidBrush(GetFactionColor(playerColor));
-
-                // If this is the current player, show the position
-                if (isCurrentPlayer)
-                {
-                    label.Text = position;
-                }
-                else
-                {
-                    label.Text = "";
-                }
-            }
-            else
-            {
-                label.Background = new SolidBrush(Color.Transparent);
-                label.Text = "";
-            }
-        }
-
         public void UpdatePanel(GameStatus gameStatus, Player clientPlayer, GamePlayers players)
         {
             _gameStatus = gameStatus;
             _clientPlayer = clientPlayer;
             _players = players;
 
-            // Update compass positions
-            foreach (var kvp in PositionCoordinates)
+            // Update client info
+            var clientColorIcon = (Panel)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "clientColorIcon");
+            if (clientColorIcon != null)
             {
-                var position = kvp.Key;
-                var label = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == $"{position}_position");
-                if (label != null)
-                {
-                    UpdatePositionLabel(label, position);
-                }
+                clientColorIcon.Background = new SolidBrush(GetFactionColor(_clientPlayer?.Color ?? "white"));
             }
 
-            // Update my info
-            var myNameLabel = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "myName");
-            if (myNameLabel != null)
+            var clientNameLabel = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "clientName");
+            if (clientNameLabel != null)
             {
-                myNameLabel.Text = _clientPlayer?.name ?? "Unknown";
+                clientNameLabel.Text = _clientPlayer?.name ?? "Unknown";
             }
 
-            // Update leader info
-            var leaderLabel = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "myLeaderDescription");
-            if (leaderLabel != null)
+            var clientLeaderLabel = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "clientLeader");
+            if (clientLeaderLabel != null)
             {
-                leaderLabel.Text = _clientPlayer?.leader?.description ?? "";
+                clientLeaderLabel.Text = _clientPlayer?.leader?.name ?? "";
             }
 
             // Update game info
-            var gameNameLabel = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "gameStatusName");
-            if (gameNameLabel != null)
-            {
-                gameNameLabel.Text = _gameStatus?.GameName ?? "";
-            }
-
             var roundLabel = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "gameRound");
             if (roundLabel != null)
             {
                 roundLabel.Text = $"Round: {_gameStatus?.Round}";
+            }
+
+            var stateLabel = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "gameState");
+            if (stateLabel != null)
+            {
+                stateLabel.Text = $"State: {_gameStatus?.CurrentState ?? "N/A"}";
             }
 
             // Update current player info
@@ -492,11 +302,10 @@ namespace rurik.UI
                 currentPlayerColorDot.Background = new SolidBrush(GetFactionColor(currentPlayerColor ?? "gray"));
             }
 
-            var currentPlayerPositionLabel = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "currentPlayerPosition");
-            if (currentPlayerPositionLabel != null)
+            var currentPlayerNameLabel = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "currentPlayerName");
+            if (currentPlayerNameLabel != null)
             {
-                var currentPlayer = _players?.playersByColor?.GetValueOrDefault(_gameStatus?.CurrentPlayerColor ?? "");
-                currentPlayerPositionLabel.Text = currentPlayer?.tablePosition ?? "";
+                currentPlayerNameLabel.Text = _gameStatus?.CurrentPlayerName ?? "N/A";
             }
         }
     }
