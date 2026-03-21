@@ -107,6 +107,78 @@ namespace rurik.UI
             this.Widgets.Add(_mainPanel);
         }
 
+        private void AddClientInfoSection()
+        {
+            Player clientPlayer = _player;
+            var clientPanel = new Panel()
+            {
+                Id = "clientInfoPanel",
+                Background = new SolidBrush(Color.Transparent),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            var clientGrid = new Grid();
+            clientPanel.Widgets.Add(clientGrid);
+
+            clientGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Color dot
+            clientGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Name
+            clientGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // Leader
+
+            // Color indicator
+            var colorDot = new Panel()
+            {
+                Id = "clientColorIcon",
+                Width = 16,
+                Height = 16,
+                Background = new SolidBrush(GetFactionColor(clientPlayer.Color ?? "white")),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            Grid.SetColumn(colorDot, 0);
+            Grid.SetRow(colorDot, 0);
+            clientGrid.Widgets.Add(colorDot);
+
+            // Player name
+            var playerNameLabel = new Label()
+            {
+                Id = "clientName",
+                Text = " " + clientPlayer?.name ?? "Unknown",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            Grid.SetColumn(playerNameLabel, 1);
+            Grid.SetRow(playerNameLabel, 0);
+            clientGrid.Widgets.Add(playerNameLabel);
+
+            // Leader name
+            var leaderLabel = new Label()
+            {
+                Id = "clientLeader",
+                Text = "-> " + clientPlayer?.leader?.name ?? "",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            Grid.SetColumn(leaderLabel, 2);
+            Grid.SetRow(leaderLabel, 0);
+            clientGrid.Widgets.Add(leaderLabel);
+
+            Grid.SetRow(clientPanel, 0);
+            verticalPanel.Widgets.Add(clientPanel);
+        }
+
+        private Color GetFactionColor(string color)
+        {
+            if (DefaultFactionColors.TryGetValue(color.ToLower(), out var factionColor))
+            {
+                return factionColor;
+            }
+            return Color.Gray;
+        }
+
         private void AddLeaderInfoSection()
         {
             // Display leader name and description if player has a leader
@@ -115,7 +187,8 @@ namespace rurik.UI
                 // Leader description label
                 var leaderDescriptionLabel = new Label()
                 {
-                    Text = _player.leader.name + ": " + _player.leader.description,
+                    //Text = _player.leader.name + ": " + _player.leader.description,
+                    Text = _player.leader.description,
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Top,
                     Wrap = true,
@@ -503,6 +576,7 @@ namespace rurik.UI
             if (player != null)
                 _player = player;
             playerPanelGrid.Widgets.Clear();
+            AddClientInfoSection();
             AddLeaderInfoSection();
             AddFirstPlayerTokenSection();
             AddLeaderSection();

@@ -85,7 +85,7 @@ namespace rurik.UI
             _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));  // Current player
 
             // Add client player info section
-            AddClientInfoSection();
+            //AddClientInfoSection();
 
             // Add game info section
             AddGameInfoSection();
@@ -271,11 +271,12 @@ namespace rurik.UI
 
             if (stateLabel != null)
             {
-                stateLabel.Text = $" {_gameStatus?.CurrentState ?? "N/A"}";
+                stateLabel.Text = $", {_gameStatus?.CurrentState ?? "N/A"}";
             }
-            if (currentPlayerNameLabel != null)
+            if (currentPlayerNameLabel != null && _gameStatus != null && _players != null && _players.playersByName.ContainsKey(currentPlayerNameLabel.Text))
             {
-                currentPlayerNameLabel.Text = "currentPlayer: " + _gameStatus?.CurrentPlayerName ?? "N/A";
+                Player currentPlayer = _players.playersByName[currentPlayerNameLabel.Text];
+                currentPlayerNameLabel.Text = "currentPlayer: " + currentPlayer.name + " -> " + currentPlayer.leader.name;
             }
 
             if (roundLabel != null)
