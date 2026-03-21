@@ -105,7 +105,7 @@ namespace rurik.UI
                 var headerLabel = new Label()
                 {
                     Id = $"header_{columnNames[col]}",
-                    Text = columnNames[col].ToUpper(),
+                    Text = columnNames[col],
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                     Background = new SolidBrush(Color.DarkGray),

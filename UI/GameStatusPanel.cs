@@ -70,6 +70,7 @@ namespace rurik.UI
                 Padding = new Thickness(10),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Top,
+                Width = 400,
             };
 
             _mainGrid = new Grid();
@@ -93,6 +94,7 @@ namespace rurik.UI
             AddCurrentPlayerSection();
 
             this.Widgets.Add(_mainPanel);
+            UpdatePanel(_gameStatus, _clientPlayer, _players);
         }
 
         private void AddClientInfoSection()

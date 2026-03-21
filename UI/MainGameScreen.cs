@@ -455,7 +455,7 @@ namespace rurik.UI
                 if (_gameStatusWindowPanel == null)
                 {
                     gameStatusPanel = new GameStatusPanel(_desktop, _game, _rurikMonoGame.Textures, _game.ClientPlayer, _game.Players);
-                    _gameStatusWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, gameStatusPanel, "Status", 0, 0, 700, 0);
+                    _gameStatusWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, gameStatusPanel, "Status", 0, 0, 600, 0);
                     _gameStatusWindowPanel.Show();
                 }
                 gameStatusPanel = (GameStatusPanel)_gameStatusWindowPanel.Panel;

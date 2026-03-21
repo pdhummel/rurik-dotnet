@@ -2,6 +2,8 @@ using Myra.Events;
 using Myra.Graphics2D.UI;
 using System;
 using Microsoft.Xna.Framework;
+using Myra.Graphics2D.UI.Styles;
+using FontStashSharp;
 
 namespace rurik.UI
 {
@@ -51,6 +53,7 @@ namespace rurik.UI
                 Title = title,
                 Content = panel
             };
+            _window.CloseButton.Content = new Label { Text = "-" };
             if (height > 0)
             {
                 _window.Height = height;
@@ -138,6 +141,7 @@ namespace rurik.UI
             //((Panel)_window.Content).Height = 0;
             _window.Content = null;
             _isMinimized = true;
+            _window.CloseButton.Content = new Label { Text = "+" };
             Globals.Log("Minimize(): exit");
         }
 
@@ -150,6 +154,7 @@ namespace rurik.UI
             if (_height > 0)
                 _window.Height = _height;
             _isMinimized = false;
+            _window.CloseButton.Content = new Label { Text = "-" };
             Globals.Log("Restore(): exit");
         }
 
