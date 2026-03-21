@@ -15,6 +15,7 @@ namespace rurik.UI
 {
     /// <summary>
     /// UI Panel for displaying player information including:
+    /// - Leader name and description
     /// - Supply troops count
     /// - Leader status (in supply or deployed)
     /// - Captured rebels count
@@ -38,6 +39,7 @@ namespace rurik.UI
         private BoatPanel _boatPanel;
 
         Grid playerPanelGrid = new Grid();
+        VerticalStackPanel verticalPanel = new VerticalStackPanel();
 
 
         // Color mapping for factions
@@ -93,8 +95,7 @@ namespace rurik.UI
 
 
             // Add main grid to panel
-            //_playerPanel.Widgets.Add(verticalPanel);
-            _playerPanel.Widgets.Add(playerPanelGrid);
+            _playerPanel.Widgets.Add(verticalPanel);
 
             // Add panel to this container
 
@@ -104,6 +105,25 @@ namespace rurik.UI
             _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // player panel
             _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // boat panel
             this.Widgets.Add(_mainPanel);
+        }
+
+        private void AddLeaderInfoSection()
+        {
+            // Display leader name and description if player has a leader
+            if (_player.leader != null)
+            {
+                // Leader description label
+                var leaderDescriptionLabel = new Label()
+                {
+                    Text = _player.leader.name + ": " + _player.leader.description,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Wrap = true,
+                };
+                verticalPanel.Widgets.Add(leaderDescriptionLabel);
+                verticalPanel.Widgets.Add(playerPanelGrid);
+
+            }
         }
 
         private void AddFirstPlayerTokenSection()
@@ -124,7 +144,7 @@ namespace rurik.UI
                 if (_player.isFirstPlayer)
                 {
                     Grid.SetColumn(bearImage, 0);
-                    Grid.SetRow(bearImage, 0);
+                    Grid.SetRow(bearImage, 1);
                     playerPanelGrid.Widgets.Add(bearImage);
                 }
 
@@ -150,7 +170,7 @@ namespace rurik.UI
                 if (_player.supplyLeader > 0)
                 {
                     Grid.SetColumn(leaderImage, 1);
-                    Grid.SetRow(leaderImage, 0);
+                    Grid.SetRow(leaderImage, 1);
                     playerPanelGrid.Widgets.Add(leaderImage);
                     Label label = new Label()
                     { 
@@ -159,7 +179,7 @@ namespace rurik.UI
                         VerticalAlignment = VerticalAlignment.Center,
                     };
                     Grid.SetColumn(label, 1);
-                    Grid.SetRow(label, 0);
+                    Grid.SetRow(label, 1);
                     playerPanelGrid.Widgets.Add(label);
                 }
             }
@@ -185,7 +205,7 @@ namespace rurik.UI
                 if (_player.supplyTroops > 0)
                 {
                     Grid.SetColumn(troopsImage, 2);
-                    Grid.SetRow(troopsImage, 0);
+                    Grid.SetRow(troopsImage, 1);
                     playerPanelGrid.Widgets.Add(troopsImage);
                     Label label = new Label()
                     { 
@@ -194,7 +214,7 @@ namespace rurik.UI
                         VerticalAlignment = VerticalAlignment.Center,
                     };
                     Grid.SetColumn(label, 2);
-                    Grid.SetRow(label, 0);
+                    Grid.SetRow(label, 1);
                     playerPanelGrid.Widgets.Add(label);
                 }
             }
@@ -221,7 +241,7 @@ namespace rurik.UI
                 if (_player.boat.capturedRebels >= 0)
                 {
                     Grid.SetColumn(rebelImage, 3);
-                    Grid.SetRow(rebelImage, 0);
+                    Grid.SetRow(rebelImage, 1);
                     playerPanelGrid.Widgets.Add(rebelImage);
                     Label label = new Label()
                     { 
@@ -230,7 +250,7 @@ namespace rurik.UI
                         VerticalAlignment = VerticalAlignment.Center,
                     };
                     Grid.SetColumn(label, 3);
-                    Grid.SetRow(label, 0);
+                    Grid.SetRow(label, 1);
                     playerPanelGrid.Widgets.Add(label);
                 }
             }
@@ -273,11 +293,11 @@ namespace rurik.UI
                     VerticalAlignment = VerticalAlignment.Center,
                 };
                 Grid.SetColumn(schemeLabel, 0);
-                Grid.SetRow(schemeLabel, 0);
+                Grid.SetRow(schemeLabel, 1);
                 schemePanel.Widgets.Add(schemeLabel);
 
                 Grid.SetColumn(schemePanel, cardCol);
-                Grid.SetRow(schemePanel, 0);
+                Grid.SetRow(schemePanel, 1);
                 playerPanelGrid.Widgets.Add(schemePanel);
                 cardCol += 1;
             }
@@ -317,11 +337,11 @@ namespace rurik.UI
                     VerticalAlignment = VerticalAlignment.Center,
                 };
                 Grid.SetColumn(secretAgendaLabel, 0);
-                Grid.SetRow(secretAgendaLabel, 0);
+                Grid.SetRow(secretAgendaLabel, 1);
                 secretAgendaPanel.Widgets.Add(secretAgendaLabel);
 
                 Grid.SetColumn(secretAgendaPanel, cardCol);
-                Grid.SetRow(secretAgendaPanel, 0);
+                Grid.SetRow(secretAgendaPanel, 1);
                 playerPanelGrid.Widgets.Add(secretAgendaPanel);
                 cardCol += 1;
             }
@@ -361,11 +381,11 @@ namespace rurik.UI
                     VerticalAlignment = VerticalAlignment.Center,
                 };
                 Grid.SetColumn(deedLabel, 0);
-                Grid.SetRow(deedLabel, 0);
+                Grid.SetRow(deedLabel, 1);
                 deedPanel.Widgets.Add(deedLabel);
 
                 Grid.SetColumn(deedPanel, cardCol);
-                Grid.SetRow(deedPanel, 0);
+                Grid.SetRow(deedPanel, 1);
                 playerPanelGrid.Widgets.Add(deedPanel);
                 cardCol += 1;
             }
@@ -411,7 +431,7 @@ namespace rurik.UI
                     if (_player.buildings[building] > 0)
                     {
                         Grid.SetColumn(buildingImage, buildingCol);
-                        Grid.SetRow(buildingImage, 1);
+                        Grid.SetRow(buildingImage, 2);
                         playerPanelGrid.Widgets.Add(buildingImage);
                         Label label = new Label()
                         { 
@@ -420,7 +440,7 @@ namespace rurik.UI
                             VerticalAlignment = VerticalAlignment.Center,
                         };
                         Grid.SetColumn(label, buildingCol);
-                        Grid.SetRow(label, 1);
+                        Grid.SetRow(label, 2);
                         playerPanelGrid.Widgets.Add(label);
                     }
                 }
@@ -483,6 +503,7 @@ namespace rurik.UI
             if (player != null)
                 _player = player;
             playerPanelGrid.Widgets.Clear();
+            AddLeaderInfoSection();
             AddFirstPlayerTokenSection();
             AddLeaderSection();
             AddTroopsSection();

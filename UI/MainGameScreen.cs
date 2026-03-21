@@ -569,7 +569,7 @@ namespace rurik.UI
                     _playerPanel.SetPlayer(game.ClientPlayer);
                     if (_playerWindowPanel == null)
                     {
-                        _playerWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _playerPanel, "Player Supply and Boat", 0, 0, 600, 300);
+                        _playerWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _playerPanel, "Player Supply and Boat", 0, 400, 600, 300);
                         _playerWindowPanel.Show();
                     }
                     //_rightBottomPanel.Widgets.Clear();
