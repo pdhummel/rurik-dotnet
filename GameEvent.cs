@@ -19,6 +19,7 @@ public class GameEvent
     public static readonly string EVENT_TROOP_PLACED = "troopPlaced";
     public static readonly string EVENT_LEADER_PLACED = "leaderPlaced";
     public static readonly string EVENT_ADVISOR_PLACED = "advisorPlaced";
+    public static readonly string EVENT_ADVISOR_RETRIEVED = "advisorRetrieved";
     public static readonly string EVENT_LOGIN_SUCCESSFUL = "loginSuccessful";
     public static readonly string EVENT_SERVER_SIDE_MESSAGE = "serverSideMessage";
     
@@ -66,6 +67,7 @@ public class GameEvent
             EVENT_TROOP_PLACED,
             EVENT_LEADER_PLACED,
             EVENT_ADVISOR_PLACED,
+            EVENT_ADVISOR_RETRIEVED,
             EVENT_LOGIN_SUCCESSFUL,
             EVENT_SERVER_SIDE_MESSAGE
         };
@@ -201,6 +203,14 @@ public class GameEvent
         if (Game.MainGameScreen == null)
             return;
         GameStatus.AuctionBoard = AuctionBoard;
+        Game.MainGameScreen.UpdateGameInfo(GameStatus);
+    }
+
+    public void advisorRetrievedHandler()
+    {
+        Globals.Log("advisorRetrievedHandler(): enter");
+        if (Game.MainGameScreen == null)
+            return;
         Game.MainGameScreen.UpdateGameInfo(GameStatus);
     }
 
