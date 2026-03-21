@@ -39,8 +39,10 @@ namespace rurik.UI
         private AdvisorBoardPanel? _advisorBoardPanel;
         private AuctionBoard? _auctionBoard;
         private PlayerPanel? _playerPanel;
+        private BoatPanel? _boatPanel;
         private WindowPanel _mapWindowPanel;
         private WindowPanel _playerWindowPanel;
+        private WindowPanel _boatWindowPanel;
         private WindowPanel _advisorWindowPanel;
 
         private WindowPanel _gameStatusWindowPanel;
@@ -455,7 +457,7 @@ namespace rurik.UI
                 if (_gameStatusWindowPanel == null)
                 {
                     gameStatusPanel = new GameStatusPanel(_desktop, _game, _rurikMonoGame.Textures, _game.ClientPlayer, _game.Players);
-                    _gameStatusWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, gameStatusPanel, "Status", 0, 0, 600, 0);
+                    _gameStatusWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, gameStatusPanel, "Status", 0, 400, 600, 0);
                     _gameStatusWindowPanel.Show();
                 }
                 gameStatusPanel = (GameStatusPanel)_gameStatusWindowPanel.Panel;
@@ -545,7 +547,7 @@ namespace rurik.UI
 
                         if (_advisorWindowPanel == null)
                         {
-                            _advisorWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _advisorBoardPanel, "Advisor Board", 0, 0, 600, 0);
+                            _advisorWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _advisorBoardPanel, "Advisor Board", 0, 0, 600, 300);
                             _advisorWindowPanel.Show();
                         }
                     }
@@ -569,11 +571,30 @@ namespace rurik.UI
                     _playerPanel.SetPlayer(game.ClientPlayer);
                     if (_playerWindowPanel == null)
                     {
-                        _playerWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _playerPanel, "Player Supply and Boat", 0, 400, 600, 300);
+                        _playerWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _playerPanel, "Player Info and Supply", 0, 400, 600, 300);
                         _playerWindowPanel.Show();
                     }
                     //_rightBottomPanel.Widgets.Clear();
                     //_rightBottomPanel.Widgets.Add(_playerPanel);
+                }
+
+                // Initialize and update BoatPanel
+                if (_boatPanel == null && game.ClientPlayer != null)
+                {
+                    var player = game.ClientPlayer;
+                    _boatPanel = new BoatPanel(_desktop, player, _rurikMonoGame.Textures);
+                }
+
+                // Update BoatPanel with the client player's data
+                if (_boatPanel != null && game.ClientPlayer != null)
+                {
+                    _boatPanel.UpdatePanel();
+                    if (_boatWindowPanel == null)
+                    {
+                        // Position boat window below player window (player window is at Y=400 with height 300)
+                        _boatWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _boatPanel, "Player Boat", 0, 400, 600, 300);
+                        _boatWindowPanel.Show();
+                    }
                 }
 
             }

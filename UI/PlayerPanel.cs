@@ -18,7 +18,6 @@ namespace rurik.UI
     /// - Leader name and description
     /// - Supply troops count
     /// - Leader status (in supply or deployed)
-    /// - Captured rebels count
     /// - First player token (bear.png)
     /// - Buildings in supply
     /// - Card counts (deed, scheme, secret agenda)
@@ -30,13 +29,8 @@ namespace rurik.UI
         private Player _player;
         private readonly Textures _textures;
 
-        private Panel _mainPanel;
-        private Grid _mainGrid;
-
         private Panel _playerPanel;
         //private Grid _playerGrid;
-
-        private BoatPanel _boatPanel;
 
         Grid playerPanelGrid = new Grid();
         VerticalStackPanel verticalPanel = new VerticalStackPanel();
@@ -98,13 +92,7 @@ namespace rurik.UI
             _playerPanel.Widgets.Add(verticalPanel);
 
             // Add panel to this container
-
-            _mainPanel = new Panel();
-            _mainGrid = new Grid();
-            _mainPanel.Widgets.Add(_mainGrid);
-            _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // player panel
-            _mainGrid.RowsProportions.Add(new Proportion(ProportionType.Auto)); // boat panel
-            this.Widgets.Add(_mainPanel);
+            this.Widgets.Add(_playerPanel);
         }
 
         private void AddClientInfoSection()
@@ -317,7 +305,7 @@ namespace rurik.UI
                     Grid.SetRow(rebelImage, 1);
                     playerPanelGrid.Widgets.Add(rebelImage);
                     Label label = new Label()
-                    { 
+                    {
                         Text="" + _player.boat.capturedRebels,
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center,
@@ -583,14 +571,6 @@ namespace rurik.UI
             AddTroopsSection();
             AddCapturedRebelsSection();
             AddBuildingsSection();
-
-            _mainGrid.Widgets.Clear();
-            _boatPanel = new BoatPanel(_desktop, _player, _textures);
-            _boatPanel.UpdatePanel();
-            Grid.SetRow(_playerPanel, 0);
-            _mainGrid.Widgets.Add(_playerPanel);
-            Grid.SetRow(_boatPanel, 1);
-            _mainGrid.Widgets.Add(_boatPanel);
 
         }
 
