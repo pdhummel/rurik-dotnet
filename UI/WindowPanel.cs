@@ -85,6 +85,17 @@ namespace rurik.UI
             args.Cancel = true;            
         }
 
+        public void BringToFront()
+        {
+            _window.BringToFront();
+            Panel.BringToFront();
+        }
+        public void BringToBack()
+        {
+            Panel.BringToBack();
+            _window.BringToBack();
+        }
+
         public void Show()
         {
             Globals.Log("Show(): enter");

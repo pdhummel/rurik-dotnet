@@ -239,14 +239,18 @@ namespace rurik.UI
 
         public void Show()
         {
+            Show(600, 300);
+        }
+
+        public void Show(int x, int y)
+        {
             IsVisible = true;
             // Populate advisor and column lists when showing the modal
             PopulateAdvisorList();
             PopulateColumnList();
             //_window.ShowModal(_desktop);
-            _windowPanel = new WindowPanel(_rurikMonoGame, _desktop, _panel, "Play Advisor", 300, 0, 600, 300);
+            _windowPanel = new WindowPanel(_rurikMonoGame, _desktop, _panel, "Play Advisor", 300, 0, x, y);
             _windowPanel.Show();
-
         }
 
         private void PopulateAdvisorList()

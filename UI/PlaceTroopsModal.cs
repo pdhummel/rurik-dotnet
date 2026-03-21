@@ -14,7 +14,6 @@ namespace rurik.UI
 {
     public class PlaceTroopsModal : IGameScreen
     {
-        private Window _window = new Window();
         private WindowPanel _windowPanel;
         private Panel _panel;
         private Grid _grid;
@@ -45,11 +44,6 @@ namespace rurik.UI
 
         public void Initialize()
         {
-            _window.Title = "Place Troops";
-            _window.Width = 400;
-            _window.Height = 300;
-            _window.CloseButton.Visible = false;
-
             // Main panel
             _panel = new Panel()
             {
@@ -84,7 +78,6 @@ namespace rurik.UI
             Grid.SetRow(_contentPanel, 4);
 
             _panel.Widgets.Add(_grid);
-            _window.Content = _panel;
         }
 
         private void setupContentPanel()
@@ -214,7 +207,17 @@ namespace rurik.UI
             // Draw logic if needed
         }
 
+        public void BringToFront()
+        {
+            _windowPanel.BringToFront();
+        }
+
         public void Show()
+        {
+            Show(600, 0);
+        }
+
+        public void Show(int x, int y)
         {
             if (! IsVisible)
             {
@@ -222,12 +225,11 @@ namespace rurik.UI
                 // Populate location list when showing the modal
                 //_window.ShowModal(_desktop);
                 //_window.Show(_desktop);
-                _windowPanel = new WindowPanel(_rurikMonoGame, _desktop, _panel, "Place Troops", 175, 0, 600, 0);
+                _windowPanel = new WindowPanel(_rurikMonoGame, _desktop, _panel, "Place Troops", 175, 0, x, y);
                 _windowPanel.Show();
             }
-            
         }
-        
+
         private void PopulateLocationList(GameMap map)
         {
             // Clear existing location widgets
@@ -270,7 +272,6 @@ namespace rurik.UI
         public void Hide()
         {
             IsVisible = false;
-            _window.Close();
         }
 
         public void HandleEvent(string eventName, object data)

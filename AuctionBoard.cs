@@ -146,7 +146,8 @@ namespace rurik
             Board["tax"].Clear();
             Board["build"].Clear();
             Board["scheme"].Clear();
-
+            // remove this
+            // NumberOfPlayers = 4;
             if (NumberOfPlayers <= 2)
             {
                 // 3 rows per column for 1-2 players

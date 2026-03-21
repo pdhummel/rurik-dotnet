@@ -21,9 +21,9 @@ namespace rurik.UI
         
         private Grid _mainGrid;
         private Panel _leftPanel;
-        private Panel _rightPanel;
-        private Panel _rightTopPanel;
-        private Panel _rightBottomPanel;
+        //private Panel _rightPanel;
+        //private Panel _rightTopPanel;
+        //private Panel _rightBottomPanel;
         
         public bool IsVisible = false;
         private GameStatus _game;
@@ -196,15 +196,7 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
-            // Create right panel (container for top and bottom panels)
-            _rightPanel = new Panel()
-            {
-                Id = "rightPanel",
-                Background = new SolidBrush(Color.DarkGray),
-                Padding = new Thickness(5),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
-            };
+
 
             // Right panel grid to split top and bottom
             Grid rightGrid = new Grid()
@@ -220,48 +212,6 @@ namespace rurik.UI
             rightGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
             rightGrid.RowsProportions.Add(new Proportion(ProportionType.Auto));
 
-            // Create right top panel (for future use - player info, turn info, etc.)
-            _rightTopPanel = new Panel()
-            {
-                Id = "rightTopPanel",
-                Background = new SolidBrush(Color.Gray),
-                Padding = new Thickness(5),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Top,
-            };
-
-            // Create right bottom panel (for future use - action buttons, chat, etc.)
-            _rightBottomPanel = new Panel()
-            {
-                Id = "rightBottomPanel",
-                Background = new SolidBrush(Color.Gray),
-                Padding = new Thickness(5),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Bottom,
-            };
-
-            // Add left panel to main grid
-            //Grid.SetColumn(_leftPanel, 0);
-            //Grid.SetRow(_leftPanel, 0);
-            //_mainGrid.Widgets.Add(_leftPanel);
-
-            Grid.SetColumn(_rightPanel, 1);
-            Grid.SetRow(_rightPanel, 0);
-            _mainGrid.Widgets.Add(_rightPanel);
-
-
-            // Add top and bottom panels to right grid
-            Grid.SetColumn(_rightTopPanel, 0);
-            Grid.SetRow(_rightTopPanel, 0);
-            _rightPanel.Widgets.Add(_rightTopPanel);
-
-            Grid.SetColumn(_rightBottomPanel, 0);
-            Grid.SetRow(_rightBottomPanel, 1);
-            _rightPanel.Widgets.Add(_rightBottomPanel);
-
-            // Add right panel to main grid
-            //Grid.SetColumn(_rightPanel, 1);
-            //_mainGrid.Widgets.Add(_rightPanel);
 
             // Add main grid to panel
             _panel.Widgets.Add(_mainGrid);
@@ -462,101 +412,6 @@ namespace rurik.UI
                 }
                 gameStatusPanel = (GameStatusPanel)_gameStatusWindowPanel.Panel;
                 gameStatusPanel.UpdatePanel(_game, _game.ClientPlayer, _game.Players);
-                
-
-
-                // Check if we should show the PlaceTroops modal
-                // Show modal when game state is waitingForTroopPlacement and player is the current player
-                if (game.CurrentState == "waitingForTroopPlacement" && game.ClientPlayer != null)
-                {
-                    // Check if the client player is the current player
-                    if (game.CurrentPlayerColor == game.ClientPlayer.Color)
-                    {
-                        Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlaceTroops modal");
-                        _placeTroopsModal = new PlaceTroopsModal(_rurikMonoGame, _desktop);
-                        if (!_placeTroopsModal.IsVisible)
-                        {
-                            _placeTroopsModal?.UpdateGameInfo(_game, _gameMap);
-                            _placeTroopsModal?.Show();
-                        }
-                    }
-                }
-
-                // Check if we should show the PlaceLeader modal
-                // Show modal when game state is waitingForLeaderPlacement and player is the current player
-                if (game.CurrentState == "waitingForLeaderPlacement" && game.ClientPlayer != null)
-                {
-                    // Check if the client player is the current player
-                    if (game.CurrentPlayerColor == game.ClientPlayer.Color)
-                    {
-                        Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlaceLeader modal");
-                        _placeLeaderModal = new PlaceLeaderModal(_rurikMonoGame, _desktop);
-                        if (!_placeLeaderModal.IsVisible)
-                        {
-                            _placeLeaderModal?.UpdateGameInfo(_game, _gameMap);
-                            _placeLeaderModal?.Show();
-                        }
-                    }
-                }
-                
-                // Check if we should show the PlayAdvisor modal
-                // Show modal when game state is strategyPhase and player is the current player
-                if (game.CurrentState == "strategyPhase" && game.ClientPlayer != null)
-                {
-                    // Check if the client player is the current player
-                    if (game.CurrentPlayerColor == game.ClientPlayer.Color)
-                    {
-                        Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlayAdvisor modal");
-                        _playAdvisorModal = new PlayAdvisorModal(_rurikMonoGame, _desktop);
-                        if (!_playAdvisorModal.IsVisible)
-                        {
-                            _playAdvisorModal?.UpdateGameInfo(_game);
-                            _playAdvisorModal?.Show();
-                        }
-                    }
-                }
-                else
-                {
-                    // Hide the PlayAdvisor modal if not in strategyPhase or player is not current player
-                    if (_playAdvisorModal != null && _playAdvisorModal.IsVisible)
-                    {
-                        _playAdvisorModal?.Hide();
-                    }
-                }
-
-        
-                // Check if we should show the AdvisorBoardPanel
-                // Show panel when game state is strategyPhase
-                if ((game.CurrentState == "strategyPhase" || game.CurrentState.Equals("retrieveAdvisor")))
-                {
-                    Globals.Log("MainGameScreen.UpdateGameInfo(): Showing AdvisorBoardPanel");
-                    if (_advisorBoardPanel != null)
-                    {
-                        // Update the auction board with the game's auction board data
-                        if (game.AuctionBoard != null)
-                        {
-                            _auctionBoard = game.AuctionBoard;
-                            // Update the advisor board panel with the current auction board
-                            Globals.Log("UpdateGameInfo(): update auction board");
-                            _advisorBoardPanel.SetAuctionBoard(game.AuctionBoard);
-                            _advisorBoardPanel.UpdateBoard();
-                        }
-                        // Add the advisor board panel to the right top panel
-                        //_rightTopPanel.Widgets.Clear();
-                        //_rightTopPanel.Widgets.Add(_advisorBoardPanel);
-
-                        if (_advisorWindowPanel == null)
-                        {
-                            _advisorWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _advisorBoardPanel, "Advisor Board", 0, 0, 600, 300);
-                            _advisorWindowPanel.Show();
-                        }
-                    }
-                }
-                else
-                {
-                    // Clear the right top panel if not in strategyPhase
-                    _rightTopPanel.Widgets.Clear();
-                }
 
                 if (_playerPanel == null && game.ClientPlayer != null)
                 {
@@ -571,11 +426,10 @@ namespace rurik.UI
                     _playerPanel.SetPlayer(game.ClientPlayer);
                     if (_playerWindowPanel == null)
                     {
-                        _playerWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _playerPanel, "Player Info and Supply", 0, 400, 600, 300);
+                        _playerWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _playerPanel, "Player Info and Supply", 0, 400, 600, 200);
                         _playerWindowPanel.Show();
                     }
-                    //_rightBottomPanel.Widgets.Clear();
-                    //_rightBottomPanel.Widgets.Add(_playerPanel);
+
                 }
 
                 // Initialize and update BoatPanel
@@ -592,11 +446,97 @@ namespace rurik.UI
                     if (_boatWindowPanel == null)
                     {
                         // Position boat window below player window (player window is at Y=400 with height 300)
-                        _boatWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _boatPanel, "Player Boat", 0, 400, 600, 300);
+                        _boatWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _boatPanel, "Player Boat", 0, 400, 600, 500);
                         _boatWindowPanel.Show();
                     }
                 }
 
+
+                // Check if we should show the AdvisorBoardPanel
+                // Show panel when game state is strategyPhase
+                if ((game.CurrentState == "strategyPhase" || game.CurrentState.Equals("retrieveAdvisor")))
+                {
+                    Globals.Log("MainGameScreen.UpdateGameInfo(): Showing AdvisorBoardPanel");
+                    if (_advisorBoardPanel != null)
+                    {
+                        // Update the auction board with the game's auction board data
+                        if (game.AuctionBoard != null)
+                        {
+                            _auctionBoard = game.AuctionBoard;
+                            // Update the advisor board panel with the current auction board
+                            Globals.Log("UpdateGameInfo(): update auction board");
+                            _advisorBoardPanel.SetAuctionBoard(game.AuctionBoard);
+                            _advisorBoardPanel.UpdateBoard();
+                        }
+
+                        if (_advisorWindowPanel == null)
+                        {
+                            _advisorWindowPanel = new WindowPanel(_rurikMonoGame, _desktop, _advisorBoardPanel, "Advisor Board", 0, 400, 600, 100);
+                            _advisorWindowPanel.Show();
+                        }
+                    }
+                }
+
+
+                // Check if we should show the PlaceTroops modal
+                // Show modal when game state is waitingForTroopPlacement and player is the current player
+                if (game.CurrentState == "waitingForTroopPlacement" && game.ClientPlayer != null)
+                {
+                    // Check if the client player is the current player
+                    if (game.CurrentPlayerColor == game.ClientPlayer.Color)
+                    {
+                        Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlaceTroops modal");
+                        _placeTroopsModal = new PlaceTroopsModal(_rurikMonoGame, _desktop);
+                        if (!_placeTroopsModal.IsVisible)
+                        {
+                            _placeTroopsModal?.UpdateGameInfo(_game, _gameMap);
+                            _placeTroopsModal?.Show(625, 100);
+                        }
+                    }
+                }
+
+                // Check if we should show the PlaceLeader modal
+                // Show modal when game state is waitingForLeaderPlacement and player is the current player
+                if (game.CurrentState == "waitingForLeaderPlacement" && game.ClientPlayer != null)
+                {
+                    // Check if the client player is the current player
+                    if (game.CurrentPlayerColor == game.ClientPlayer.Color)
+                    {
+                        Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlaceLeader modal");
+                        _placeLeaderModal = new PlaceLeaderModal(_rurikMonoGame, _desktop);
+                        if (!_placeLeaderModal.IsVisible)
+                        {
+                            _placeLeaderModal?.UpdateGameInfo(_game, _gameMap);
+                            _placeLeaderModal?.Show(625, 100);
+                        }
+                    }
+                }
+                
+                // Check if we should show the PlayAdvisor modal
+                // Show modal when game state is strategyPhase and player is the current player
+                if (game.CurrentState == "strategyPhase" && game.ClientPlayer != null)
+                {
+                    // Check if the client player is the current player
+                    if (game.CurrentPlayerColor == game.ClientPlayer.Color)
+                    {
+                        Globals.Log("MainGameScreen.UpdateGameInfo(): Showing PlayAdvisor modal");
+                        _playAdvisorModal = new PlayAdvisorModal(_rurikMonoGame, _desktop);
+                        if (!_playAdvisorModal.IsVisible)
+                        {
+                            _playAdvisorModal?.UpdateGameInfo(_game);
+                            _playAdvisorModal?.Show(625, 450);
+                        }
+                    }
+                }
+                else
+                {
+                    // Hide the PlayAdvisor modal if not in strategyPhase or player is not current player
+                    if (_playAdvisorModal != null && _playAdvisorModal.IsVisible)
+                    {
+                        _playAdvisorModal?.Hide();
+                    }
+                }
+        
             }
         }
 

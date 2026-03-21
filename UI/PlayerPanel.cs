@@ -181,9 +181,9 @@ namespace rurik.UI
                     VerticalAlignment = VerticalAlignment.Top,
                     Wrap = true,
                 };
+                verticalPanel.Widgets.Clear();
                 verticalPanel.Widgets.Add(leaderDescriptionLabel);
                 verticalPanel.Widgets.Add(playerPanelGrid);
-
             }
         }
 

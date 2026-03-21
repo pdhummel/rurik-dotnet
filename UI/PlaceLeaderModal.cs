@@ -186,14 +186,20 @@ namespace rurik.UI
 
         public void Show()
         {
+            Show(600, 0);
+        }
+
+        public void Show(int x, int y)
+        {
             IsVisible = true;
             // Populate location list when showing the modal
             PopulateLocationList();
             //_window.ShowModal(_desktop);
-            _windowPanel = new WindowPanel(_rurikMonoGame, _desktop, _panel, "Place Leader", 175, 0, 600, 0);
+            _windowPanel = new WindowPanel(_rurikMonoGame, _desktop, _panel, "Place Leader", 175, 0, x, y);
             _windowPanel.Show();
 
         }
+
         
         private void PopulateLocationList()
         {
