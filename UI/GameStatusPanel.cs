@@ -30,6 +30,10 @@ namespace rurik.UI
         private Panel _mainPanel;
         private Grid _mainGrid;
 
+        private Label stateLabel;
+        private Label currentPlayerNameLabel;
+        private Label roundLabel;
+
         // Color mapping for factions
         private static readonly Dictionary<string, Color> FactionColors = new Dictionary<string, Color>
         {
@@ -127,7 +131,7 @@ namespace rurik.UI
             var playerNameLabel = new Label()
             {
                 Id = "clientName",
-                Text = _clientPlayer?.name ?? "Unknown",
+                Text = " " + _clientPlayer?.name ?? "Unknown",
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -140,7 +144,7 @@ namespace rurik.UI
             var leaderLabel = new Label()
             {
                 Id = "clientLeader",
-                Text = _clientPlayer?.leader?.name ?? "",
+                Text = " " + _clientPlayer?.leader?.name ?? "",
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -170,7 +174,7 @@ namespace rurik.UI
             gameInfoGrid.ColumnsProportions.Add(new Proportion(ProportionType.Auto)); // State
 
             // Round info
-            var roundLabel = new Label()
+            roundLabel = new Label()
             {
                 Id = "gameRound",
                 Text = $"Round: {_gameStatus?.Round}",
@@ -183,10 +187,10 @@ namespace rurik.UI
             gameInfoGrid.Widgets.Add(roundLabel);
 
             // Game state
-            var stateLabel = new Label()
+            stateLabel = new Label()
             {
                 Id = "gameState",
-                Text = $"State: {_gameStatus?.CurrentState ?? "N/A"}",
+                Text = $" {_gameStatus?.CurrentState ?? "N/A"}",
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
@@ -226,20 +230,20 @@ namespace rurik.UI
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            Grid.SetColumn(currentPlayerColorDot, 0);
-            Grid.SetRow(currentPlayerColorDot, 0);
-            currentPlayerGrid.Widgets.Add(currentPlayerColorDot);
+            //Grid.SetColumn(currentPlayerColorDot, 0);
+            //Grid.SetRow(currentPlayerColorDot, 0);
+            //currentPlayerGrid.Widgets.Add(currentPlayerColorDot);
 
             // Current player name
-            var currentPlayerNameLabel = new Label()
+            currentPlayerNameLabel = new Label()
             {
                 Id = "currentPlayerName",
-                Text = _gameStatus?.CurrentPlayerName ?? "N/A",
+                Text = "currentPlayer: " + _gameStatus?.CurrentPlayerName ?? "N/A",
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
             };
 
-            Grid.SetColumn(currentPlayerNameLabel, 1);
+            //Grid.SetColumn(currentPlayerNameLabel, 1);
             Grid.SetRow(currentPlayerNameLabel, 0);
             currentPlayerGrid.Widgets.Add(currentPlayerNameLabel);
 
@@ -258,55 +262,26 @@ namespace rurik.UI
 
         public void UpdatePanel(GameStatus gameStatus, Player clientPlayer, GamePlayers players)
         {
+            Globals.Log("UpdatePanel(): enter");
             _gameStatus = gameStatus;
             _clientPlayer = clientPlayer;
             _players = players;
 
-            // Update client info
-            var clientColorIcon = (Panel)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "clientColorIcon");
-            if (clientColorIcon != null)
+            if (stateLabel != null)
             {
-                clientColorIcon.Background = new SolidBrush(GetFactionColor(_clientPlayer?.Color ?? "white"));
+                stateLabel.Text = $" {_gameStatus?.CurrentState ?? "N/A"}";
+            }
+            if (currentPlayerNameLabel != null)
+            {
+                currentPlayerNameLabel.Text = "currentPlayer: " + _gameStatus?.CurrentPlayerName ?? "N/A";
             }
 
-            var clientNameLabel = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "clientName");
-            if (clientNameLabel != null)
-            {
-                clientNameLabel.Text = _clientPlayer?.name ?? "Unknown";
-            }
-
-            var clientLeaderLabel = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "clientLeader");
-            if (clientLeaderLabel != null)
-            {
-                clientLeaderLabel.Text = _clientPlayer?.leader?.name ?? "";
-            }
-
-            // Update game info
-            var roundLabel = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "gameRound");
             if (roundLabel != null)
             {
                 roundLabel.Text = $"Round: {_gameStatus?.Round}";
             }
 
-            var stateLabel = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "gameState");
-            if (stateLabel != null)
-            {
-                stateLabel.Text = $"State: {_gameStatus?.CurrentState ?? "N/A"}";
-            }
 
-            // Update current player info
-            var currentPlayerColorDot = (Panel)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "currentPlayerColor");
-            if (currentPlayerColorDot != null)
-            {
-                var currentPlayerColor = _gameStatus?.CurrentPlayerColor;
-                currentPlayerColorDot.Background = new SolidBrush(GetFactionColor(currentPlayerColor ?? "gray"));
-            }
-
-            var currentPlayerNameLabel = (Label)_mainGrid.Widgets.FirstOrDefault(w => w.Id == "currentPlayerName");
-            if (currentPlayerNameLabel != null)
-            {
-                currentPlayerNameLabel.Text = _gameStatus?.CurrentPlayerName ?? "N/A";
-            }
         }
     }
 }
